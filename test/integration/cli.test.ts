@@ -1,4 +1,4 @@
-import { describe, test, expect } from 'vitest';
+import { describe, test, expect, afterAll } from 'vitest';
 import { spawnSync } from 'node:child_process';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -12,8 +12,14 @@ function runCli(args: string[]) {
   return spawnSync('npx', ['tsx', cliPath, ...args], {
     cwd: rootDir,
     encoding: 'utf-8',
+    timeout: 30000,
   });
 }
+
+afterAll(async () => {
+  const { close } = await import('../../src/index.js');
+  await close();
+});
 
 describe('export command — successful render', () => {
   test('exports simple.tsx to /tmp/out-cli-test.png, prints path to stdout, exits 0', () => {
@@ -43,4 +49,43 @@ describe('export command — successful render', () => {
     expect(result.status).toBe(0);
     expect(existsSync(outPath)).toBe(true);
   }, 30_000);
+});
+
+describe('export command — error cases', () => {
+  test('missing --file exits 1 with non-empty stderr', () => {
+    const result = runCli(['export', '--out', '/tmp/grafex-no-file.png']);
+    expect(result.status).toBe(1);
+    expect(result.stderr.trim().length).toBeGreaterThan(0);
+  });
+
+  test('--format svg exits 1 with unsupported format message in stderr', () => {
+    const result = runCli([
+      'export',
+      '--file',
+      'test/fixtures/simple.tsx',
+      '--format',
+      'svg',
+      '--out',
+      '/tmp/grafex-svg-test.png',
+    ]);
+    expect(result.status).toBe(1);
+    expect(result.stderr).toContain('Only PNG format is supported in this version.');
+  });
+});
+
+describe('global flags', () => {
+  test('--version exits 0 and stdout matches package.json version', () => {
+    const pkg = JSON.parse(readFileSync(resolve(rootDir, 'package.json'), 'utf-8')) as {
+      version: string;
+    };
+    const result = runCli(['--version']);
+    expect(result.status).toBe(0);
+    expect(result.stdout.trim()).toBe(pkg.version);
+  });
+
+  test('--help exits 0 and stdout contains "export"', () => {
+    const result = runCli(['--help']);
+    expect(result.status).toBe(0);
+    expect(result.stdout).toContain('export');
+  });
 });
