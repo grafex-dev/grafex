@@ -11,12 +11,7 @@ const VIEWPORT = { width: 100, height: 100 };
 
 // PNG magic bytes: 89 50 4E 47
 function isPng(buffer: Buffer): boolean {
-  return (
-    buffer[0] === 0x89 &&
-    buffer[1] === 0x50 &&
-    buffer[2] === 0x4e &&
-    buffer[3] === 0x47
-  );
+  return buffer[0] === 0x89 && buffer[1] === 0x50 && buffer[2] === 0x4e && buffer[3] === 0x47;
 }
 
 describe('BrowserManager — rendering', () => {

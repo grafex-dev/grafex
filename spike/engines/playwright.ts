@@ -28,7 +28,12 @@ function findChromiumHeadlessShell(): string | undefined {
         const macX64 = join(base, dir, 'chrome-headless-shell-mac-x64', 'chrome-headless-shell');
         if (existsSync(macX64)) return macX64;
         // Linux
-        const linuxPath = join(base, dir, 'chrome-headless-shell-linux-x64', 'chrome-headless-shell');
+        const linuxPath = join(
+          base,
+          dir,
+          'chrome-headless-shell-linux-x64',
+          'chrome-headless-shell',
+        );
         if (existsSync(linuxPath)) return linuxPath;
       }
     } catch {
@@ -79,10 +84,7 @@ export class PlaywrightEngine implements BrowserEngine {
     this.page = await this.browser.newPage();
   }
 
-  async render(
-    html: string,
-    viewport: { width: number; height: number },
-  ): Promise<Buffer> {
+  async render(html: string, viewport: { width: number; height: number }): Promise<Buffer> {
     if (!this.page) throw new Error(`${this.name}: not launched`);
 
     await this.page.setViewportSize(viewport);

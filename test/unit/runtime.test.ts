@@ -1,5 +1,12 @@
 import { describe, test, expect } from 'vitest';
-import { h, Fragment, renderToHTML, styleObjectToString, escapeHtml, HtmlString } from '../../src/runtime.js';
+import {
+  h,
+  Fragment,
+  renderToHTML,
+  styleObjectToString,
+  escapeHtml,
+  HtmlString,
+} from '../../src/runtime.js';
 
 describe('h() — string tags', () => {
   test('basic element with text child', () => {
@@ -114,9 +121,9 @@ describe('h() — function components', () => {
   test('function component receives children', () => {
     const Comp = ({ children }: { children?: unknown }) =>
       new HtmlString(`<section>${children}</section>`);
-    expect(
-      String(h(Comp as (props: Record<string, unknown>) => HtmlString, null, 'hello')),
-    ).toBe('<section>hello</section>');
+    expect(String(h(Comp as (props: Record<string, unknown>) => HtmlString, null, 'hello'))).toBe(
+      '<section>hello</section>',
+    );
   });
 
   test('nested function components resolve correctly', () => {
@@ -152,9 +159,15 @@ describe('renderChildren — special values', () => {
   });
 
   test('list rendering: array of elements renders all items', () => {
-    expect(String(h('div', null, ['a', 'b', 'c'].map((s) => h('span', null, s))))).toBe(
-      '<div><span>a</span><span>b</span><span>c</span></div>',
-    );
+    expect(
+      String(
+        h(
+          'div',
+          null,
+          ['a', 'b', 'c'].map((s) => h('span', null, s)),
+        ),
+      ),
+    ).toBe('<div><span>a</span><span>b</span><span>c</span></div>');
   });
 });
 
@@ -237,9 +250,7 @@ describe('escapeHtml — text child escaping', () => {
   });
 
   test('nested h() children are not double-escaped', () => {
-    expect(String(h('div', null, h('span', null, 'hello')))).toBe(
-      '<div><span>hello</span></div>',
-    );
+    expect(String(h('div', null, h('span', null, 'hello')))).toBe('<div><span>hello</span></div>');
   });
 });
 
@@ -251,9 +262,7 @@ describe('escapeHtml — attribute value escaping', () => {
   });
 
   test('injection attempt in attribute value is escaped', () => {
-    expect(String(h('a', { href: '" onclick="x' }))).toBe(
-      '<a href="&quot; onclick=&quot;x"></a>',
-    );
+    expect(String(h('a', { href: '" onclick="x' }))).toBe('<a href="&quot; onclick=&quot;x"></a>');
   });
 
   test('className value is escaped', () => {

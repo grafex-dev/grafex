@@ -215,10 +215,7 @@ function printTable(results: EngineResult[]): void {
   console.log('BENCHMARK RESULTS');
   console.log('='.repeat(hr.length));
 
-  const header =
-    pad('Metric', labelW) +
-    ' ' +
-    engineNames.map((n) => rpad(n, colW)).join(' ');
+  const header = pad('Metric', labelW) + ' ' + engineNames.map((n) => rpad(n, colW)).join(' ');
   console.log(header);
   console.log(hr);
 
@@ -257,10 +254,8 @@ function printTable(results: EngineResult[]): void {
         ' ' +
         results
           .map((r) =>
-            compCell(
-              r,
-              comp.name,
-              (c) => (c.warmRenderP50Ms !== null ? `${c.warmRenderP50Ms}ms` : 'N/A'),
+            compCell(r, comp.name, (c) =>
+              c.warmRenderP50Ms !== null ? `${c.warmRenderP50Ms}ms` : 'N/A',
             ),
           )
           .join(' '),
@@ -270,10 +265,8 @@ function printTable(results: EngineResult[]): void {
         ' ' +
         results
           .map((r) =>
-            compCell(
-              r,
-              comp.name,
-              (c) => (c.warmRenderP95Ms !== null ? `${c.warmRenderP95Ms}ms` : 'N/A'),
+            compCell(r, comp.name, (c) =>
+              c.warmRenderP95Ms !== null ? `${c.warmRenderP95Ms}ms` : 'N/A',
             ),
           )
           .join(' '),
@@ -283,10 +276,8 @@ function printTable(results: EngineResult[]): void {
         ' ' +
         results
           .map((r) =>
-            compCell(
-              r,
-              comp.name,
-              (c) => (c.warmRenderMaxMs !== null ? `${c.warmRenderMaxMs}ms` : 'N/A'),
+            compCell(r, comp.name, (c) =>
+              c.warmRenderMaxMs !== null ? `${c.warmRenderMaxMs}ms` : 'N/A',
             ),
           )
           .join(' '),
@@ -309,9 +300,7 @@ function printTable(results: EngineResult[]): void {
       results.map((r) => cell(r, (r) => `${Math.round(r.peakNodeRssMb)}MB`)).join(' '),
   );
   console.log(
-    pad('Disk footprint', labelW) +
-      ' ' +
-      results.map((r) => rpad(r.diskFootprint, colW)).join(' '),
+    pad('Disk footprint', labelW) + ' ' + results.map((r) => rpad(r.diskFootprint, colW)).join(' '),
   );
   console.log('='.repeat(hr.length));
 }
@@ -354,16 +343,10 @@ async function main() {
   mkdirSync(resultsDir, { recursive: true });
 
   for (const r of allResults) {
-    writeFileSync(
-      resolve(resultsDir, `${r.engine}.json`),
-      JSON.stringify(r, null, 2),
-    );
+    writeFileSync(resolve(resultsDir, `${r.engine}.json`), JSON.stringify(r, null, 2));
   }
 
-  writeFileSync(
-    resolve(resultsDir, 'comparison.json'),
-    JSON.stringify(allResults, null, 2),
-  );
+  writeFileSync(resolve(resultsDir, 'comparison.json'), JSON.stringify(allResults, null, 2));
 
   console.log('\nResults saved to results/');
 }

@@ -42,9 +42,33 @@ function findBrowserBinary(engine: Engine): string | undefined {
         const candidates =
           engine === 'webkit'
             ? [
-                join(base, dir, 'webkit-mac-15', 'Playwright.app', 'Contents', 'MacOS', 'Playwright'),
-                join(base, dir, 'webkit-mac-14', 'Playwright.app', 'Contents', 'MacOS', 'Playwright'),
-                join(base, dir, 'webkit-mac-13', 'Playwright.app', 'Contents', 'MacOS', 'Playwright'),
+                join(
+                  base,
+                  dir,
+                  'webkit-mac-15',
+                  'Playwright.app',
+                  'Contents',
+                  'MacOS',
+                  'Playwright',
+                ),
+                join(
+                  base,
+                  dir,
+                  'webkit-mac-14',
+                  'Playwright.app',
+                  'Contents',
+                  'MacOS',
+                  'Playwright',
+                ),
+                join(
+                  base,
+                  dir,
+                  'webkit-mac-13',
+                  'Playwright.app',
+                  'Contents',
+                  'MacOS',
+                  'Playwright',
+                ),
                 join(base, dir, 'minibrowser-gtk', 'MiniBrowser'),
                 join(base, dir, 'minibrowser-gtk-wpe', 'MiniBrowser'),
                 join(base, dir, 'pw_run.sh'),
@@ -93,9 +117,7 @@ export class BrowserManager {
 
   async render(html: string, viewport: { width: number; height: number }): Promise<Buffer> {
     if (findBrowserBinary(this.engine) === undefined) {
-      throw new Error(
-        `WebKit browser not found. Run: npx playwright install webkit`,
-      );
+      throw new Error(`WebKit browser not found. Run: npx playwright install webkit`);
     }
 
     if (!this.browser) {

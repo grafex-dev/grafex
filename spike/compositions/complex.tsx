@@ -68,9 +68,7 @@ export default function Complex() {
                 background: 'linear-gradient(135deg, #667eea, #764ba2)',
               }}
             />
-            <span style={{ color: 'white', fontSize: '28px', fontWeight: '700' }}>
-              grafex
-            </span>
+            <span style={{ color: 'white', fontSize: '28px', fontWeight: '700' }}>grafex</span>
           </div>
           <span
             style={{
@@ -139,8 +137,7 @@ export default function Complex() {
               marginBottom: '48px',
             }}
           >
-            Write compositions in JSX. Export to PNG, SVG, or PDF.
-            No browser window required.
+            Write compositions in JSX. Export to PNG, SVG, or PDF. No browser window required.
           </p>
 
           {/* Feature pills */}
@@ -182,9 +179,7 @@ export default function Complex() {
               <span style={{ color: 'white', fontSize: '32px', fontWeight: '700' }}>
                 {stat.value}
               </span>
-              <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '18px' }}>
-                {stat.label}
-              </span>
+              <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '18px' }}>{stat.label}</span>
             </div>
           ))}
         </div>
