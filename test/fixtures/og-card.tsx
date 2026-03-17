@@ -1,4 +1,6 @@
-export const config = {
+import type { CompositionConfig } from '../../src/types.js';
+
+export const config: CompositionConfig = {
   width: 1200,
   height: 630,
   format: 'png' as const,
