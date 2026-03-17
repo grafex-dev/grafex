@@ -73,7 +73,10 @@ describe('pipeline() — dimensions', () => {
     const result = await pipeline(resolve(fixturesDir, 'no-config.tsx'), {}, mockManager as any);
     expect(result.width).toBe(1200);
     expect(result.height).toBe(630);
-    expect(mockManager.render).toHaveBeenCalledWith(expect.any(String), { width: 1200, height: 630 });
+    expect(mockManager.render).toHaveBeenCalledWith(expect.any(String), {
+      width: 1200,
+      height: 630,
+    });
   });
 
   test('uses config dimensions from composition', async () => {
