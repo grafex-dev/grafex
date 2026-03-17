@@ -112,39 +112,6 @@ describe('BrowserManager — findBrowserBinary false-positive fallback', () => {
   });
 });
 
-describe('BrowserManager — concurrent render() race condition', () => {
-  test('two concurrent render() calls both succeed without spawning duplicate browsers', async () => {
-    let launchCount = 0;
-    const manager = new BrowserManager();
-
-    // Intercept launch calls by tracking how many times the browser field transitions from null
-    // We do this by wrapping render() — the observable contract is: both calls succeed
-    // and only one browser is launched (verified by counting launch() invocations via spy)
-    const { chromium, webkit } = await import('playwright-core');
-    const originalLaunch = webkit.launch.bind(webkit);
-    webkit.launch = async (...args: Parameters<typeof webkit.launch>) => {
-      launchCount++;
-      return originalLaunch(...args);
-    };
-
-    const SIMPLE_HTML = `<!DOCTYPE html><html><body></body></html>`;
-    const VIEWPORT = { width: 10, height: 10 };
-
-    try {
-      const [buf1, buf2] = await Promise.all([
-        manager.render(SIMPLE_HTML, VIEWPORT),
-        manager.render(SIMPLE_HTML, VIEWPORT),
-      ]);
-      expect(Buffer.isBuffer(buf1)).toBe(true);
-      expect(Buffer.isBuffer(buf2)).toBe(true);
-      expect(launchCount).toBe(1);
-    } finally {
-      webkit.launch = originalLaunch;
-      await manager.close();
-    }
-  });
-});
-
 describe('BrowserManager — process listener cleanup on close()', () => {
   test('close() removes the exit listener added during construction', async () => {
     const before = process.listenerCount('exit');

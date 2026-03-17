@@ -11,12 +11,7 @@ const VIEWPORT = { width: 100, height: 100 };
 
 // PNG magic bytes: 89 50 4E 47
 function isPng(buffer: Buffer): boolean {
-  return (
-    buffer[0] === 0x89 &&
-    buffer[1] === 0x50 &&
-    buffer[2] === 0x4e &&
-    buffer[3] === 0x47
-  );
+  return buffer[0] === 0x89 && buffer[1] === 0x50 && buffer[2] === 0x4e && buffer[3] === 0x47;
 }
 
 describe('BrowserManager — rendering', () => {
@@ -97,6 +92,33 @@ describe('BrowserManager — idle timer resets after screenshot', () => {
     expect(isPng(buf2)).toBe(true);
 
     await manager.close();
+  });
+});
+
+describe('BrowserManager — concurrent render() race condition', () => {
+  test('two concurrent render() calls both succeed without spawning duplicate browsers', async () => {
+    let launchCount = 0;
+    const manager = new BrowserManager();
+
+    const { webkit } = await import('playwright-core');
+    const originalLaunch = webkit.launch.bind(webkit);
+    webkit.launch = async (...args: Parameters<typeof webkit.launch>) => {
+      launchCount++;
+      return originalLaunch(...args);
+    };
+
+    try {
+      const [buf1, buf2] = await Promise.all([
+        manager.render(SIMPLE_HTML, VIEWPORT),
+        manager.render(SIMPLE_HTML, VIEWPORT),
+      ]);
+      expect(Buffer.isBuffer(buf1)).toBe(true);
+      expect(Buffer.isBuffer(buf2)).toBe(true);
+      expect(launchCount).toBe(1);
+    } finally {
+      webkit.launch = originalLaunch;
+      await manager.close();
+    }
   });
 });
 

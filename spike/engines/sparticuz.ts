@@ -35,10 +35,7 @@ export class SparticuzEngine implements BrowserEngine {
     this.page = await this.browser.newPage();
   }
 
-  async render(
-    html: string,
-    viewport: { width: number; height: number },
-  ): Promise<Buffer> {
+  async render(html: string, viewport: { width: number; height: number }): Promise<Buffer> {
     if (!this.page) throw new Error('sparticuz: not launched');
 
     await this.page.setViewport(viewport);

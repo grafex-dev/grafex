@@ -51,8 +51,20 @@ export function h(
   const openTag = attrs ? `<${tag} ${attrs}>` : `<${tag}>`;
 
   const voidElements = new Set([
-    'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input',
-    'link', 'meta', 'param', 'source', 'track', 'wbr',
+    'area',
+    'base',
+    'br',
+    'col',
+    'embed',
+    'hr',
+    'img',
+    'input',
+    'link',
+    'meta',
+    'param',
+    'source',
+    'track',
+    'wbr',
   ]);
 
   if (voidElements.has(tag)) return openTag;

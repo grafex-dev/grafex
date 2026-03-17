@@ -17,9 +17,7 @@ export default function Simple() {
         fontFamily: 'system-ui, sans-serif',
       }}
     >
-      <h1 style={{ color: 'white', fontSize: '48px', fontWeight: 'bold' }}>
-        Hello, Grafex
-      </h1>
+      <h1 style={{ color: 'white', fontSize: '48px', fontWeight: 'bold' }}>Hello, Grafex</h1>
     </div>
   );
 }
