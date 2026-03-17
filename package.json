@@ -18,8 +18,9 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup src/index.ts src/cli.ts --format esm --dts",
-    "dev": "tsup src/index.ts src/cli.ts --format esm --dts --watch",
+    "build": "tsup",
+    "postbuild": "chmod +x dist/cli.js",
+    "dev": "tsup --watch",
     "typecheck": "tsc --noEmit",
     "test": "vitest",
     "format:check": "prettier --check .",
