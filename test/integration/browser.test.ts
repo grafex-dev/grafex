@@ -95,6 +95,33 @@ describe('BrowserManager — idle timer resets after screenshot', () => {
   });
 });
 
+describe('BrowserManager — concurrent render() race condition', () => {
+  test('two concurrent render() calls both succeed without spawning duplicate browsers', async () => {
+    let launchCount = 0;
+    const manager = new BrowserManager();
+
+    const { webkit } = await import('playwright-core');
+    const originalLaunch = webkit.launch.bind(webkit);
+    webkit.launch = async (...args: Parameters<typeof webkit.launch>) => {
+      launchCount++;
+      return originalLaunch(...args);
+    };
+
+    try {
+      const [buf1, buf2] = await Promise.all([
+        manager.render(SIMPLE_HTML, VIEWPORT),
+        manager.render(SIMPLE_HTML, VIEWPORT),
+      ]);
+      expect(Buffer.isBuffer(buf1)).toBe(true);
+      expect(Buffer.isBuffer(buf2)).toBe(true);
+      expect(launchCount).toBe(1);
+    } finally {
+      webkit.launch = originalLaunch;
+      await manager.close();
+    }
+  });
+});
+
 describe('BrowserManager — missing browser binary error', () => {
   test('render() throws with descriptive error when WebKit binary is not found', async () => {
     // Override PLAYWRIGHT_BROWSERS_PATH to a non-existent directory so binary check fails
