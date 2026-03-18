@@ -1,6 +1,6 @@
-import { describe, test, expect } from 'vitest';
+import { describe, test, expect, afterEach } from 'vitest';
 import { transpile, resolveRuntimePath } from '../../src/transpile.js';
-import { writeFileSync, unlinkSync } from 'node:fs';
+import { writeFileSync, unlinkSync, mkdirSync, rmSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { tmpdir } from 'node:os';
@@ -100,5 +100,60 @@ describe('transpile — module exports', () => {
     const mod = await import('../../src/transpile.js');
     const exports = Object.keys(mod).sort();
     expect(exports).toEqual(['resolveRuntimePath', 'transpile']);
+  });
+});
+
+describe('transpile — CWD with node_modules', () => {
+  let tmpDir: string;
+
+  afterEach(() => {
+    rmSync(tmpDir, { recursive: true, force: true });
+  });
+
+  test('h() returns HtmlString (not plain object) when CWD has a tsconfig.json with jsxImportSource', async () => {
+    tmpDir = join(tmpdir(), `grafex-test-cwd-${Date.now()}`);
+    mkdirSync(tmpDir, { recursive: true });
+
+    // Simulate a project with react in node_modules and tsconfig.json that sets jsxImportSource
+    mkdirSync(join(tmpDir, 'node_modules', 'react'), { recursive: true });
+    writeFileSync(
+      join(tmpDir, 'node_modules', 'react', 'jsx-runtime.js'),
+      'export function jsx(type, props) { return { type, props }; }\nexport function jsxs(type, props) { return { type, props }; }\nexport const Fragment = Symbol("Fragment");\n',
+    );
+    writeFileSync(
+      join(tmpDir, 'node_modules', 'react', 'package.json'),
+      JSON.stringify({
+        name: 'react',
+        version: '18.0.0',
+        type: 'module',
+        exports: { '.': './index.js', './jsx-runtime': './jsx-runtime.js' },
+      }),
+    );
+    writeFileSync(
+      join(tmpDir, 'tsconfig.json'),
+      JSON.stringify({ compilerOptions: { jsx: 'react-jsx', jsxImportSource: 'react' } }),
+    );
+
+    const compositionPath = join(tmpDir, 'test.tsx');
+    writeFileSync(
+      compositionPath,
+      'export const config = { width: 800, height: 400 };\nexport default function Test() { return <div>Hello</div>; }\n',
+    );
+
+    const code = await transpile(compositionPath);
+
+    // The output must use h( not jsx( — meaning grafex's factory was used, not react's
+    expect(code).toContain('h(');
+    expect(code).not.toContain('jsx(');
+
+    // Execute the transpiled code and verify the component returns an HtmlString, not a plain object
+    const dataUrl = `data:text/javascript;base64,${Buffer.from(code).toString('base64')}#${Date.now()}`;
+    const mod = await import(dataUrl);
+    const component = mod.default as () => unknown;
+    const result = component();
+
+    // If h() returned an HtmlString, String(result) gives HTML. If plain object, it gives [object Object].
+    expect(String(result)).not.toBe('[object Object]');
+    expect(String(result)).toContain('<div');
   });
 });
