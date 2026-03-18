@@ -1,0 +1,298 @@
+# Grafex
+
+> Grafex is an open-source developer tool for programmatic image composition. Write JSX/TSX compositions with full CSS support, export to PNG. Uses a real browser engine (WebKit) — not a CSS subset. No browser window, no server, no ceremony.
+
+Grafex works as both a CLI tool (`npx grafex export`) and a Node.js library (`import { render } from 'grafex'`). Compositions are plain TSX files that export a function component and a config object. The tool transpiles JSX via esbuild, renders HTML in a headless WebKit browser via Playwright, and screenshots the result to PNG.
+
+Key features: full CSS support (flexbox, grid, gradients, shadows, transforms), custom fonts via config.fonts (Google Fonts or any CSS URL), AI-friendly (compositions are easy for LLMs to write), sub-100ms warm renders, 2 runtime dependencies (playwright-core + esbuild).
+
+---
+
+## Getting Started
+
+Go from zero to a rendered PNG in under 5 minutes.
+
+### Install
+
+```bash
+npm install grafex
+```
+
+Grafex uses WebKit for rendering. The browser binary is downloaded automatically during `npm install` via a postinstall script — no extra steps needed.
+
+Requirements: Node.js >= 20.0.0
+
+### Write a composition
+
+Create a file called `card.tsx`:
+
+```tsx
+import type { CompositionConfig } from 'grafex';
+
+export const config: CompositionConfig = {
+  width: 1200,
+  height: 630,
+};
+
+export default function Card() {
+  return (
+    <div
+      style={{
+        width: '100%',
+        height: '100%',
+        background: 'linear-gradient(135deg, #667eea, #764ba2)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: 'white',
+        fontSize: '64px',
+        fontWeight: 'bold',
+        fontFamily: 'system-ui, sans-serif',
+      }}
+    >
+      Hello, Grafex!
+    </div>
+  );
+}
+```
+
+A composition has two parts:
+1. Default export — a function that returns JSX. This is your image layout.
+2. Named `config` export — a `CompositionConfig` object that sets the output dimensions and optionally loads custom fonts.
+
+### Export
+
+```bash
+npx grafex export -f card.tsx -o card.png
+```
+
+---
+
+## Compositions
+
+Compositions are TSX files that describe your image layout. They use a custom JSX runtime — not React — so there are no hooks, no state, and no effects. Just pure functions that return markup.
+
+### CompositionConfig
+
+```ts
+interface CompositionConfig {
+  width?: number;   // Image width in pixels (default: 1200)
+  height?: number;  // Image height in pixels (default: 630)
+  format?: 'png';   // Output format (only PNG supported)
+  fonts?: string[]; // URLs to font stylesheets (e.g., Google Fonts)
+}
+```
+
+### Custom Fonts
+
+Load custom fonts via `config.fonts` with Google Fonts or any CSS font URL:
+
+```tsx
+export const config: CompositionConfig = {
+  width: 1200,
+  height: 630,
+  fonts: [
+    'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap',
+  ],
+};
+
+export default function Card() {
+  return (
+    <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '48px' }}>
+      Custom Font Text
+    </div>
+  );
+}
+```
+
+### Styling
+
+Style compositions using the `style` prop with a CSS-in-JS object. Unlike Satori, Grafex supports the full CSS spec because it renders in a real browser engine — flexbox, grid, calc(), CSS variables, z-index, gradients, shadows, transforms all work.
+
+### Props
+
+Compositions can accept props for dynamic content:
+
+```tsx
+interface Props {
+  title: string;
+  date: string;
+}
+
+export default function BlogCard({ title, date }: Props) {
+  return (
+    <div style={{ padding: '80px', background: '#0f172a', color: 'white' }}>
+      <div style={{ fontSize: '48px', fontWeight: 'bold' }}>{title}</div>
+      <div style={{ fontSize: '20px', color: '#94a3b8', marginTop: '16px' }}>{date}</div>
+    </div>
+  );
+}
+```
+
+Pass props via CLI: `grafex export -f card.tsx --props '{"title":"My Post","date":"March 2026"}'`
+Pass props via API: `render('./card.tsx', { props: { title: 'My Post' } })`
+
+### Custom Components
+
+Compositions can import components from other files. Grafex bundles everything with esbuild before rendering.
+
+---
+
+## CLI Reference
+
+### `grafex export`
+
+Render a composition file to a PNG image.
+
+```bash
+grafex export -f <file> [options]
+```
+
+| Flag | Short | Type | Default | Description |
+|---|---|---|---|---|
+| `--file` | `-f` | string | — | Path to the `.tsx` composition file (required) |
+| `--out` | `-o` | string | `./output.png` | Output file path |
+| `--props` | | string (JSON) | `{}` | Props to pass to the composition |
+| `--width` | | number | from config | Override composition width in pixels |
+| `--height` | | number | from config | Override composition height in pixels |
+| `--format` | | string | `png` | Output format (only `png` supported) |
+| `--help` | `-h` | | | Show help text |
+
+Examples:
+
+```bash
+grafex export -f card.tsx -o card.png
+grafex export -f card.tsx -o card.png --props '{"title":"Hello"}'
+grafex export -f card.tsx -o card.png --width 800 --height 400
+```
+
+Exit codes: 0 = success, 1 = error.
+
+### Global Flags
+
+```bash
+grafex --version    # Print version and exit
+grafex --help       # Print help text and exit
+```
+
+---
+
+## Library API
+
+Use Grafex programmatically in Node.js applications.
+
+```ts
+import { render, close } from 'grafex';
+```
+
+### `render(compositionPath, options?)`
+
+```ts
+const result = await render('./card.tsx', {
+  props: { title: 'Hello' },
+  width: 1200,
+  height: 630,
+});
+// result.buffer is a Buffer containing PNG data
+```
+
+Returns `Promise<RenderResult>`:
+
+```ts
+interface RenderResult {
+  buffer: Buffer;
+  width: number;
+  height: number;
+  format: 'png';
+}
+```
+
+### `close()`
+
+Shut down the browser process. Always call this when done rendering.
+
+```ts
+await close();
+```
+
+### Batch rendering
+
+The browser is reused across `render()` calls — warm renders are 5-50ms:
+
+```ts
+for (const page of pages) {
+  const result = await render(page.file);
+  writeFileSync(page.out, result.buffer);
+}
+await close();
+```
+
+### Advanced Exports
+
+```ts
+import { h, Fragment, renderToHTML, BrowserManager } from 'grafex';
+```
+
+### Types
+
+```ts
+interface RenderOptions {
+  props?: Record<string, unknown>;
+  width?: number;
+  height?: number;
+  browser?: 'webkit';
+}
+
+interface CompositionConfig {
+  width?: number;
+  height?: number;
+  format?: 'png';
+  fonts?: string[];
+}
+```
+
+---
+
+## Browser Setup
+
+Grafex renders using headless WebKit via Playwright.
+
+### Automatic Installation
+
+`npm install grafex` downloads WebKit automatically via postinstall.
+
+### Manual Installation
+
+```bash
+npx playwright-core install webkit
+```
+
+### PLAYWRIGHT_BROWSERS_PATH
+
+Override browser cache location:
+
+```bash
+export PLAYWRIGHT_BROWSERS_PATH=/path/to/browsers
+npx playwright-core install webkit
+```
+
+### CI Setup (GitHub Actions)
+
+```yaml
+steps:
+  - uses: actions/checkout@v4
+  - uses: actions/setup-node@v4
+    with:
+      node-version: 20
+  - run: npm ci
+  - run: npx playwright install-deps webkit
+  - run: npx playwright-core install webkit
+  - run: npx grafex export -f card.tsx -o card.png
+```
+
+### Troubleshooting
+
+- "Browser not found": Run `npx playwright-core install webkit`
+- "Missing system dependencies" (Linux): Run `npx playwright install-deps webkit`
+- Slow first render: Normal — browser launches once, subsequent renders are 5-50ms
+- Disk space: WebKit is ~2MB cached (vs Chromium 200MB+)

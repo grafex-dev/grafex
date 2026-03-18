@@ -1,0 +1,22 @@
+# Grafex
+
+> Grafex is an open-source developer tool for programmatic image composition. Write JSX/TSX compositions with full CSS support, export to PNG. Uses a real browser engine (WebKit) — not a CSS subset. No browser window, no server, no ceremony.
+
+Grafex works as both a CLI tool (`npx grafex export`) and a Node.js library (`import { render } from 'grafex'`). Compositions are plain TSX files that export a function component and a config object. The tool transpiles JSX via esbuild, renders HTML in a headless WebKit browser via Playwright, and screenshots the result to PNG.
+
+Key features: full CSS support (flexbox, grid, gradients, shadows, transforms), custom fonts via Google Fonts or any CSS URL, AI-friendly (compositions are easy for LLMs to write), sub-100ms warm renders, 2 runtime dependencies (playwright-core + esbuild).
+
+## Docs
+
+- [Full documentation](https://grafex.dev/llms-full.txt): Complete docs in a single file for LLM context
+- [Getting Started](https://grafex.dev/docs/getting-started): Install, write a composition, export to PNG
+- [Compositions](https://grafex.dev/docs/compositions): JSX runtime, CompositionConfig, styling, props, custom components, custom fonts
+- [Examples](https://grafex.dev/docs/examples): OG cards, social media cards, banners, certificates, thumbnails, diagrams
+- [CLI Reference](https://grafex.dev/docs/cli): grafex export command, all flags and options
+- [Library API](https://grafex.dev/docs/api): render(), close(), RenderOptions, RenderResult, CompositionConfig types
+- [Browser Setup](https://grafex.dev/docs/browser-setup): WebKit installation, PLAYWRIGHT_BROWSERS_PATH, CI/CD setup
+
+## Optional
+
+- [GitHub Repository](https://github.com/grafex-dev/grafex): Source code, issues, contributing
+- [npm Package](https://www.npmjs.com/package/grafex): Package registry page
