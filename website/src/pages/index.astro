@@ -1,0 +1,542 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CopyButton from '../components/CopyButton.tsx';
+import { Code } from 'astro:components';
+import { grafexTheme } from '../shiki-theme';
+
+const ogCardCode = `export const config = {
+  width: 600,
+  height: 400,
+};
+
+export default function OgCard() {
+  return (
+    <div style={{
+      width: '100%',
+      height: '100%',
+      background: 'linear-gradient(145deg, #0f172a, #1e293b)',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'space-between',
+      padding: '52px',
+      fontFamily: 'system-ui, sans-serif',
+      position: 'relative',
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div style={{
+          background: 'rgba(163,230,53,0.15)',
+          border: '1px solid rgba(163,230,53,0.3)',
+          borderRadius: '6px',
+          padding: '4px 12px',
+          color: '#A3E635',
+          fontSize: '12px',
+          fontWeight: '600',
+          textTransform: 'uppercase',
+        }}>
+          Tutorial
+        </div>
+        <span style={{ color: '#475569', fontSize: '13px' }}>5 min read</span>
+      </div>
+
+      <div>
+        <div style={{ color: '#F1F5F9', fontSize: '36px', fontWeight: '700' }}>
+          Building Modern APIs
+        </div>
+        <div style={{ color: '#94A3B8', fontSize: '16px', marginTop: '16px' }}>
+          Best practices for REST and GraphQL in 2026
+        </div>
+      </div>
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div style={{
+          width: '36px', height: '36px', borderRadius: '50%',
+          background: 'linear-gradient(135deg, #F472B6, #38BDF8)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          color: 'white', fontSize: '14px', fontWeight: '700',
+        }}>JS</div>
+        <div>
+          <div style={{ color: '#E2E8F0', fontSize: '14px' }}>Jane Smith</div>
+          <div style={{ color: '#64748B', fontSize: '12px' }}>March 15, 2026</div>
+        </div>
+      </div>
+    </div>
+  );
+}`;
+---
+
+<BaseLayout
+  title="Grafex — Images as Code"
+  description="Write JSX compositions with full CSS support. Export to PNG. No browser window, no server, no ceremony."
+>
+  <!-- Skip to content -->
+  <a
+    href="#main-content"
+    class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:rounded-md"
+    style="color: var(--color-text-primary); background: var(--color-bg-surface); outline: 2px solid var(--color-border-focus);"
+  >
+    Skip to content
+  </a>
+
+  <!-- Navigation -->
+  <header id="site-nav" class="fixed top-0 left-0 right-0 z-40 h-16 transition-all duration-300 border-b border-transparent">
+    <div class="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
+      <a href="/" class="font-heading font-bold text-xl transition-opacity duration-150 ease-out hover:opacity-80 text-[var(--color-text-primary)]">Grafex</a>
+
+      <!-- Desktop nav -->
+      <nav class="hidden md:flex items-center gap-8">
+        <a href="/docs/getting-started" class="text-sm transition-colors duration-150 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] no-underline">Docs</a>
+        <a href="#why-grafex" class="text-sm transition-colors duration-150 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] no-underline">Why Grafex</a>
+        <a href="#use-cases" class="text-sm transition-colors duration-150 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] no-underline">Examples</a>
+        <a href="https://github.com/grafex-dev/grafex" target="_blank" rel="noopener noreferrer" class="text-sm transition-colors duration-150 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] no-underline">GitHub</a>
+      </nav>
+
+      <div class="hidden md:block">
+        <a
+          href="/docs/getting-started"
+          class="px-5 py-2 rounded-lg text-sm font-semibold text-white transition-all hover:brightness-110"
+          style="background: linear-gradient(135deg, #F472B6, var(--color-purple));"
+        >
+          Get Started
+        </a>
+      </div>
+
+      <!-- Mobile hamburger -->
+      <button id="mobile-menu-btn" class="md:hidden p-2 rounded-md transition-colors" style="color: var(--color-text-secondary);" aria-label="Open menu" aria-expanded="false">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <line x1="3" y1="12" x2="21" y2="12"/>
+          <line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Mobile menu -->
+    <div id="mobile-menu" class="hidden md:hidden border-t" style="background: var(--color-bg-base); border-color: var(--color-border-default);">
+      <nav class="px-6 py-4 flex flex-col gap-4">
+        <a href="/docs/getting-started" class="text-sm transition-colors duration-150 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] no-underline">Docs</a>
+        <a href="#why-grafex" class="text-sm transition-colors duration-150 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] no-underline">Why Grafex</a>
+        <a href="#use-cases" class="text-sm transition-colors duration-150 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] no-underline">Examples</a>
+        <a href="https://github.com/grafex-dev/grafex" target="_blank" rel="noopener noreferrer" class="text-sm transition-colors duration-150 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] no-underline">GitHub</a>
+        <a href="/docs/getting-started" class="mt-2 px-5 py-2.5 rounded-lg text-sm font-semibold text-white text-center" style="background: linear-gradient(135deg, #F472B6, var(--color-purple));">
+          Get Started
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main-content">
+    <!-- Hero Section -->
+    <section class="relative pt-40 pb-24 px-6 overflow-hidden text-center">
+      <div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(ellipse at 50% 0%, rgba(244, 114, 182, 0.12), transparent 70%);"></div>
+
+      <div class="relative max-w-4xl mx-auto">
+        <!-- Eyebrow badge -->
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider mb-8 border" style="background: rgba(163, 230, 53, 0.1); color: var(--color-accent-lime); border-color: rgba(163, 230, 53, 0.2);">
+          Open Source
+        </div>
+
+        <!-- Headline -->
+        <h1 class="font-heading font-bold text-5xl md:text-6xl lg:text-7xl leading-tight tracking-tight mb-6" style="background: linear-gradient(135deg, #F472B6, #38BDF8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+          Images as Code.
+        </h1>
+
+        <!-- Subheadline -->
+        <p class="text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed" style="color: var(--color-text-secondary);">
+          Write JSX compositions with full CSS support. Export to PNG. No browser window, no server, no ceremony.
+        </p>
+
+        <!-- Install command -->
+        <div class="inline-flex items-center gap-3 px-5 py-3 rounded-full mx-auto mb-8 border" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
+          <code class="font-mono text-sm" style="color: var(--color-accent-lime);">npm install grafex</code>
+          <CopyButton text="npm install grafex" client:load />
+        </div>
+
+        <!-- CTA buttons -->
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
+          <a
+            href="/docs/getting-started"
+            class="px-8 py-3.5 rounded-lg text-base font-semibold text-white transition-all hover:brightness-110 min-h-[48px] flex items-center"
+            style="background: linear-gradient(135deg, #F472B6, var(--color-purple)); box-shadow: 0 0 20px rgba(244, 114, 182, 0.2);"
+          >
+            Get Started
+          </a>
+          <a
+            href="https://github.com/grafex-dev/grafex"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="px-8 py-3.5 rounded-lg text-base font-medium transition-all min-h-[48px] flex items-center gap-2 border hover:bg-[var(--color-bg-surface-hover)] hover:border-[var(--color-primary)] text-[var(--color-text-primary)] border-[var(--color-border-strong)]"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+            </svg>
+            View on GitHub
+          </a>
+        </div>
+
+        <!-- Hero demo: Code + Output -->
+        <div class="max-w-4xl mx-auto rounded-2xl overflow-hidden border" style="border-color: var(--color-border-default); box-shadow: 0 8px 24px rgba(0,0,0,0.5);">
+          <div class="flex flex-col lg:flex-row">
+            <!-- Left pane: Code -->
+            <div class="flex-1 border-b lg:border-b-0 lg:border-r" style="border-color: var(--color-border-strong);">
+              <!-- Code header -->
+              <div class="flex items-center justify-between px-4 py-2.5 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
+                <div class="flex items-center gap-3">
+                  <span class="text-xs font-mono" style="color: var(--color-text-muted);">card.tsx</span>
+                </div>
+                <CopyButton
+                  text={`import type { CompositionConfig } from 'grafex';\n\nexport const config: CompositionConfig = {\n  width: 1200,\n  height: 630,\n};\n\nexport default function Card() {\n  return (\n    <div\n      style={{\n        width: '100%',\n        height: '100%',\n        background: 'linear-gradient(135deg, #667eea, #764ba2)',\n        display: 'flex',\n        alignItems: 'center',\n        justifyContent: 'center',\n        color: 'white',\n        fontSize: '64px',\n        fontWeight: 'bold',\n        fontFamily: 'system-ui, sans-serif',\n      }}\n    >\n      Hello, Grafex!\n    </div>\n  );\n}`}
+                  client:load
+                />
+              </div>
+              <!-- Code content -->
+              <div class="p-6 overflow-x-auto" style="background: var(--color-bg-code); max-height: 400px; overflow-y: auto;">
+                <pre class="font-mono text-sm leading-relaxed text-left"><code><span style="color:#F472B6">import</span><span style="color:#94A3B8"> type </span><span style="color:#94A3B8">{"{"} </span><span style="color:#38BDF8">CompositionConfig</span><span style="color:#94A3B8"> {"}"} </span><span style="color:#F472B6">from</span><span style="color:#A3E635"> 'grafex'</span><span style="color:#94A3B8">;</span>
+
+<span style="color:#F472B6">export</span><span style="color:#F472B6"> const</span><span style="color:#38BDF8"> config</span><span style="color:#94A3B8">:</span><span style="color:#38BDF8"> CompositionConfig</span><span style="color:#94A3B8"> = {"{"}</span>
+<span style="color:#38BDF8">  width</span><span style="color:#94A3B8">:</span><span style="color:#FB923C"> 1200</span><span style="color:#94A3B8">,</span>
+<span style="color:#38BDF8">  height</span><span style="color:#94A3B8">:</span><span style="color:#FB923C"> 630</span><span style="color:#94A3B8">,</span>
+<span style="color:#94A3B8">{"}"};</span>
+
+<span style="color:#F472B6">export</span><span style="color:#F472B6"> default</span><span style="color:#F472B6"> function</span><span style="color:#38BDF8"> Card</span><span style="color:#94A3B8">() {"{"}</span>
+<span style="color:#F472B6">  return</span><span style="color:#94A3B8"> (</span>
+<span style="color:#F472B6">    &lt;div</span>
+<span style="color:#38BDF8">      style</span><span style="color:#94A3B8">={"{{"}</span>
+<span style="color:#38BDF8">        width</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '100%'</span><span style="color:#94A3B8">,</span>
+<span style="color:#38BDF8">        height</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '100%'</span><span style="color:#94A3B8">,</span>
+<span style="color:#38BDF8">        background</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'linear-gradient(135deg, #667eea, #764ba2)'</span><span style="color:#94A3B8">,</span>
+<span style="color:#38BDF8">        display</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'flex'</span><span style="color:#94A3B8">,</span>
+<span style="color:#38BDF8">        alignItems</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'center'</span><span style="color:#94A3B8">,</span>
+<span style="color:#38BDF8">        justifyContent</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'center'</span><span style="color:#94A3B8">,</span>
+<span style="color:#38BDF8">        color</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'white'</span><span style="color:#94A3B8">,</span>
+<span style="color:#38BDF8">        fontSize</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '64px'</span><span style="color:#94A3B8">,</span>
+<span style="color:#38BDF8">        fontWeight</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'bold'</span><span style="color:#94A3B8">,</span>
+<span style="color:#38BDF8">        fontFamily</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'system-ui, sans-serif'</span><span style="color:#94A3B8">,</span>
+<span style="color:#94A3B8">      {"}}"}</span>
+<span style="color:#F472B6">    &gt;</span>
+      Hello, Grafex!
+<span style="color:#F472B6">    &lt;/div&gt;</span>
+  <span style="color:#94A3B8">);</span>
+<span style="color:#94A3B8">{"}"}</span></code></pre>
+              </div>
+            </div>
+
+            <!-- Right pane: Output -->
+            <div class="checkerboard lg:w-[45%] flex flex-col items-center justify-center p-8 relative min-h-48">
+              <div class="w-full rounded-xl overflow-hidden shadow-lg flex items-center justify-center" style="background: linear-gradient(135deg, #667eea, #764ba2); aspect-ratio: 1200/630; max-width: 360px;">
+                <span style="color: white; font-size: clamp(14px, 3.5vw, 24px); font-weight: bold; font-family: system-ui, sans-serif; text-align: center; padding: 1rem;">Hello, Grafex!</span>
+              </div>
+              <span class="absolute bottom-3 right-4 text-xs font-mono" style="color: var(--color-text-muted);">output.png</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Why Grafex -->
+    <section id="why-grafex" class="py-24 px-6" style="border-top: 1px solid var(--color-border-default);">
+      <div class="max-w-6xl mx-auto">
+        <div class="text-center mb-16">
+          <h2 class="font-heading font-bold text-4xl mb-4" style="color: var(--color-text-primary);">Why Grafex?</h2>
+          <p class="text-lg max-w-2xl mx-auto" style="color: var(--color-text-secondary);">Full CSS. Real browser engine. Zero configuration. The image composition tool you actually wanted.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div class="rounded-xl p-6 border transition-all duration-200 hover:border-[var(--color-border-strong)] hover:shadow-md" style="background: var(--color-bg-surface); border-color: var(--color-border-default); border-top: 2px solid var(--color-primary);">
+            <div class="mb-4" style="color: var(--color-primary);">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                <path d="M18.37 2.63 14 7l-1.59-1.59a2 2 0 0 0-2.82 0L8 7l9 9 1.59-1.59a2 2 0 0 0 0-2.82L17 10l4.37-4.37a1 1 0 0 0-3-3Z"/><path d="M9 8c-2 3-4 3.5-7 4l8 8c1-.5 3.5-2 4-7"/><path d="M14.5 17.5 4.5 15"/>
+              </svg>
+            </div>
+            <h3 class="font-heading font-semibold text-lg mb-2" style="color: var(--color-text-primary);">Full CSS Support</h3>
+            <p class="text-sm leading-relaxed" style="color: var(--color-text-secondary);">Flexbox, Grid, gradients, shadows, custom fonts — real CSS rendered by a real browser engine. Not a subset. Not reimplemented. The real thing.</p>
+          </div>
+
+          <div class="rounded-xl p-6 border transition-all duration-200 hover:border-[var(--color-border-strong)] hover:shadow-md" style="background: var(--color-bg-surface); border-color: var(--color-border-default); border-top: 2px solid var(--color-accent-lime);">
+            <div class="mb-4" style="color: var(--color-accent-lime);">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+              </svg>
+            </div>
+            <h3 class="font-heading font-semibold text-lg mb-2" style="color: var(--color-text-primary);">Fast Renders</h3>
+            <p class="text-sm leading-relaxed" style="color: var(--color-text-secondary);">5-50ms warm renders. Sub-second cold starts. WebKit launches once and stays ready.</p>
+          </div>
+
+          <div class="rounded-xl p-6 border transition-all duration-200 hover:border-[var(--color-border-strong)] hover:shadow-md" style="background: var(--color-bg-surface); border-color: var(--color-border-default); border-top: 2px solid var(--color-secondary);">
+            <div class="mb-4" style="color: var(--color-secondary);">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
+              </svg>
+            </div>
+            <h3 class="font-heading font-semibold text-lg mb-2" style="color: var(--color-text-primary);">AI-Friendly</h3>
+            <p class="text-sm leading-relaxed" style="color: var(--color-text-secondary);">Compositions are plain JSX functions. Any LLM can write them, modify them, and reason about them.</p>
+          </div>
+
+          <div class="rounded-xl p-6 border transition-all duration-200 hover:border-[var(--color-border-strong)] hover:shadow-md" style="background: var(--color-bg-surface); border-color: var(--color-border-default); border-top: 2px solid var(--color-accent-amber);">
+            <div class="mb-4" style="color: var(--color-accent-amber);">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>
+              </svg>
+            </div>
+            <h3 class="font-heading font-semibold text-lg mb-2" style="color: var(--color-text-primary);">No Browser Window</h3>
+            <p class="text-sm leading-relaxed" style="color: var(--color-text-secondary);">WebKit runs headlessly behind the scenes. No Puppeteer scripts. No browser lifecycle management. Just import, render, done.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Code Example -->
+    <section id="code-example" class="py-24 px-6" style="border-top: 1px solid var(--color-border-default);">
+      <div class="max-w-6xl mx-auto">
+        <div class="text-center mb-16">
+          <h2 class="font-heading font-bold text-4xl mb-4" style="color: var(--color-text-primary);">Compositions Are Just Functions</h2>
+          <p class="text-lg max-w-2xl mx-auto" style="color: var(--color-text-secondary);">A composition is a TSX file that exports a function and a config. Accept props, use components, style with CSS — all the patterns you already know.</p>
+        </div>
+
+        <!-- Code + Output: unified container -->
+        <div class="rounded-xl overflow-hidden border" style="border-color: var(--color-border-default);">
+          <!-- Code header -->
+          <div class="flex items-center justify-between px-4 py-2.5 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
+            <span class="text-xs font-mono" style="color: var(--color-text-muted);">og-card.tsx</span>
+            <CopyButton
+              text={ogCardCode}
+              client:load
+            />
+          </div>
+          <!-- Code content -->
+          <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 400px; overflow-y: auto;">
+            <Code code={ogCardCode} lang="tsx" theme={grafexTheme} />
+          </div>
+          <!-- Output image: directly below code, no gap, shares border -->
+          <div class="checkerboard border-t relative flex items-center justify-center p-6" style="border-color: var(--color-border-default);">
+            <img src="/examples/og-card.png" alt="Generated OG card showing 'Building Modern APIs'" class="rounded-lg shadow-2xl" style="max-width: 600px; width: 100%;" />
+            <span class="absolute bottom-3 right-4 text-xs font-mono" style="color: var(--color-text-muted);">og-card.png</span>
+          </div>
+        </div>
+
+        <!-- CLI command -->
+        <div class="mt-4 rounded-xl overflow-hidden border" style="border-color: var(--color-border-default);">
+          <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
+            <span class="text-xs uppercase tracking-wider font-medium" style="color: var(--color-text-muted);">bash</span>
+            <CopyButton text="npx grafex export -f og-card.tsx -o og-card.png" client:load />
+          </div>
+          <div class="px-4 py-3" style="background: var(--color-bg-code);">
+            <code class="font-mono text-sm" style="color: var(--color-accent-lime);">npx grafex export -f og-card.tsx -o og-card.png</code>
+          </div>
+        </div>
+
+        <p class="text-center mt-6">
+          <a href="/docs/examples" class="text-sm font-medium transition-colors duration-150 no-underline hover:no-underline text-[var(--color-primary)] hover:text-[#F9A8D4]">See more examples →</a>
+        </p>
+      </div>
+    </section>
+
+    <!-- Use Cases -->
+    <section id="use-cases" class="py-24 px-6" style="border-top: 1px solid var(--color-border-default);">
+      <div class="max-w-6xl mx-auto">
+        <div class="text-center mb-16">
+          <h2 class="font-heading font-bold text-4xl mb-4" style="color: var(--color-text-primary);">What You Can Build</h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[
+            { title: 'Open Graph Images', desc: 'Dynamic social previews for every page, generated at build time.', img: '/examples/og-card.png' },
+            { title: 'Social Media Cards', desc: 'Branded cards for Twitter, LinkedIn, and Instagram — from one template.', img: '/examples/social-card.png' },
+            { title: 'Email & Web Banners', desc: 'Programmatic banner generation with consistent branding across campaigns.', img: '/examples/banner.png' },
+            { title: 'Certificates', desc: 'Event certificates and awards with dynamic names, dates, and details.', img: '/examples/certificate.png' },
+            { title: 'Video Thumbnails', desc: 'YouTube and podcast covers generated from a single template.', img: '/examples/thumbnail.png' },
+            { title: 'Diagrams & Charts', desc: 'Architecture diagrams and data visualizations, version-controlled as code.', img: '/examples/diagram.png' },
+          ].map((item) => (
+            <div class="rounded-xl border transition-all duration-200 hover:border-[var(--color-border-strong)] hover:shadow-md overflow-hidden" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
+              <div class="checkerboard border-b overflow-hidden" style="aspect-ratio: 1200/630; border-color: var(--color-border-default);">
+                <img src={item.img} alt={item.title} width="600" height="400" style="width: 100%; height: 100%; object-fit: contain; display: block;" loading="lazy" />
+              </div>
+              <div class="p-6">
+                <h3 class="font-heading font-semibold text-lg mb-2" style="color: var(--color-text-primary);">{item.title}</h3>
+                <p class="text-sm leading-relaxed" style="color: var(--color-text-secondary);">{item.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- Getting Started Steps -->
+    <section id="getting-started" class="py-24 px-6" style="border-top: 1px solid var(--color-border-default);">
+      <div class="max-w-3xl mx-auto">
+        <div class="text-center mb-16">
+          <h2 class="font-heading font-bold text-4xl mb-4" style="color: var(--color-text-primary);">Get Started in 3 Steps</h2>
+        </div>
+
+        <div class="space-y-12">
+          <!-- Step 1 -->
+          <div>
+            <div class="flex items-center gap-4 mb-4">
+              <div class="w-10 h-10 rounded-full flex items-center justify-center border flex-shrink-0" style="background: var(--color-bg-surface); border-color: var(--color-border-strong);">
+                <span class="font-heading font-bold text-base" style="color: var(--color-primary);">1</span>
+              </div>
+              <h3 class="font-heading font-semibold text-2xl" style="color: var(--color-text-primary);">Install</h3>
+            </div>
+            <p class="text-base mb-4 ml-14" style="color: var(--color-text-secondary);">One package. WebKit is downloaded automatically.</p>
+            <div class="ml-14 rounded-xl overflow-hidden border" style="border-color: var(--color-border-default);">
+              <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
+                <span class="text-xs uppercase tracking-wider font-medium" style="color: var(--color-text-muted);">bash</span>
+                <CopyButton text="npm install grafex" client:load />
+              </div>
+              <div class="px-4 py-3" style="background: var(--color-bg-code);">
+                <code class="font-mono text-sm" style="color: var(--color-accent-lime);">npm install grafex</code>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2 -->
+          <div>
+            <div class="flex items-center gap-4 mb-4">
+              <div class="w-10 h-10 rounded-full flex items-center justify-center border flex-shrink-0" style="background: var(--color-bg-surface); border-color: var(--color-border-strong);">
+                <span class="font-heading font-bold text-base" style="color: var(--color-primary);">2</span>
+              </div>
+              <h3 class="font-heading font-semibold text-2xl" style="color: var(--color-text-primary);">Write a composition</h3>
+            </div>
+            <p class="text-base mb-4 ml-14" style="color: var(--color-text-secondary);">Create a TSX file. Export a component and a config.</p>
+            <div class="ml-14 rounded-xl overflow-hidden border" style="border-color: var(--color-border-default);">
+              <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
+                <span class="text-xs font-mono" style="color: var(--color-text-muted);">card.tsx</span>
+                <CopyButton text={`// card.tsx\nimport type { CompositionConfig } from 'grafex';\n\nexport const config: CompositionConfig = { width: 1200, height: 630 };\n\nexport default function Card() {\n  return (\n    <div\n      style={{\n        width: '100%',\n        height: '100%',\n        background: 'linear-gradient(135deg, #667eea, #764ba2)',\n        display: 'flex',\n        alignItems: 'center',\n        justifyContent: 'center',\n        color: 'white',\n        fontSize: '64px',\n        fontWeight: 'bold',\n        fontFamily: 'system-ui, sans-serif',\n      }}\n    >\n      Hello, Grafex!\n    </div>\n  );\n}`} client:load />
+              </div>
+              <div class="p-4 overflow-x-auto" style="background: var(--color-bg-code); max-height: 400px; overflow-y: auto;">
+                <pre class="font-mono text-sm leading-relaxed text-left"><code><span style="color:#F472B6">import</span><span style="color:#94A3B8"> type </span><span style="color:#94A3B8">{"{"} </span><span style="color:#38BDF8">CompositionConfig</span><span style="color:#94A3B8"> {"}"} </span><span style="color:#F472B6">from</span><span style="color:#A3E635"> 'grafex'</span><span style="color:#94A3B8">;</span>
+
+<span style="color:#F472B6">export</span><span style="color:#F472B6"> const</span><span style="color:#38BDF8"> config</span><span style="color:#94A3B8">:</span><span style="color:#38BDF8"> CompositionConfig</span><span style="color:#94A3B8"> = {"{"} </span><span style="color:#38BDF8">width</span><span style="color:#94A3B8">:</span><span style="color:#FB923C"> 1200</span><span style="color:#94A3B8">,</span><span style="color:#38BDF8"> height</span><span style="color:#94A3B8">:</span><span style="color:#FB923C"> 630</span><span style="color:#94A3B8"> {"}"};</span>
+
+<span style="color:#F472B6">export</span><span style="color:#F472B6"> default</span><span style="color:#F472B6"> function</span><span style="color:#38BDF8"> Card</span><span style="color:#94A3B8">() {"{"}</span>
+<span style="color:#F472B6">  return</span><span style="color:#94A3B8"> (</span>
+<span style="color:#F472B6">    &lt;div</span><span style="color:#38BDF8"> style</span><span style="color:#94A3B8">={"{{"}</span>
+<span style="color:#38BDF8">      background</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'linear-gradient(135deg, #667eea, #764ba2)'</span><span style="color:#94A3B8">,</span>
+<span style="color:#38BDF8">      display</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'flex'</span><span style="color:#94A3B8">,</span><span style="color:#38BDF8"> alignItems</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'center'</span><span style="color:#94A3B8">,</span>
+      <span style="color:#38BDF8">fontSize</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '64px'</span><span style="color:#94A3B8">,</span><span style="color:#38BDF8"> color</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'white'</span><span style="color:#94A3B8">,</span>
+<span style="color:#94A3B8">    {"}}"}&gt;</span>
+      Hello, Grafex!
+<span style="color:#F472B6">    &lt;/div&gt;</span>
+  <span style="color:#94A3B8">);</span>
+<span style="color:#94A3B8">{"}"}</span></code></pre>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 3 -->
+          <div>
+            <div class="flex items-center gap-4 mb-4">
+              <div class="w-10 h-10 rounded-full flex items-center justify-center border flex-shrink-0" style="background: var(--color-bg-surface); border-color: var(--color-border-strong);">
+                <span class="font-heading font-bold text-base" style="color: var(--color-primary);">3</span>
+              </div>
+              <h3 class="font-heading font-semibold text-2xl" style="color: var(--color-text-primary);">Export</h3>
+            </div>
+            <p class="text-base mb-4 ml-14" style="color: var(--color-text-secondary);">Run one command. Get a PNG.</p>
+            <div class="ml-14 rounded-xl overflow-hidden border" style="border-color: var(--color-border-default);">
+              <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
+                <span class="text-xs uppercase tracking-wider font-medium" style="color: var(--color-text-muted);">bash</span>
+                <CopyButton text="npx grafex export -f card.tsx -o card.png" client:load />
+              </div>
+              <div class="px-4 py-3" style="background: var(--color-bg-code);">
+                <code class="font-mono text-sm" style="color: var(--color-accent-lime);">npx grafex export -f card.tsx -o card.png</code>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Band -->
+    <section class="py-20 px-6" style="background: var(--color-bg-surface); border-top: 1px solid var(--color-border-default);">
+      <div class="max-w-2xl mx-auto text-center">
+        <h2 class="font-heading font-bold text-4xl mb-8" style="background: linear-gradient(135deg, #F472B6, #38BDF8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+          Start Making Images.
+        </h2>
+
+        <div class="inline-flex items-center gap-3 px-5 py-3 rounded-full mb-8 border" style="background: var(--color-bg-base); border-color: var(--color-border-default);">
+          <code class="font-mono text-sm" style="color: var(--color-accent-lime);">npm install grafex</code>
+          <CopyButton text="npm install grafex" client:load />
+        </div>
+
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <a
+            href="/docs/getting-started"
+            class="px-8 py-3.5 rounded-lg text-base font-semibold text-white transition-all hover:brightness-110 min-h-[48px] flex items-center"
+            style="background: linear-gradient(135deg, #F472B6, var(--color-purple)); box-shadow: 0 0 20px rgba(244, 114, 182, 0.2);"
+          >
+            Get Started
+          </a>
+          <a
+            href="https://github.com/grafex-dev/grafex"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="px-8 py-3.5 rounded-lg text-base font-medium transition-all min-h-[48px] flex items-center gap-2 border hover:bg-[var(--color-bg-surface-hover)] hover:border-[var(--color-primary)] text-[var(--color-text-primary)] border-[var(--color-border-strong)]"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+            </svg>
+            View on GitHub
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-8 px-6 border-t" style="border-color: var(--color-border-default); background: var(--color-bg-base);">
+      <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <span class="text-sm font-semibold" style="color: var(--color-text-secondary);">Grafex</span>
+          <span class="text-xs" style="color: var(--color-text-muted);">MIT License</span>
+        </div>
+        <nav class="flex items-center gap-6">
+          <a href="https://github.com/grafex-dev/grafex" target="_blank" rel="noopener noreferrer" class="text-sm transition-colors duration-150 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] no-underline">GitHub</a>
+          <a href="https://www.npmjs.com/package/grafex" target="_blank" rel="noopener noreferrer" class="text-sm transition-colors duration-150 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] no-underline">npm</a>
+          <a href="/docs/getting-started" class="text-sm transition-colors duration-150 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] no-underline">Docs</a>
+        </nav>
+      </div>
+    </footer>
+  </main>
+
+  <script>
+    const menuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    menuBtn?.addEventListener('click', () => {
+      const isOpen = !mobileMenu?.classList.contains('hidden');
+      mobileMenu?.classList.toggle('hidden');
+      menuBtn.setAttribute('aria-expanded', String(!isOpen));
+    });
+
+    mobileMenu?.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        mobileMenu.classList.add('hidden');
+        menuBtn?.setAttribute('aria-expanded', 'false');
+      });
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !mobileMenu?.classList.contains('hidden')) {
+        mobileMenu?.classList.add('hidden');
+        menuBtn?.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    const nav = document.getElementById('site-nav');
+    function updateNav() {
+      if (window.scrollY > 50) {
+        if (nav) {
+          nav.style.background = 'rgba(11, 17, 32, 0.92)';
+          nav.style.backdropFilter = 'blur(12px)';
+          nav.style.borderColor = 'var(--color-border-default)';
+        }
+      } else {
+        if (nav) {
+          nav.style.background = 'transparent';
+          nav.style.backdropFilter = 'none';
+          nav.style.borderColor = 'transparent';
+        }
+      }
+    }
+    window.addEventListener('scroll', updateNav, { passive: true });
+    updateNav();
+  </script>
+</BaseLayout>
