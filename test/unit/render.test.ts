@@ -207,6 +207,29 @@ describe('pipeline() — import cache (nonce)', () => {
   });
 });
 
+describe('pipeline() — fonts passthrough', () => {
+  let mockManager: ReturnType<typeof makeMockManager>;
+
+  beforeEach(() => {
+    mockManager = makeMockManager();
+  });
+
+  test('config.fonts are present in the HTML passed to the browser', async () => {
+    const { pipeline } = await import('../../src/render.js');
+    await pipeline(resolve(fixturesDir, 'with-fonts.tsx'), {}, mockManager as any);
+    const [html] = mockManager.render.mock.calls[0] as [string, unknown];
+    expect(html).toContain('<link rel="stylesheet"');
+    expect(html).toContain('fonts.googleapis.com');
+  });
+
+  test('composition without fonts config produces no link tags', async () => {
+    const { pipeline } = await import('../../src/render.js');
+    await pipeline(resolve(fixturesDir, 'simple.tsx'), {}, mockManager as any);
+    const [html] = mockManager.render.mock.calls[0] as [string, unknown];
+    expect(html).not.toContain('<link rel="stylesheet"');
+  });
+});
+
 describe('pipeline() — with-components fixture', () => {
   let mockManager: ReturnType<typeof makeMockManager>;
 

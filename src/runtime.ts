@@ -58,6 +58,19 @@ function renderChildren(children: unknown): string {
   return String(children);
 }
 
+function renderRawChildren(children: unknown): string {
+  if (children === null || children === undefined || children === false || children === true) {
+    return '';
+  }
+  if (children instanceof HtmlString) return children.value;
+  if (typeof children === 'string') return children;
+  if (typeof children === 'number') return String(children);
+  if (Array.isArray(children)) return children.map(renderRawChildren).join('');
+  return String(children);
+}
+
+const RAW_TEXT_ELEMENTS = new Set(['style', 'script']);
+
 export function h(
   tag: string | ((props: Props) => HtmlString),
   props: Props | null,
@@ -65,10 +78,10 @@ export function h(
 ): HtmlString {
   const allProps = props ?? {};
   const flatChildren = children.flat(Infinity);
+  const isRaw = typeof tag === 'string' && RAW_TEXT_ELEMENTS.has(tag);
+  const renderFn = isRaw ? renderRawChildren : renderChildren;
   const childContent =
-    'children' in allProps
-      ? renderChildren(allProps.children)
-      : flatChildren.map(renderChildren).join('');
+    'children' in allProps ? renderFn(allProps.children) : flatChildren.map(renderFn).join('');
 
   if (typeof tag === 'function') {
     return tag({ ...allProps, children: childContent });
@@ -101,12 +114,19 @@ export function Fragment({ children }: { children?: unknown }): HtmlString {
 export function renderToHTML(
   componentHtml: string,
   viewport: { width: number; height: number },
+  fonts?: string[],
 ): string {
+  const fontLinks =
+    fonts && fonts.length > 0
+      ? fonts
+          .map((url) => `<link rel="stylesheet" href="${escapeHtml(url)}" crossorigin>`)
+          .join('\n') + '\n'
+      : '';
   return `<!DOCTYPE html>
 <html>
 <head>
 <meta charset="utf-8">
-<style>
+${fontLinks}<style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { width: ${viewport.width}px; height: ${viewport.height}px; overflow: hidden; }
 </style>

@@ -17,4 +17,5 @@ export interface CompositionConfig {
   width?: number;
   height?: number;
   format?: 'png';
+  fonts?: string[];
 }
