@@ -30,6 +30,13 @@ export async function transpile(compositionPath: string): Promise<string> {
       platform: 'node',
       target: 'node18',
       loader: { '.ts': 'ts', '.tsx': 'tsx' },
+      tsconfigRaw: {
+        compilerOptions: {
+          jsx: 'react',
+          jsxFactory: 'h',
+          jsxFragmentFactory: 'Fragment',
+        },
+      },
     });
   } catch (err) {
     throw new Error(`esbuild transpilation failed:\n${(err as Error).message}`);
