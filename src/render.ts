@@ -27,7 +27,7 @@ export async function pipeline(
   const height = options.height ?? config.height ?? 630;
 
   const componentHtml = String(component(options.props ?? {}));
-  const html = renderToHTML(componentHtml, { width, height });
+  const html = renderToHTML(componentHtml, { width, height }, config.fonts);
 
   const buffer = await manager.render(html, { width, height });
 

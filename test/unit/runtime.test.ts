@@ -302,6 +302,65 @@ describe('HtmlString', () => {
   });
 });
 
+describe('h() — style and script raw content (no escaping)', () => {
+  test('style child is NOT escaped', () => {
+    expect(String(h('style', null, 'body { color: red }'))).toBe(
+      '<style>body { color: red }</style>',
+    );
+  });
+
+  test('style child with angle brackets is NOT escaped', () => {
+    expect(String(h('style', null, '<script>alert("xss")</script>'))).toBe(
+      '<style><script>alert("xss")</script></style>',
+    );
+  });
+
+  test('script child is NOT escaped', () => {
+    expect(String(h('script', null, 'if (a < b) { console.log("ok") }'))).toBe(
+      '<script>if (a < b) { console.log("ok") }</script>',
+    );
+  });
+
+  test('div child IS still escaped', () => {
+    expect(String(h('div', null, '<b>bold</b>'))).toBe('<div>&lt;b&gt;bold&lt;/b&gt;</div>');
+  });
+});
+
+describe('renderToHTML — fonts', () => {
+  test('injects link tags for each font URL in head', () => {
+    const fonts = [
+      'https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap',
+      'https://fonts.googleapis.com/css2?family=Roboto&display=swap',
+    ];
+    const html = renderToHTML('<p>hi</p>', { width: 1200, height: 630 }, fonts);
+    expect(html).toContain(
+      '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&amp;display=swap" crossorigin>',
+    );
+    expect(html).toContain(
+      '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto&amp;display=swap" crossorigin>',
+    );
+  });
+
+  test('link tags appear inside head', () => {
+    const fonts = ['https://fonts.googleapis.com/css2?family=Inter&display=swap'];
+    const html = renderToHTML('<p>hi</p>', { width: 800, height: 600 }, fonts);
+    const headClose = html.indexOf('</head>');
+    const linkPos = html.indexOf('<link rel="stylesheet"');
+    expect(linkPos).toBeGreaterThan(-1);
+    expect(linkPos).toBeLessThan(headClose);
+  });
+
+  test('empty fonts array produces no link tags', () => {
+    const html = renderToHTML('<p>hi</p>', { width: 800, height: 600 }, []);
+    expect(html).not.toContain('<link rel="stylesheet"');
+  });
+
+  test('undefined fonts produces no link tags', () => {
+    const html = renderToHTML('<p>hi</p>', { width: 800, height: 600 });
+    expect(html).not.toContain('<link rel="stylesheet"');
+  });
+});
+
 describe('module exports', () => {
   test('h is exported', () => {
     expect(typeof h).toBe('function');

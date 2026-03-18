@@ -131,6 +131,12 @@ export class BrowserManager {
     const page = this.page!;
     await page.setViewportSize(viewport);
     await page.setContent(html, { waitUntil: 'load' });
+    await page.evaluate(() =>
+      Promise.race([
+        document.fonts.ready,
+        new Promise<void>((resolve) => setTimeout(resolve, 5000)),
+      ]),
+    );
 
     const screenshotOptions =
       this.engine === 'chromium'
