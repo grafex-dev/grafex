@@ -1,0 +1,109 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import CopyButton from '../../components/CopyButton.tsx';
+import { Code } from 'astro:components';
+import { grafexTheme } from '../../shiki-theme';
+
+const examples = [
+  {
+    title: 'OG Card',
+    desc: 'A blog post Open Graph image with gradient background, tag badge, title, author avatar, and accent stripe.',
+    img: '/examples/og-card.png',
+    file: 'og-card.tsx',
+    cmd: 'npx grafex export -f og-card.tsx -o og-card.png',
+  },
+  {
+    title: 'Social Media Card',
+    desc: 'A Twitter/LinkedIn quote card with avatar, quote text, engagement stats, and branding.',
+    img: '/examples/social-card.png',
+    file: 'social-card.tsx',
+    cmd: 'npx grafex export -f social-card.tsx -o social-card.png',
+  },
+  {
+    title: 'Email Banner',
+    desc: 'A promotional banner with bold typography, discount callout, and call-to-action button.',
+    img: '/examples/banner.png',
+    file: 'banner.tsx',
+    cmd: 'npx grafex export -f banner.tsx -o banner.png',
+  },
+  {
+    title: 'Certificate',
+    desc: 'A completion certificate with decorative border, recipient name, course details, and signatures.',
+    img: '/examples/certificate.png',
+    file: 'certificate.tsx',
+    cmd: 'npx grafex export -f certificate.tsx -o certificate.png',
+  },
+  {
+    title: 'Video Thumbnail',
+    desc: 'A YouTube-style thumbnail with episode badge, bold title, tech tags, and channel branding.',
+    img: '/examples/thumbnail.png',
+    file: 'thumbnail.tsx',
+    cmd: 'npx grafex export -f thumbnail.tsx -o thumbnail.png',
+  },
+  {
+    title: 'Architecture Diagram',
+    desc: 'A technical diagram showing client, API, and database with connection arrows and protocol labels.',
+    img: '/examples/diagram.png',
+    file: 'diagram.tsx',
+    cmd: 'npx grafex export -f diagram.tsx -o diagram.png',
+  },
+];
+
+// Read all example source files
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+
+const exampleDir = resolve(process.cwd(), 'examples');
+const sources = Object.fromEntries(
+  ['og-card-example.tsx', 'social-card-example.tsx', 'banner-example.tsx', 'certificate-example.tsx', 'thumbnail-example.tsx', 'diagram-example.tsx']
+    .map((f, i) => [examples[i].file, readFileSync(resolve(exampleDir, f), 'utf-8')])
+);
+---
+
+<DocsLayout title="Examples" currentPage="/docs/examples" description="Real compositions you can copy, modify, and render.">
+  <div class="max-w-4xl">
+    <h1 class="font-heading text-4xl font-bold mb-4" style="color: var(--color-text-primary);">Examples</h1>
+    <p class="text-lg mb-12" style="color: var(--color-text-secondary);">
+      Real compositions you can copy, modify, and render. Each example shows the rendered output and the full source code.
+    </p>
+
+    <div class="space-y-16">
+      {examples.map((ex) => (
+        <div>
+          <h2 class="font-heading text-2xl font-semibold mb-2" style="color: var(--color-text-primary);">{ex.title}</h2>
+          <p class="text-base mb-4" style="color: var(--color-text-secondary);">{ex.desc}</p>
+
+          {/* Rendered image */}
+          <div class="checkerboard rounded-xl overflow-hidden border mb-4 flex items-center justify-center p-4" style="border-color: var(--color-border-default);">
+            <img src={ex.img} alt={ex.title} class="block rounded-lg" style="max-width: 600px; width: 100%;" loading="lazy" />
+          </div>
+
+          {/* CLI command */}
+          <div class="rounded-lg px-4 py-3 flex items-center justify-between gap-3 border mb-4" style="background: var(--color-bg-code); border-color: var(--color-border-default);">
+            <div class="flex items-center gap-3 overflow-x-auto">
+              <span class="font-mono text-sm flex-shrink-0" style="color: var(--color-text-muted);">$</span>
+              <code class="font-mono text-sm whitespace-nowrap" style="color: var(--color-accent-lime);">{ex.cmd}</code>
+            </div>
+            <CopyButton text={ex.cmd} client:load />
+          </div>
+
+          {/* Collapsible source */}
+          <details class="group rounded-xl overflow-hidden border" style="border-color: var(--color-border-default);">
+            <summary class="flex items-center justify-between px-4 py-3 cursor-pointer select-none hover:bg-[var(--color-bg-surface-hover)] transition-colors list-none [&::-webkit-details-marker]:hidden" style="background: var(--color-bg-surface);">
+              <div class="flex items-center gap-3">
+                <svg class="w-4 h-4 transition-transform duration-200 group-open:rotate-90" style="color: var(--color-text-muted);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="9 6 15 12 9 18" />
+                </svg>
+                <span class="text-xs font-mono" style="color: var(--color-text-muted);">{ex.file}</span>
+              </div>
+              <CopyButton text={sources[ex.file]} client:load />
+            </summary>
+            <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 400px; overflow-y: auto;">
+              <Code code={sources[ex.file]} lang="tsx" theme={grafexTheme} />
+            </div>
+          </details>
+        </div>
+      ))}
+    </div>
+  </div>
+</DocsLayout>

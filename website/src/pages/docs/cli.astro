@@ -1,0 +1,135 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import CopyButton from '../../components/CopyButton.tsx';
+---
+
+<DocsLayout
+  title="CLI Reference"
+  description="Complete reference for all grafex CLI commands and flags."
+  currentPage="/docs/cli"
+>
+  <article>
+    <h1 class="font-heading font-bold text-4xl mb-2" style="color: var(--color-text-primary);">CLI Reference</h1>
+    <p class="text-lg mb-12" style="color: var(--color-text-secondary);">Complete reference for all CLI commands and flags.</p>
+
+    <!-- grafex export -->
+    <section class="mb-12">
+      <h2 class="font-heading font-bold text-2xl mb-2" style="color: var(--color-text-primary);"><code class="font-mono" style="color: var(--color-primary);">grafex export</code></h2>
+      <p class="text-base leading-relaxed mb-6" style="color: var(--color-text-secondary);">Render a composition file to a PNG image.</p>
+
+      <div class="rounded-xl overflow-hidden border mb-8" style="border-color: var(--color-border-default);">
+        <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
+          <span class="text-xs uppercase tracking-wider font-medium" style="color: var(--color-text-muted);">bash</span>
+          <CopyButton text="grafex export -f <file> [options]" client:load />
+        </div>
+        <div class="px-4 py-3" style="background: var(--color-bg-code);">
+          <code class="font-mono text-sm" style="color: var(--color-accent-lime);">grafex export -f &lt;file&gt; [options]</code>
+        </div>
+      </div>
+
+      <h3 class="font-heading font-semibold text-xl mb-4" style="color: var(--color-text-primary);">Flags</h3>
+
+      <div class="rounded-xl overflow-hidden border" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr style="background: var(--color-bg-surface-hover); border-bottom: 1px solid var(--color-border-default);">
+                <th class="text-left px-4 py-3 font-semibold" style="color: var(--color-text-primary);">Flag</th>
+                <th class="text-left px-4 py-3 font-semibold" style="color: var(--color-text-primary);">Short</th>
+                <th class="text-left px-4 py-3 font-semibold" style="color: var(--color-text-primary);">Type</th>
+                <th class="text-left px-4 py-3 font-semibold" style="color: var(--color-text-primary);">Default</th>
+                <th class="text-left px-4 py-3 font-semibold" style="color: var(--color-text-primary);">Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                ['--file', '-f', 'string', '—', 'Path to the .tsx composition file (required)'],
+                ['--out', '-o', 'string', './output.png', 'Output file path'],
+                ['--props', '', 'string (JSON)', '{}', 'Props to pass to the composition as a JSON object'],
+                ['--width', '', 'number', 'from config', 'Override composition width in pixels'],
+                ['--height', '', 'number', 'from config', 'Override composition height in pixels'],
+                ['--format', '', 'string', 'png', 'Output format (only png currently supported)'],
+                ['--browser', '', 'string', 'webkit', 'Browser engine to use for rendering'],
+                ['--help', '-h', '', '', 'Show help text'],
+              ].map(([flag, short, type, def, desc]) => (
+                <tr style="border-bottom: 1px solid var(--color-border-default);">
+                  <td class="px-4 py-3"><code class="font-mono text-xs" style="color: var(--color-primary);">{flag}</code></td>
+                  <td class="px-4 py-3"><code class="font-mono text-xs" style="color: short ? 'var(--color-secondary)' : 'var(--color-text-muted)'">{short || '—'}</code></td>
+                  <td class="px-4 py-3 text-xs" style="color: var(--color-text-muted);">{type || '—'}</td>
+                  <td class="px-4 py-3"><code class="font-mono text-xs" style="color: var(--color-accent-lime);">{def}</code></td>
+                  <td class="px-4 py-3 text-sm" style="color: var(--color-text-secondary);">{desc}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Examples -->
+    <section class="mb-12">
+      <h3 class="font-heading font-semibold text-xl mb-6" style="color: var(--color-text-primary);">Examples</h3>
+
+      <div class="space-y-4">
+        {[
+          { label: 'Basic export', cmd: 'grafex export -f card.tsx -o card.png' },
+          { label: 'Pass props to a composition', cmd: `grafex export -f card.tsx -o card.png --props '{"title":"Hello World","author":"Jane"}'` },
+          { label: 'Override dimensions', cmd: 'grafex export -f card.tsx -o card.png --width 800 --height 400' },
+          { label: 'Export to a specific directory', cmd: 'grafex export -f card.tsx -o ./images/card.png' },
+        ].map((ex) => (
+          <div>
+            <p class="text-sm mb-2 font-medium" style="color: var(--color-text-secondary);">{ex.label}:</p>
+            <div class="rounded-xl overflow-hidden border" style="border-color: var(--color-border-default);">
+              <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
+                <span class="text-xs uppercase tracking-wider font-medium" style="color: var(--color-text-muted);">bash</span>
+                <CopyButton text={ex.cmd} client:load />
+              </div>
+              <div class="px-4 py-3 overflow-x-auto" style="background: var(--color-bg-code);">
+                <code class="font-mono text-sm whitespace-nowrap" style="color: var(--color-accent-lime);">{ex.cmd}</code>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Exit codes -->
+    <section class="mb-12">
+      <h3 class="font-heading font-semibold text-xl mb-4" style="color: var(--color-text-primary);">Exit codes</h3>
+      <div class="rounded-xl overflow-hidden border" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
+        <table class="w-full text-sm">
+          <thead>
+            <tr style="background: var(--color-bg-surface-hover); border-bottom: 1px solid var(--color-border-default);">
+              <th class="text-left px-4 py-3 font-semibold" style="color: var(--color-text-primary);">Code</th>
+              <th class="text-left px-4 py-3 font-semibold" style="color: var(--color-text-primary);">Meaning</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom: 1px solid var(--color-border-default);">
+              <td class="px-4 py-3"><code class="font-mono text-sm" style="color: var(--color-accent-lime);">0</code></td>
+              <td class="px-4 py-3 text-sm" style="color: var(--color-text-secondary);">Success — image exported</td>
+            </tr>
+            <tr>
+              <td class="px-4 py-3"><code class="font-mono text-sm" style="color: var(--color-error);">1</code></td>
+              <td class="px-4 py-3 text-sm" style="color: var(--color-text-secondary);">Error — composition failed to render (check stderr for details)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Global Flags -->
+    <section>
+      <h2 class="font-heading font-bold text-2xl mb-4" style="color: var(--color-text-primary);">Global Flags</h2>
+      <div class="rounded-xl overflow-hidden border" style="border-color: var(--color-border-default);">
+        <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
+          <span class="text-xs uppercase tracking-wider font-medium" style="color: var(--color-text-muted);">bash</span>
+        </div>
+        <div class="p-4" style="background: var(--color-bg-code); max-height: 500px; overflow-y: auto;">
+          <pre class="font-mono text-sm leading-relaxed"><code><span style="color:#A3E635">grafex --version</span>    <span style="color:#64748B"># Print version and exit</span>
+<span style="color:#A3E635">grafex --help</span>       <span style="color:#64748B"># Print help text and exit</span></code></pre>
+        </div>
+      </div>
+    </section>
+  </article>
+</DocsLayout>
