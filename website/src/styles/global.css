@@ -57,7 +57,8 @@
 }
 
 @layer base {
-  h2, h3 {
+  h2,
+  h3 {
     scroll-margin-top: 5rem;
   }
 

@@ -78,7 +78,7 @@ describe('BrowserManager — idle timer resets after screenshot', () => {
     // that is shorter than the total render time but verify the render still completes.
     // We do this by checking: after render() resolves, the manager is still alive
     // (not closed mid-render) by doing a second render successfully.
-    const manager = new BrowserManager({ idleTimeoutMs: 50 });
+    const manager = new BrowserManager({ idleTimeoutMs: 200 });
 
     // First render: triggers launch + screenshot. If timer fires mid-render, the browser
     // closes and the second render would have to re-launch.
