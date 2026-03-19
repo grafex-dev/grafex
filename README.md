@@ -1,8 +1,8 @@
 # Grafex
 
-**Images as Code. Write JSX, export PNG.**
+**Images as Code. Write JSX, export as images.**
 
-Grafex is a programmatic image composition tool. Write compositions in JSX/TSX with full CSS support and export them to PNG — no browser window, no server, no configuration ceremony.
+Grafex is a programmatic image composition tool. Write compositions in JSX/TSX with full CSS support and export as images — no browser window, no server, no configuration ceremony.
 
 ```
 npx grafex export -f card.tsx -o card.png
