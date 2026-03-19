@@ -57,6 +57,10 @@
 }
 
 @layer base {
+  h2, h3 {
+    scroll-margin-top: 5rem;
+  }
+
   body {
     background-color: var(--color-bg-base);
     color: var(--color-text-primary);
