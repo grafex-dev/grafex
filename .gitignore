@@ -1,5 +1,3 @@
 node_modules/
 dist/
-*.png
-!website/public/**/*.png
 *.json.results

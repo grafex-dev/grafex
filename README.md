@@ -238,6 +238,34 @@ npx grafex export -f card.tsx -o card.png
 
 ---
 
+## Local Images
+
+Use local image files in `<img>` tags or CSS `background-image`. Grafex reads them from disk and embeds them as base64 data URLs automatically — no server or public URL needed.
+
+```tsx
+export default function Card() {
+  return (
+    <div style={{ width: '100%', height: '100%' }}>
+      <img src="./logo.png" alt="Logo" width="200" height="60" />
+    </div>
+  );
+}
+```
+
+Paths are resolved relative to the composition file. Supported formats: PNG, JPEG, GIF, WebP, SVG, AVIF, ICO, BMP.
+
+CSS `url()` references work too — both in inline styles and in external CSS files loaded via `config.css`:
+
+```css
+.hero {
+  background-image: url('./hero.jpg');
+}
+```
+
+Remote URLs (`http://`, `https://`) and data URLs are passed through unchanged.
+
+---
+
 ## Browser Installation
 
 WebKit is downloaded automatically when you run `npm install` via the `postinstall` script:
