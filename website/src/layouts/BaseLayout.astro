@@ -40,5 +40,12 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
   <body>
     <slot />
     <Analytics />
+    <script>
+      document.querySelectorAll('h2, h3').forEach((h) => {
+        if (!h.id) {
+          h.id = h.textContent.trim().toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-');
+        }
+      });
+    </script>
   </body>
 </html>
