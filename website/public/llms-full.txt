@@ -4,7 +4,7 @@
 
 Grafex works as both a CLI tool (`npx grafex export`) and a Node.js library (`import { render } from 'grafex'`). Compositions are plain TSX files that export a function component and a config object. The tool transpiles JSX via esbuild, renders HTML in a headless WebKit browser via Playwright, and screenshots the result to PNG.
 
-Key features: full CSS support (flexbox, grid, gradients, shadows, transforms), custom fonts via config.fonts (Google Fonts or any CSS URL), external CSS files via config.css (plain CSS, Tailwind output, Sass output, any .css file), AI-friendly (compositions are easy for LLMs to write), sub-100ms warm renders, 2 runtime dependencies (playwright-core + esbuild).
+Key features: full CSS support (flexbox, grid, gradients, shadows, transforms), custom fonts via config.fonts (Google Fonts or any CSS URL), external CSS files via config.css (plain CSS, Tailwind output, Sass output, any .css file), local image embedding (reference local PNG/JPEG/GIF/WebP/SVG/AVIF/ICO/BMP files by path — they are embedded as base64 data URLs automatically), AI-friendly (compositions are easy for LLMs to write), sub-100ms warm renders, 2 runtime dependencies (playwright-core + esbuild).
 
 ---
 
@@ -76,21 +76,13 @@ Compositions are TSX files that describe your image layout. They use a custom JS
 
 ```ts
 interface CompositionConfig {
-<<<<<<< Updated upstream
-  width?: number;          // Image width in pixels (default: 1200)
-  height?: number;         // Image height in pixels (default: 630)
+  width?: number;           // Image width in pixels (default: 1200)
+  height?: number;          // Image height in pixels (default: 630)
   format?: 'png' | 'jpeg'; // Output format (default: 'png')
-  quality?: number;        // JPEG quality 1-100 (default: 90)
-  fonts?: string[];        // URLs to font stylesheets (e.g., Google Fonts)
-  scale?: number;          // Device pixel ratio (default: 1)
-=======
-  width?: number;   // Image width in pixels (default: 1200)
-  height?: number;  // Image height in pixels (default: 630)
-  format?: 'png';   // Output format (only PNG supported)
-  fonts?: string[]; // URLs to font stylesheets (e.g., Google Fonts)
-  css?: string[];   // Paths to CSS files (relative to the composition file)
-  scale?: number;   // Device pixel ratio (default: 1)
->>>>>>> Stashed changes
+  quality?: number;         // JPEG quality 1-100 (default: 90)
+  fonts?: string[];         // URLs to font stylesheets (e.g., Google Fonts)
+  css?: string[];           // Paths to CSS files (relative to the composition file)
+  scale?: number;           // Device pixel ratio (default: 1)
 }
 ```
 
@@ -164,6 +156,30 @@ export default function BlogCard({ title, date }: Props) {
 
 Pass props via CLI: `grafex export -f card.tsx --props '{"title":"My Post","date":"March 2026"}'`
 Pass props via API: `render('./card.tsx', { props: { title: 'My Post' } })`
+
+### Local Images
+
+Use local image files in `<img>` tags or CSS `background-image`. Grafex reads them from disk and embeds them as base64 data URLs automatically — no server or public URL needed.
+
+```tsx
+export default function Card() {
+  return (
+    <div style={{ width: '100%', height: '100%' }}>
+      <img src="./logo.png" alt="Logo" width="200" height="60" />
+    </div>
+  );
+}
+```
+
+Supported formats: PNG, JPEG, GIF, WebP, SVG, AVIF, ICO, BMP. Paths are resolved relative to the composition file. Remote URLs (`http://`, `https://`) and data URLs are passed through unchanged.
+
+CSS `url()` references work too — both in inline styles and in external CSS files loaded via `config.css`:
+
+```css
+.hero {
+  background-image: url('./hero.jpg');
+}
+```
 
 ### Custom Components
 
@@ -288,11 +304,8 @@ interface CompositionConfig {
   format?: 'png' | 'jpeg';
   quality?: number;
   fonts?: string[];
-<<<<<<< Updated upstream
-  scale?: number;
-=======
   css?: string[];
->>>>>>> Stashed changes
+  scale?: number;
 }
 ```
 

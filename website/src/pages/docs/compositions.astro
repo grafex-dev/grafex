@@ -180,6 +180,18 @@ export default function OgCard() {
   );
 }`;
 
+const localImageCode = `export default function Card() {
+  return (
+    <div style={{ width: '100%', height: '100%' }}>
+      <img src="./logo.png" alt="Logo" width="200" height="60" />
+    </div>
+  );
+}`;
+
+const cssUrlCode = `.hero {
+  background-image: url('./hero.jpg');
+}`;
+
 const badgeComponentCode = `interface BadgeProps {
   label: string;
   color: string;
@@ -373,6 +385,36 @@ export default function OgImage() {
 <span style="color:#F472B6">    &lt;/div&gt;</span>
 <span style="color:#94A3B8">  );</span>
 <span style="color:#94A3B8">{"}"}</span></code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- Local Images -->
+    <section class="mb-12">
+      <h2 class="font-heading font-bold text-2xl mb-4" style="color: var(--color-text-primary);">Images</h2>
+      <p class="text-base leading-relaxed mb-6" style="color: var(--color-text-secondary);">Use local image files in <code class="font-mono text-sm px-1 py-0.5 rounded" style="color: var(--color-primary); background: rgba(244,114,182,0.1);">&lt;img&gt;</code> tags or CSS <code class="font-mono text-sm px-1 py-0.5 rounded" style="color: var(--color-primary); background: rgba(244,114,182,0.1);">background-image</code>. Grafex reads them from disk and embeds them as base64 data URLs automatically — no server or public URL needed.</p>
+
+      <div class="rounded-xl overflow-hidden border mb-4" style="border-color: var(--color-border-default);">
+        <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
+          <span class="text-xs font-mono" style="color: var(--color-text-muted);">card.tsx</span>
+          <CopyButton text={localImageCode} client:load />
+        </div>
+        <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
+          <Code code={localImageCode} lang="tsx" theme={grafexTheme} />
+        </div>
+      </div>
+
+      <p class="text-sm mb-4" style="color: var(--color-text-secondary);">Paths are resolved relative to the composition file. Supported formats: PNG, JPEG, GIF, WebP, SVG, AVIF, ICO, BMP. Remote URLs (<code class="font-mono" style="color: var(--color-primary);">http://</code>, <code class="font-mono" style="color: var(--color-primary);">https://</code>) and data URLs are passed through unchanged.</p>
+
+      <p class="text-base leading-relaxed mb-4" style="color: var(--color-text-secondary);">CSS <code class="font-mono text-sm px-1 py-0.5 rounded" style="color: var(--color-primary); background: rgba(244,114,182,0.1);">url()</code> references work too — both in inline styles and in external CSS files loaded via <code class="font-mono text-sm px-1 py-0.5 rounded" style="color: var(--color-primary); background: rgba(244,114,182,0.1);">config.css</code>:</p>
+
+      <div class="rounded-xl overflow-hidden border" style="border-color: var(--color-border-default);">
+        <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
+          <span class="text-xs font-mono" style="color: var(--color-text-muted);">styles.css</span>
+          <CopyButton text={cssUrlCode} client:load />
+        </div>
+        <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
+          <Code code={cssUrlCode} lang="css" theme={grafexTheme} />
         </div>
       </div>
     </section>
