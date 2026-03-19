@@ -69,7 +69,7 @@ describe('export command — error cases', () => {
       '/tmp/grafex-svg-test.png',
     ]);
     expect(result.status).toBe(1);
-    expect(result.stderr).toContain('Only PNG format is supported in this version.');
+    expect(result.stderr).toContain('--format must be "png" or "jpeg"');
   });
 });
 

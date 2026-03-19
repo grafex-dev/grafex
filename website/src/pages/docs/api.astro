@@ -1,6 +1,79 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import CopyButton from '../../components/CopyButton.tsx';
+import { Code } from 'astro:components';
+import { grafexTheme } from '../../shiki-theme';
+
+const importCode = `import { render, close } from 'grafex';`;
+
+const renderCallCode = `const result = await render('./card.tsx', {
+  props: { title: 'Hello' },
+  width: 1200,
+  height: 630,
+});`;
+
+const renderResultTypeCode = `interface RenderResult {
+  buffer: Buffer;          // Image data
+  width: number;           // Effective render width (after scaling)
+  height: number;          // Effective render height (after scaling)
+  format: 'png' | 'jpeg';  // Output format
+  scale: number;           // Device pixel ratio used
+}`;
+
+const writeToFileCode = `import { render, close } from 'grafex';
+import { writeFileSync } from 'node:fs';
+
+const result = await render('./card.tsx', {
+  props: { title: 'Hello World' },
+});
+
+writeFileSync('card.png', result.buffer);
+await close();`;
+
+const renderMultipleCode = `const pages = [
+  { file: 'hero.tsx', out: 'hero.png' },
+  { file: 'card.tsx', out: 'card.png' },
+  { file: 'thumbnail.tsx', out: 'thumbnail.png' },
+];
+
+for (const page of pages) {
+  const result = await render(page.file);
+  writeFileSync(page.out, result.buffer);
+}
+
+await close();`;
+
+const advancedImportCode = `import { h, Fragment, renderToHTML, BrowserManager } from 'grafex';`;
+
+const compositionConfigTypeCode = `interface CompositionConfig {
+  width?: number;           // Image width in pixels (default: 1200)
+  height?: number;          // Image height in pixels (default: 630)
+  format?: 'png' | 'jpeg';  // Output format (default: 'png')
+  quality?: number;         // JPEG quality 1-100 (default: 90)
+  fonts?: string[];         // URLs to font stylesheets
+  css?: string[];           // CSS file paths to inject
+  scale?: number;           // Device pixel ratio (default: 1)
+}`;
+
+const renderResultFullTypeCode = `interface RenderResult {
+  buffer: Buffer;           // Image data
+  width: number;            // Effective render width (after scaling)
+  height: number;           // Effective render height (after scaling)
+  format: 'png' | 'jpeg';   // Output format
+  scale: number;            // Device pixel ratio used
+}`;
+
+const renderOptionsTypeCode = `interface RenderOptions {
+  props?: Record<string, unknown>;  // Props passed to the composition
+  width?: number;                   // Override width in pixels
+  height?: number;                  // Override height in pixels
+  format?: 'png' | 'jpeg';          // Output format (default: 'png')
+  quality?: number;                 // JPEG quality 1-100 (default: 90)
+  browser?: 'webkit';               // Browser engine
+  scale?: number;                   // Device pixel ratio (default: 1)
+}`;
+
+const closeCallCode = `await close();`;
 ---
 
 <DocsLayout
@@ -17,27 +90,23 @@ import CopyButton from '../../components/CopyButton.tsx';
         <span class="text-xs uppercase tracking-wider font-medium" style="color: var(--color-text-muted);">TypeScript</span>
         <CopyButton text="import { render, close } from 'grafex';" client:load />
       </div>
-      <div class="px-4 py-3" style="background: var(--color-bg-code);">
-        <code class="font-mono text-sm"><span style="color:#F472B6">import</span><span style="color:#94A3B8"> {"{"} </span><span style="color:#38BDF8">render</span><span style="color:#94A3B8">,</span><span style="color:#38BDF8"> close</span><span style="color:#94A3B8"> {"}"} </span><span style="color:#F472B6">from</span><span style="color:#A3E635"> 'grafex'</span><span style="color:#94A3B8">;</span></code>
+      <div class="overflow-x-auto [&_pre]:px-4 [&_pre]:py-3 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed">
+        <Code code={importCode} lang="typescript" theme={grafexTheme} />
       </div>
     </div>
 
     <!-- render() -->
     <section class="mb-12">
       <h2 class="font-heading font-bold text-2xl mb-2" style="color: var(--color-text-primary);"><code class="font-mono" style="color: var(--color-primary);">render(compositionPath, options?)</code></h2>
-      <p class="text-base leading-relaxed mb-6" style="color: var(--color-text-secondary);">Render a composition to a PNG buffer.</p>
+      <p class="text-base leading-relaxed mb-6" style="color: var(--color-text-secondary);">Render a composition to an image buffer.</p>
 
       <div class="rounded-xl overflow-hidden border mb-6" style="border-color: var(--color-border-default);">
         <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
           <span class="text-xs uppercase tracking-wider font-medium" style="color: var(--color-text-muted);">TypeScript</span>
           <CopyButton text={`const result = await render('./card.tsx', {\n  props: { title: 'Hello' },\n  width: 1200,\n  height: 630,\n});`} client:load />
         </div>
-        <div class="p-4 overflow-x-auto" style="background: var(--color-bg-code); max-height: 500px; overflow-y: auto;">
-          <pre class="font-mono text-sm leading-relaxed"><code><span style="color:#F472B6">const</span><span style="color:#38BDF8"> result</span><span style="color:#94A3B8"> =</span><span style="color:#F472B6"> await</span><span style="color:#38BDF8"> render</span><span style="color:#94A3B8">(</span><span style="color:#A3E635">'./card.tsx'</span><span style="color:#94A3B8">, {"{"}</span>
-<span style="color:#38BDF8">  props</span><span style="color:#94A3B8">:</span><span style="color:#94A3B8"> {"{"} </span><span style="color:#38BDF8">title</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'Hello'</span><span style="color:#94A3B8"> {"}"},</span>
-<span style="color:#38BDF8">  width</span><span style="color:#94A3B8">:</span><span style="color:#FB923C"> 1200</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">  height</span><span style="color:#94A3B8">:</span><span style="color:#FB923C"> 630</span><span style="color:#94A3B8">,</span>
-<span style="color:#94A3B8">{"}"});</span></code></pre>
+        <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
+          <Code code={renderCallCode} lang="typescript" theme={grafexTheme} />
         </div>
       </div>
 
@@ -58,6 +127,8 @@ import CopyButton from '../../components/CopyButton.tsx';
                 ['options.props', 'Record<string, unknown>', 'Props to pass to the composition'],
                 ['options.width', 'number', 'Override composition width in pixels'],
                 ['options.height', 'number', 'Override composition height in pixels'],
+                ["options.format", "'png' | 'jpeg'", "Output format (default: 'png')"],
+                ['options.quality', 'number', 'JPEG quality 1–100 (default: 90, only applies when format is jpeg)'],
                 ["options.browser", "'webkit'", "Browser engine (default: 'webkit')"],
                 ['options.scale', 'number', 'Device pixel ratio (default: 1)'],
               ].map(([param, type, desc]) => (
@@ -76,14 +147,8 @@ import CopyButton from '../../components/CopyButton.tsx';
       <p class="text-sm mb-4" style="color: var(--color-text-secondary);"><code class="font-mono" style="color: var(--color-primary);">render()</code> returns a <code class="font-mono" style="color: var(--color-secondary);">Promise&lt;RenderResult&gt;</code>:</p>
 
       <div class="rounded-xl overflow-hidden border mb-8" style="border-color: var(--color-border-default);">
-        <div class="p-4 overflow-x-auto" style="background: var(--color-bg-code); max-height: 500px; overflow-y: auto;">
-          <pre class="font-mono text-sm leading-relaxed"><code><span style="color:#F472B6">interface</span><span style="color:#38BDF8"> RenderResult</span><span style="color:#94A3B8"> {"{"}</span>
-<span style="color:#38BDF8">  buffer</span><span style="color:#94A3B8">:</span><span style="color:#38BDF8"> Buffer</span><span style="color:#94A3B8">;</span>   <span style="color:#64748B">// PNG image data</span>
-<span style="color:#38BDF8">  width</span><span style="color:#94A3B8">:</span><span style="color:#F472B6"> number</span><span style="color:#94A3B8">;</span>    <span style="color:#64748B">// Effective render width (after scaling)</span>
-<span style="color:#38BDF8">  height</span><span style="color:#94A3B8">:</span><span style="color:#F472B6"> number</span><span style="color:#94A3B8">;</span>   <span style="color:#64748B">// Effective render height (after scaling)</span>
-<span style="color:#38BDF8">  format</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'png'</span><span style="color:#94A3B8">;</span>    <span style="color:#64748B">// Output format</span>
-<span style="color:#38BDF8">  scale</span><span style="color:#94A3B8">:</span><span style="color:#F472B6"> number</span><span style="color:#94A3B8">;</span>    <span style="color:#64748B">// Device pixel ratio used</span>
-<span style="color:#94A3B8">{"}"}</span></code></pre>
+        <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
+          <Code code={renderResultTypeCode} lang="typescript" theme={grafexTheme} />
         </div>
       </div>
 
@@ -93,16 +158,8 @@ import CopyButton from '../../components/CopyButton.tsx';
           <span class="text-xs uppercase tracking-wider font-medium" style="color: var(--color-text-muted);">TypeScript</span>
           <CopyButton text={`import { render, close } from 'grafex';\nimport { writeFileSync } from 'node:fs';\n\nconst result = await render('./card.tsx', {\n  props: { title: 'Hello World' },\n});\n\nwriteFileSync('card.png', result.buffer);\nawait close();`} client:load />
         </div>
-        <div class="p-4 overflow-x-auto" style="background: var(--color-bg-code); max-height: 500px; overflow-y: auto;">
-          <pre class="font-mono text-sm leading-relaxed"><code><span style="color:#F472B6">import</span><span style="color:#94A3B8"> {"{"} </span><span style="color:#38BDF8">render</span><span style="color:#94A3B8">,</span><span style="color:#38BDF8"> close</span><span style="color:#94A3B8"> {"}"} </span><span style="color:#F472B6">from</span><span style="color:#A3E635"> 'grafex'</span><span style="color:#94A3B8">;</span>
-<span style="color:#F472B6">import</span><span style="color:#94A3B8"> {"{"} </span><span style="color:#38BDF8">writeFileSync</span><span style="color:#94A3B8"> {"}"} </span><span style="color:#F472B6">from</span><span style="color:#A3E635"> 'node:fs'</span><span style="color:#94A3B8">;</span>
-
-<span style="color:#F472B6">const</span><span style="color:#38BDF8"> result</span><span style="color:#94A3B8"> =</span><span style="color:#F472B6"> await</span><span style="color:#38BDF8"> render</span><span style="color:#94A3B8">(</span><span style="color:#A3E635">'./card.tsx'</span><span style="color:#94A3B8">, {"{"}</span>
-<span style="color:#38BDF8">  props</span><span style="color:#94A3B8">:</span><span style="color:#94A3B8"> {"{"} </span><span style="color:#38BDF8">title</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'Hello World'</span><span style="color:#94A3B8"> {"}"},</span>
-<span style="color:#94A3B8">{"}"});</span>
-
-<span style="color:#38BDF8">writeFileSync</span><span style="color:#94A3B8">(</span><span style="color:#A3E635">'card.png'</span><span style="color:#94A3B8">,</span><span style="color:#38BDF8"> result</span><span style="color:#94A3B8">.</span><span style="color:#38BDF8">buffer</span><span style="color:#94A3B8">);</span>
-<span style="color:#F472B6">await</span><span style="color:#38BDF8"> close</span><span style="color:#94A3B8">();</span></code></pre>
+        <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
+          <Code code={writeToFileCode} lang="typescript" theme={grafexTheme} />
         </div>
       </div>
     </section>
@@ -113,8 +170,8 @@ import CopyButton from '../../components/CopyButton.tsx';
       <p class="text-base leading-relaxed mb-6" style="color: var(--color-text-secondary);">Shut down the browser process. Call this when you are done rendering to free resources.</p>
 
       <div class="rounded-xl overflow-hidden border mb-6" style="border-color: var(--color-border-default);">
-        <div class="px-4 py-3" style="background: var(--color-bg-code);">
-          <code class="font-mono text-sm"><span style="color:#F472B6">await</span><span style="color:#38BDF8"> close</span><span style="color:#94A3B8">();</span></code>
+        <div class="overflow-x-auto [&_pre]:px-4 [&_pre]:py-3 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed">
+          <Code code={closeCallCode} lang="typescript" theme={grafexTheme} />
         </div>
       </div>
 
@@ -131,19 +188,8 @@ import CopyButton from '../../components/CopyButton.tsx';
           <span class="text-xs uppercase tracking-wider font-medium" style="color: var(--color-text-muted);">TypeScript</span>
           <CopyButton text={`import { render, close } from 'grafex';\nimport { writeFileSync } from 'node:fs';\n\nconst pages = [\n  { file: 'hero.tsx', out: 'hero.png' },\n  { file: 'card.tsx', out: 'card.png' },\n  { file: 'thumbnail.tsx', out: 'thumbnail.png' },\n];\n\nfor (const page of pages) {\n  const result = await render(page.file);\n  writeFileSync(page.out, result.buffer);\n}\n\nawait close();`} client:load />
         </div>
-        <div class="p-4 overflow-x-auto" style="background: var(--color-bg-code); max-height: 500px; overflow-y: auto;">
-          <pre class="font-mono text-sm leading-relaxed"><code><span style="color:#F472B6">const</span><span style="color:#38BDF8"> pages</span><span style="color:#94A3B8"> = [</span>
-<span style="color:#94A3B8">  {"{"} </span><span style="color:#38BDF8">file</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'hero.tsx'</span><span style="color:#94A3B8">,</span><span style="color:#38BDF8"> out</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'hero.png'</span><span style="color:#94A3B8"> {"}"},</span>
-<span style="color:#94A3B8">  {"{"} </span><span style="color:#38BDF8">file</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'card.tsx'</span><span style="color:#94A3B8">,</span><span style="color:#38BDF8"> out</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'card.png'</span><span style="color:#94A3B8"> {"}"},</span>
-<span style="color:#94A3B8">  {"{"} </span><span style="color:#38BDF8">file</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'thumbnail.tsx'</span><span style="color:#94A3B8">,</span><span style="color:#38BDF8"> out</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'thumbnail.png'</span><span style="color:#94A3B8"> {"}"},</span>
-<span style="color:#94A3B8">];</span>
-
-<span style="color:#F472B6">for</span><span style="color:#94A3B8"> (</span><span style="color:#F472B6">const</span><span style="color:#38BDF8"> page</span><span style="color:#F472B6"> of</span><span style="color:#38BDF8"> pages</span><span style="color:#94A3B8">) {"{"}</span>
-<span style="color:#F472B6">  const</span><span style="color:#38BDF8"> result</span><span style="color:#94A3B8"> =</span><span style="color:#F472B6"> await</span><span style="color:#38BDF8"> render</span><span style="color:#94A3B8">(</span><span style="color:#38BDF8">page</span><span style="color:#94A3B8">.</span><span style="color:#38BDF8">file</span><span style="color:#94A3B8">);</span>
-<span style="color:#38BDF8">  writeFileSync</span><span style="color:#94A3B8">(</span><span style="color:#38BDF8">page</span><span style="color:#94A3B8">.</span><span style="color:#38BDF8">out</span><span style="color:#94A3B8">,</span><span style="color:#38BDF8"> result</span><span style="color:#94A3B8">.</span><span style="color:#38BDF8">buffer</span><span style="color:#94A3B8">);</span>
-<span style="color:#94A3B8">{"}"}</span>
-
-<span style="color:#F472B6">await</span><span style="color:#38BDF8"> close</span><span style="color:#94A3B8">();</span></code></pre>
+        <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
+          <Code code={renderMultipleCode} lang="typescript" theme={grafexTheme} />
         </div>
       </div>
     </section>
@@ -158,8 +204,8 @@ import CopyButton from '../../components/CopyButton.tsx';
           <span class="text-xs uppercase tracking-wider font-medium" style="color: var(--color-text-muted);">TypeScript</span>
           <CopyButton text="import { h, Fragment, renderToHTML, BrowserManager } from 'grafex';" client:load />
         </div>
-        <div class="px-4 py-3" style="background: var(--color-bg-code);">
-          <code class="font-mono text-sm"><span style="color:#F472B6">import</span><span style="color:#94A3B8"> {"{"} </span><span style="color:#38BDF8">h</span><span style="color:#94A3B8">,</span><span style="color:#38BDF8"> Fragment</span><span style="color:#94A3B8">,</span><span style="color:#38BDF8"> renderToHTML</span><span style="color:#94A3B8">,</span><span style="color:#38BDF8"> BrowserManager</span><span style="color:#94A3B8"> {"}"} </span><span style="color:#F472B6">from</span><span style="color:#A3E635"> 'grafex'</span><span style="color:#94A3B8">;</span></code>
+        <div class="overflow-x-auto [&_pre]:px-4 [&_pre]:py-3 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed">
+          <Code code={advancedImportCode} lang="typescript" theme={grafexTheme} />
         </div>
       </div>
 
@@ -193,33 +239,44 @@ import CopyButton from '../../components/CopyButton.tsx';
       <h2 class="font-heading font-bold text-2xl mb-6" style="color: var(--color-text-primary);">Types</h2>
 
       <div class="space-y-6">
-        {[
-          {
-            name: 'CompositionConfig',
-            code: `interface CompositionConfig {\n  width?: number;   // Image width in pixels (default: 1200)\n  height?: number;  // Image height in pixels (default: 630)\n  format?: 'png';   // Output format (only PNG supported)\n  fonts?: string[]; // URLs to font stylesheets (e.g., Google Fonts)\n  scale?: number;   // Device pixel ratio (default: 1)\n}`,
-          },
-          {
-            name: 'RenderResult',
-            code: `interface RenderResult {\n  buffer: Buffer;   // PNG image data\n  width: number;    // Effective render width (after scaling)\n  height: number;   // Effective render height (after scaling)\n  format: 'png';    // Output format\n  scale: number;    // Device pixel ratio used\n}`,
-          },
-          {
-            name: 'RenderOptions',
-            code: `interface RenderOptions {\n  props?: Record<string, unknown>;  // Props passed to the composition\n  width?: number;                   // Override width in pixels\n  height?: number;                  // Override height in pixels\n  browser?: 'webkit';              // Browser engine\n  scale?: number;                  // Device pixel ratio (default: 1)\n}`,
-          },
-        ].map((type) => (
-          <div>
-            <h3 class="font-heading font-semibold text-lg mb-3" style="color: var(--color-text-primary);">{type.name}</h3>
-            <div class="rounded-xl overflow-hidden border" style="border-color: var(--color-border-default);">
-              <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
-                <span class="text-xs uppercase tracking-wider font-medium" style="color: var(--color-text-muted);">TypeScript</span>
-                <CopyButton text={type.code} client:load />
-              </div>
-              <div class="p-4 overflow-x-auto" style="background: var(--color-bg-code); max-height: 500px; overflow-y: auto;">
-                <pre class="font-mono text-sm leading-relaxed"><code set:html={type.code.replace(/interface/g, '<span style="color:#F472B6">interface</span>').replace(/(\w+)\?:/g, '<span style="color:#38BDF8">$1</span>?:').replace(/'png'/g, '<span style="color:#A3E635">\'png\'</span>').replace(/\/\/.*/g, (m) => `<span style="color:#64748B">${m}</span>`).replace(/number|string|Buffer/g, '<span style="color:#F472B6">$&</span>')} /></code></pre>
-              </div>
+        <div>
+          <h3 class="font-heading font-semibold text-lg mb-3" style="color: var(--color-text-primary);">CompositionConfig</h3>
+          <div class="rounded-xl overflow-hidden border" style="border-color: var(--color-border-default);">
+            <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
+              <span class="text-xs uppercase tracking-wider font-medium" style="color: var(--color-text-muted);">TypeScript</span>
+              <CopyButton text={`interface CompositionConfig {\n  width?: number;          // Image width in pixels (default: 1200)\n  height?: number;         // Image height in pixels (default: 630)\n  format?: 'png' | 'jpeg'; // Output format (default: 'png')\n  quality?: number;        // JPEG quality 1-100 (default: 90)\n  fonts?: string[];        // URLs to font stylesheets (e.g., Google Fonts)\n  css?: string[];           // CSS file paths to inject\n  scale?: number;          // Device pixel ratio (default: 1)\n}`} client:load />
+            </div>
+            <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
+              <Code code={compositionConfigTypeCode} lang="typescript" theme={grafexTheme} />
             </div>
           </div>
-        ))}
+        </div>
+
+        <div>
+          <h3 class="font-heading font-semibold text-lg mb-3" style="color: var(--color-text-primary);">RenderResult</h3>
+          <div class="rounded-xl overflow-hidden border" style="border-color: var(--color-border-default);">
+            <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
+              <span class="text-xs uppercase tracking-wider font-medium" style="color: var(--color-text-muted);">TypeScript</span>
+              <CopyButton text={`interface RenderResult {\n  buffer: Buffer;          // Image data\n  width: number;           // Effective render width (after scaling)\n  height: number;          // Effective render height (after scaling)\n  format: 'png' | 'jpeg';  // Output format\n  scale: number;           // Device pixel ratio used\n}`} client:load />
+            </div>
+            <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
+              <Code code={renderResultFullTypeCode} lang="typescript" theme={grafexTheme} />
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h3 class="font-heading font-semibold text-lg mb-3" style="color: var(--color-text-primary);">RenderOptions</h3>
+          <div class="rounded-xl overflow-hidden border" style="border-color: var(--color-border-default);">
+            <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
+              <span class="text-xs uppercase tracking-wider font-medium" style="color: var(--color-text-muted);">TypeScript</span>
+              <CopyButton text={`interface RenderOptions {\n  props?: Record<string, unknown>;  // Props passed to the composition\n  width?: number;                   // Override width in pixels\n  height?: number;                  // Override height in pixels\n  format?: 'png' | 'jpeg';          // Output format (default: 'png')\n  quality?: number;                  // JPEG quality 1-100 (default: 90)\n  browser?: 'webkit';                // Browser engine\n  scale?: number;                    // Device pixel ratio (default: 1)\n}`} client:load />
+            </div>
+            <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
+              <Code code={renderOptionsTypeCode} lang="typescript" theme={grafexTheme} />
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   </article>

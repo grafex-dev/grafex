@@ -1,16 +1,155 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import CopyButton from '../../components/CopyButton.tsx';
+import { Code } from 'astro:components';
+import { grafexTheme } from '../../shiki-theme';
+
+const cardCode = `import type { CompositionConfig } from 'grafex';
+
+export const config: CompositionConfig = {
+  width: 1200,
+  height: 630,
+};
+
+export default function Card() {
+  return (
+    <div
+      style={{
+        width: '100%',
+        height: '100%',
+        background: 'linear-gradient(135deg, #667eea, #764ba2)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: 'white',
+        fontSize: '64px',
+        fontWeight: 'bold',
+        fontFamily: 'system-ui, sans-serif',
+      }}
+    >
+      Hello, Grafex!
+    </div>
+  );
+}`;
+
+const ogCardCode = `export const config = {
+  width: 600,
+  height: 400,
+};
+
+export default function OgCard() {
+  return (
+    <div style={{
+      width: '100%',
+      height: '100%',
+      background: 'linear-gradient(145deg, #0f172a 0%, #1e293b 100%)',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'space-between',
+      padding: '52px',
+      fontFamily: 'system-ui, -apple-system, sans-serif',
+      position: 'relative',
+      overflow: 'hidden',
+    }}>
+      {/* Top accent glow */}
+      <div style={{
+        position: 'absolute',
+        top: '-60px',
+        right: '-60px',
+        width: '300px',
+        height: '300px',
+        background: 'radial-gradient(circle, rgba(244,114,182,0.2) 0%, transparent 70%)',
+      }} />
+
+      {/* Top: tag */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', zIndex: 1 }}>
+        <div style={{
+          background: 'rgba(163,230,53,0.15)',
+          border: '1px solid rgba(163,230,53,0.3)',
+          borderRadius: '6px',
+          padding: '4px 12px',
+          color: '#A3E635',
+          fontSize: '12px',
+          fontWeight: '600',
+          letterSpacing: '0.08em',
+          textTransform: 'uppercase',
+        }}>
+          Tutorial
+        </div>
+        <span style={{ color: '#475569', fontSize: '13px' }}>5 min read</span>
+      </div>
+
+      {/* Middle: title */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', zIndex: 1 }}>
+        <div style={{
+          color: '#F1F5F9',
+          fontSize: '36px',
+          fontWeight: '700',
+          lineHeight: '1.2',
+          letterSpacing: '-0.5px',
+        }}>
+          Building Modern APIs
+        </div>
+        <div style={{ color: '#94A3B8', fontSize: '16px', lineHeight: '1.5' }}>
+          Best practices for REST and GraphQL in 2026
+        </div>
+      </div>
+
+      {/* Bottom: author + meta */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', zIndex: 1 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{
+            width: '36px',
+            height: '36px',
+            borderRadius: '50%',
+            background: 'linear-gradient(135deg, #F472B6, #38BDF8)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: 'white',
+            fontSize: '14px',
+            fontWeight: '700',
+            flexShrink: 0,
+          }}>
+            JS
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+            <span style={{ color: '#E2E8F0', fontSize: '14px', fontWeight: '600' }}>Jane Smith</span>
+            <span style={{ color: '#64748B', fontSize: '12px' }}>March 15, 2026</span>
+          </div>
+        </div>
+        <div style={{
+          color: '#475569',
+          fontSize: '13px',
+          fontWeight: '600',
+          letterSpacing: '0.05em',
+        }}>
+          dev.blog
+        </div>
+      </div>
+
+      {/* Bottom-left accent stripe */}
+      <div style={{
+        position: 'absolute',
+        bottom: '0',
+        left: '0',
+        right: '0',
+        height: '3px',
+        background: 'linear-gradient(90deg, #F472B6, #38BDF8, #A3E635)',
+      }} />
+    </div>
+  );
+}`;
 ---
 
 <DocsLayout
   title="Getting Started"
-  description="Go from zero to a rendered PNG in under 5 minutes."
+  description="Go from zero to a rendered image in under 5 minutes."
   currentPage="/docs/getting-started"
 >
   <article>
     <h1 class="font-heading font-bold text-4xl mb-2" style="color: var(--color-text-primary);">Getting Started</h1>
-    <p class="text-lg mb-12" style="color: var(--color-text-secondary);">Go from zero to a rendered PNG in under 5 minutes.</p>
+    <p class="text-lg mb-12" style="color: var(--color-text-secondary);">Go from zero to a rendered image in under 5 minutes.</p>
 
     <!-- Install -->
     <section class="mb-12">
@@ -50,36 +189,10 @@ import CopyButton from '../../components/CopyButton.tsx';
       <div class="rounded-xl overflow-hidden border mb-6" style="border-color: var(--color-border-default);">
         <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
           <span class="text-xs font-mono" style="color: var(--color-text-muted);">card.tsx</span>
-          <CopyButton text={`import type { CompositionConfig } from 'grafex';\n\nexport const config: CompositionConfig = {\n  width: 1200,\n  height: 630,\n};\n\nexport default function Card() {\n  return (\n    <div\n      style={{\n        width: '100%',\n        height: '100%',\n        background: 'linear-gradient(135deg, #667eea, #764ba2)',\n        display: 'flex',\n        alignItems: 'center',\n        justifyContent: 'center',\n        color: 'white',\n        fontSize: '64px',\n        fontWeight: 'bold',\n        fontFamily: 'system-ui, sans-serif',\n      }}\n    >\n      Hello, Grafex!\n    </div>\n  );\n}`} client:load />
+          <CopyButton text={cardCode} client:load />
         </div>
-        <div class="p-4 overflow-x-auto" style="background: var(--color-bg-code); max-height: 500px; overflow-y: auto;">
-          <pre class="font-mono text-sm leading-relaxed"><code><span style="color:#F472B6">import</span><span style="color:#94A3B8"> type </span><span style="color:#94A3B8">{"{"} </span><span style="color:#38BDF8">CompositionConfig</span><span style="color:#94A3B8"> {"}"} </span><span style="color:#F472B6">from</span><span style="color:#A3E635"> 'grafex'</span><span style="color:#94A3B8">;</span>
-
-<span style="color:#F472B6">export</span><span style="color:#F472B6"> const</span><span style="color:#38BDF8"> config</span><span style="color:#94A3B8">:</span><span style="color:#38BDF8"> CompositionConfig</span><span style="color:#94A3B8"> = {"{"}</span>
-<span style="color:#38BDF8">  width</span><span style="color:#94A3B8">:</span><span style="color:#FB923C"> 1200</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">  height</span><span style="color:#94A3B8">:</span><span style="color:#FB923C"> 630</span><span style="color:#94A3B8">,</span>
-<span style="color:#94A3B8">{"}"};</span>
-
-<span style="color:#F472B6">export</span><span style="color:#F472B6"> default</span><span style="color:#F472B6"> function</span><span style="color:#38BDF8"> Card</span><span style="color:#94A3B8">() {"{"}</span>
-<span style="color:#F472B6">  return</span><span style="color:#94A3B8"> (</span>
-<span style="color:#F472B6">    &lt;div</span>
-<span style="color:#38BDF8">      style</span><span style="color:#94A3B8">={"{{"}</span>
-<span style="color:#38BDF8">        width</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '100%'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">        height</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '100%'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">        background</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'linear-gradient(135deg, #667eea, #764ba2)'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">        display</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'flex'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">        alignItems</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'center'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">        justifyContent</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'center'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">        color</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'white'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">        fontSize</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '64px'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">        fontWeight</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'bold'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">        fontFamily</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'system-ui, sans-serif'</span><span style="color:#94A3B8">,</span>
-<span style="color:#94A3B8">      {"}}"}</span>
-<span style="color:#F472B6">    &gt;</span>
-      Hello, Grafex!
-<span style="color:#F472B6">    &lt;/div&gt;</span>
-  <span style="color:#94A3B8">);</span>
-<span style="color:#94A3B8">{"}"}</span></code></pre>
+        <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
+          <Code code={cardCode} lang="tsx" theme={grafexTheme} />
         </div>
       </div>
 
@@ -105,14 +218,14 @@ import CopyButton from '../../components/CopyButton.tsx';
       </div>
 
       <p class="text-base leading-relaxed" style="color: var(--color-text-secondary);">
-        Grafex bundles your composition with esbuild, renders it in a headless WebKit instance, and saves the screenshot as a PNG. The output is a 1200×630 image with your gradient background and centered text.
+        Grafex bundles your composition with esbuild, renders it in a headless WebKit instance, and saves the screenshot as an image. The output is a 1200×630 image with your gradient background and centered text.
       </p>
     </section>
 
     <!-- See it in action -->
     <section class="mb-12">
       <h2 class="font-heading font-bold text-2xl mb-4" style="color: var(--color-text-primary);">See it in action</h2>
-      <p class="text-base leading-relaxed mb-6" style="color: var(--color-text-secondary);">This is the kind of image Grafex can generate. Code on the left, rendered PNG on the right — no browser window, no server, just one CLI command.</p>
+      <p class="text-base leading-relaxed mb-6" style="color: var(--color-text-secondary);">This is the kind of image Grafex can generate. Write the code, run one command, see the result — no browser window, no server.</p>
 
       <div class="rounded-xl overflow-hidden border" style="border-color: var(--color-border-default);">
         <!-- Code pane -->
@@ -120,115 +233,8 @@ import CopyButton from '../../components/CopyButton.tsx';
           <div class="flex items-center justify-between px-4 py-2.5 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
             <span class="text-xs font-mono" style="color: var(--color-text-muted);">og-card.tsx</span>
           </div>
-          <div class="p-5 overflow-x-auto" style="background: var(--color-bg-code); max-height: 500px; overflow-y: auto;">
-            <pre class="font-mono text-sm leading-relaxed text-left"><code><span style="color:#F472B6">export</span><span style="color:#F472B6"> const</span><span style="color:#38BDF8"> config</span><span style="color:#94A3B8"> = {"{"}</span>
-<span style="color:#38BDF8">  width</span><span style="color:#94A3B8">:</span><span style="color:#FB923C"> 600</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">  height</span><span style="color:#94A3B8">:</span><span style="color:#FB923C"> 400</span><span style="color:#94A3B8">,</span>
-<span style="color:#94A3B8">{"}"};</span>
-
-<span style="color:#F472B6">export</span><span style="color:#F472B6"> default</span><span style="color:#F472B6"> function</span><span style="color:#38BDF8"> OgCard</span><span style="color:#94A3B8">() {"{"}</span>
-<span style="color:#F472B6">  return</span><span style="color:#94A3B8"> (</span>
-<span style="color:#F472B6">    &lt;div</span><span style="color:#38BDF8"> style</span><span style="color:#94A3B8">={"{{"}</span>
-<span style="color:#38BDF8">      width</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '100%'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">      height</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '100%'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">      background</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'linear-gradient(145deg, #0f172a 0%, #1e293b 100%)'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">      display</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'flex'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">      flexDirection</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'column'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">      justifyContent</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'space-between'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">      padding</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '52px'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">      fontFamily</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'system-ui, -apple-system, sans-serif'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">      position</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'relative'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">      overflow</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'hidden'</span><span style="color:#94A3B8">,</span>
-<span style="color:#94A3B8">    {"}}"}&gt;</span>
-<span style="color:#94A3B8">      {"{"}/</span><span style="color:#94A3B8">* Top accent glow *{"/"}</span><span style="color:#94A3B8">{"}"}</span>
-<span style="color:#F472B6">      &lt;div</span><span style="color:#38BDF8"> style</span><span style="color:#94A3B8">={"{{"}</span>
-<span style="color:#38BDF8">        position</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'absolute'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">        top</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '-60px'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">        right</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '-60px'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">        width</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '300px'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">        height</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '300px'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">        background</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'radial-gradient(circle, rgba(244,114,182,0.2) 0%, transparent 70%)'</span><span style="color:#94A3B8">,</span>
-<span style="color:#94A3B8">      {"}"}</span><span style="color:#94A3B8">{"}"}</span><span style="color:#F472B6"> /&gt;</span>
-
-<span style="color:#94A3B8">      {"{"}/</span><span style="color:#94A3B8">* Top: tag *{"/"}</span><span style="color:#94A3B8">{"}"}</span>
-<span style="color:#F472B6">      &lt;div</span><span style="color:#38BDF8"> style</span><span style="color:#94A3B8">={"{{"} </span><span style="color:#38BDF8">display</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'flex'</span><span style="color:#94A3B8">, </span><span style="color:#38BDF8">alignItems</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'center'</span><span style="color:#94A3B8">, </span><span style="color:#38BDF8">gap</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '12px'</span><span style="color:#94A3B8">, </span><span style="color:#38BDF8">zIndex</span><span style="color:#94A3B8">:</span><span style="color:#FB923C"> 1</span><span style="color:#94A3B8"> {"}}"}&gt;</span>
-<span style="color:#F472B6">        &lt;div</span><span style="color:#38BDF8"> style</span><span style="color:#94A3B8">={"{{"}</span>
-<span style="color:#38BDF8">          background</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'rgba(163,230,53,0.15)'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">          border</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '1px solid rgba(163,230,53,0.3)'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">          borderRadius</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '6px'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">          padding</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '4px 12px'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">          color</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '#A3E635'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">          fontSize</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '12px'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">          fontWeight</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '600'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">          letterSpacing</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '0.08em'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">          textTransform</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'uppercase'</span><span style="color:#94A3B8">,</span>
-<span style="color:#94A3B8">        {"}}"}&gt;</span>
-          Tutorial
-<span style="color:#F472B6">        &lt;/div&gt;</span>
-<span style="color:#F472B6">        &lt;span</span><span style="color:#38BDF8"> style</span><span style="color:#94A3B8">={"{{"} </span><span style="color:#38BDF8">color</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '#475569'</span><span style="color:#94A3B8">, </span><span style="color:#38BDF8">fontSize</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '13px'</span><span style="color:#94A3B8"> {"}}"}&gt;</span>5 min read<span style="color:#F472B6">&lt;/span&gt;</span>
-<span style="color:#F472B6">      &lt;/div&gt;</span>
-
-<span style="color:#94A3B8">      {"{"}/</span><span style="color:#94A3B8">* Middle: title *{"/"}</span><span style="color:#94A3B8">{"}"}</span>
-<span style="color:#F472B6">      &lt;div</span><span style="color:#38BDF8"> style</span><span style="color:#94A3B8">={"{{"} </span><span style="color:#38BDF8">display</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'flex'</span><span style="color:#94A3B8">, </span><span style="color:#38BDF8">flexDirection</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'column'</span><span style="color:#94A3B8">, </span><span style="color:#38BDF8">gap</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '16px'</span><span style="color:#94A3B8">, </span><span style="color:#38BDF8">zIndex</span><span style="color:#94A3B8">:</span><span style="color:#FB923C"> 1</span><span style="color:#94A3B8"> {"}}"}&gt;</span>
-<span style="color:#F472B6">        &lt;div</span><span style="color:#38BDF8"> style</span><span style="color:#94A3B8">={"{{"}</span>
-<span style="color:#38BDF8">          color</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '#F1F5F9'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">          fontSize</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '36px'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">          fontWeight</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '700'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">          lineHeight</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '1.2'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">          letterSpacing</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '-0.5px'</span><span style="color:#94A3B8">,</span>
-<span style="color:#94A3B8">        {"}}"}&gt;</span>
-          Building Modern APIs
-<span style="color:#F472B6">        &lt;/div&gt;</span>
-<span style="color:#F472B6">        &lt;div</span><span style="color:#38BDF8"> style</span><span style="color:#94A3B8">={"{{"} </span><span style="color:#38BDF8">color</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '#94A3B8'</span><span style="color:#94A3B8">, </span><span style="color:#38BDF8">fontSize</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '16px'</span><span style="color:#94A3B8">, </span><span style="color:#38BDF8">lineHeight</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '1.5'</span><span style="color:#94A3B8"> {"}}"}&gt;</span>
-          Best practices for REST and GraphQL in 2026
-<span style="color:#F472B6">        &lt;/div&gt;</span>
-<span style="color:#F472B6">      &lt;/div&gt;</span>
-
-<span style="color:#94A3B8">      {"{"}/</span><span style="color:#94A3B8">* Bottom: author + meta *{"/"}</span><span style="color:#94A3B8">{"}"}</span>
-<span style="color:#F472B6">      &lt;div</span><span style="color:#38BDF8"> style</span><span style="color:#94A3B8">={"{{"} </span><span style="color:#38BDF8">display</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'flex'</span><span style="color:#94A3B8">, </span><span style="color:#38BDF8">alignItems</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'center'</span><span style="color:#94A3B8">, </span><span style="color:#38BDF8">justifyContent</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'space-between'</span><span style="color:#94A3B8">, </span><span style="color:#38BDF8">zIndex</span><span style="color:#94A3B8">:</span><span style="color:#FB923C"> 1</span><span style="color:#94A3B8"> {"}}"}&gt;</span>
-<span style="color:#F472B6">        &lt;div</span><span style="color:#38BDF8"> style</span><span style="color:#94A3B8">={"{{"} </span><span style="color:#38BDF8">display</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'flex'</span><span style="color:#94A3B8">, </span><span style="color:#38BDF8">alignItems</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'center'</span><span style="color:#94A3B8">, </span><span style="color:#38BDF8">gap</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '12px'</span><span style="color:#94A3B8"> {"}}"}&gt;</span>
-<span style="color:#F472B6">          &lt;div</span><span style="color:#38BDF8"> style</span><span style="color:#94A3B8">={"{{"}</span>
-<span style="color:#38BDF8">            width</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '36px'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">            height</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '36px'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">            borderRadius</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '50%'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">            background</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'linear-gradient(135deg, #F472B6, #38BDF8)'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">            display</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'flex'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">            alignItems</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'center'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">            justifyContent</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'center'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">            color</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'white'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">            fontSize</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '14px'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">            fontWeight</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '700'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">            flexShrink</span><span style="color:#94A3B8">:</span><span style="color:#FB923C"> 0</span><span style="color:#94A3B8">,</span>
-<span style="color:#94A3B8">          {"}}"}&gt;</span>
-            JS
-<span style="color:#F472B6">          &lt;/div&gt;</span>
-<span style="color:#F472B6">          &lt;div</span><span style="color:#38BDF8"> style</span><span style="color:#94A3B8">={"{{"} </span><span style="color:#38BDF8">display</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'flex'</span><span style="color:#94A3B8">, </span><span style="color:#38BDF8">flexDirection</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'column'</span><span style="color:#94A3B8">, </span><span style="color:#38BDF8">gap</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '2px'</span><span style="color:#94A3B8"> {"}}"}&gt;</span>
-<span style="color:#F472B6">            &lt;span</span><span style="color:#38BDF8"> style</span><span style="color:#94A3B8">={"{{"} </span><span style="color:#38BDF8">color</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '#E2E8F0'</span><span style="color:#94A3B8">, </span><span style="color:#38BDF8">fontSize</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '14px'</span><span style="color:#94A3B8">, </span><span style="color:#38BDF8">fontWeight</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '600'</span><span style="color:#94A3B8"> {"}}"}&gt;</span>Jane Smith<span style="color:#F472B6">&lt;/span&gt;</span>
-<span style="color:#F472B6">            &lt;span</span><span style="color:#38BDF8"> style</span><span style="color:#94A3B8">={"{{"} </span><span style="color:#38BDF8">color</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '#64748B'</span><span style="color:#94A3B8">, </span><span style="color:#38BDF8">fontSize</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '12px'</span><span style="color:#94A3B8"> {"}}"}&gt;</span>March 15, 2026<span style="color:#F472B6">&lt;/span&gt;</span>
-<span style="color:#F472B6">          &lt;/div&gt;</span>
-<span style="color:#F472B6">        &lt;/div&gt;</span>
-<span style="color:#F472B6">        &lt;div</span><span style="color:#38BDF8"> style</span><span style="color:#94A3B8">={"{{"}</span>
-<span style="color:#38BDF8">          color</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '#475569'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">          fontSize</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '13px'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">          fontWeight</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '600'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">          letterSpacing</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '0.05em'</span><span style="color:#94A3B8">,</span>
-<span style="color:#94A3B8">        {"}}"}&gt;</span>
-          dev.blog
-<span style="color:#F472B6">        &lt;/div&gt;</span>
-<span style="color:#F472B6">      &lt;/div&gt;</span>
-
-<span style="color:#94A3B8">      {"{"}/</span><span style="color:#94A3B8">* Bottom-left accent stripe *{"/"}</span><span style="color:#94A3B8">{"}"}</span>
-<span style="color:#F472B6">      &lt;div</span><span style="color:#38BDF8"> style</span><span style="color:#94A3B8">={"{{"}</span>
-<span style="color:#38BDF8">        position</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'absolute'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">        bottom</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '0'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">        left</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '0'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">        right</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '0'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">        height</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '3px'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">        background</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'linear-gradient(90deg, #F472B6, #38BDF8, #A3E635)'</span><span style="color:#94A3B8">,</span>
-<span style="color:#94A3B8">      {"}"}</span><span style="color:#94A3B8">{"}"}</span><span style="color:#F472B6"> /&gt;</span>
-<span style="color:#F472B6">    &lt;/div&gt;</span>
-  <span style="color:#94A3B8">);</span>
-<span style="color:#94A3B8">{"}"}</span></code></pre>
+          <div class="overflow-x-auto [&_pre]:p-5 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
+            <Code code={ogCardCode} lang="tsx" theme={grafexTheme} />
           </div>
         </div>
 

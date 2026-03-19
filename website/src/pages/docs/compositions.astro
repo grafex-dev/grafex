@@ -1,6 +1,210 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import CopyButton from '../../components/CopyButton.tsx';
+import { Code } from 'astro:components';
+import { grafexTheme } from '../../shiki-theme';
+
+const overviewCode = `import type { CompositionConfig } from 'grafex';
+
+// 1. Config — sets output dimensions
+export const config: CompositionConfig = {
+  width: 1200,
+  height: 630,
+};
+
+// 2. Default export — the image layout
+export default function MyImage() {
+  return <div style={{ color: 'white' }}>Hello</div>;
+}`;
+
+const compositionConfigCode = `interface CompositionConfig {
+  width?: number;          // Image width in pixels (default: 1200)
+  height?: number;         // Image height in pixels (default: 630)
+  format?: 'png' | 'jpeg'; // Output format (default: 'png')
+  quality?: number;        // JPEG quality 1-100 (default: 90)
+  fonts?: string[];        // URLs to font stylesheets (e.g., Google Fonts)
+  scale?: number;          // Device pixel ratio (default: 1)
+}`;
+
+const customFontsCode = `import type { CompositionConfig } from 'grafex';
+
+export const config: CompositionConfig = {
+  width: 1200,
+  height: 630,
+  fonts: [
+    'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap',
+  ],
+};
+
+export default function Card() {
+  return (
+    <h1 style={{ fontFamily: "'Playfair Display', serif" }}>Hello</h1>
+  );
+}`;
+
+const stylingCode = `<div
+  style={{
+    display: 'flex',
+    flexDirection: 'column',
+    background: 'linear-gradient(135deg, #667eea, #764ba2)',
+    padding: '40px',
+    gap: '16px',
+    borderRadius: '12px',
+    boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
+  }}
+>
+  {/* content */}
+</div>`;
+
+const propsCode = `interface Props {
+  title: string;
+  date: string;
+}
+
+export default function BlogCard({ title, date }: Props) {
+  return (
+    <div style={{ padding: '80px', ... }}>
+      <div style={{ fontSize: '48px' }}>{title}</div>
+      <div style={{ color: '#94a3b8' }}>{date}</div>
+    </div>
+  );
+}`;
+
+const ogCardFullCode = `export const config = {
+  width: 600,
+  height: 400,
+};
+
+export default function OgCard() {
+  return (
+    <div style={{
+      width: '100%',
+      height: '100%',
+      background: 'linear-gradient(145deg, #0f172a 0%, #1e293b 100%)',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'space-between',
+      padding: '52px',
+      fontFamily: 'system-ui, -apple-system, sans-serif',
+      position: 'relative',
+      overflow: 'hidden',
+    }}>
+      {/* Top accent glow */}
+      <div style={{
+        position: 'absolute',
+        top: '-60px',
+        right: '-60px',
+        width: '300px',
+        height: '300px',
+        background: 'radial-gradient(circle, rgba(244,114,182,0.2) 0%, transparent 70%)',
+      }} />
+
+      {/* Top: tag */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', zIndex: 1 }}>
+        <div style={{
+          background: 'rgba(163,230,53,0.15)',
+          border: '1px solid rgba(163,230,53,0.3)',
+          borderRadius: '6px',
+          padding: '4px 12px',
+          color: '#A3E635',
+          fontSize: '12px',
+          fontWeight: '600',
+          letterSpacing: '0.08em',
+          textTransform: 'uppercase',
+        }}>
+          Tutorial
+        </div>
+        <span style={{ color: '#475569', fontSize: '13px' }}>5 min read</span>
+      </div>
+
+      {/* Middle: title */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', zIndex: 1 }}>
+        <div style={{
+          color: '#F1F5F9',
+          fontSize: '36px',
+          fontWeight: '700',
+          lineHeight: '1.2',
+          letterSpacing: '-0.5px',
+        }}>
+          Building Modern APIs
+        </div>
+        <div style={{ color: '#94A3B8', fontSize: '16px', lineHeight: '1.5' }}>
+          Best practices for REST and GraphQL in 2026
+        </div>
+      </div>
+
+      {/* Bottom: author + meta */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', zIndex: 1 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{
+            width: '36px',
+            height: '36px',
+            borderRadius: '50%',
+            background: 'linear-gradient(135deg, #F472B6, #38BDF8)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: 'white',
+            fontSize: '14px',
+            fontWeight: '700',
+            flexShrink: 0,
+          }}>
+            JS
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+            <span style={{ color: '#E2E8F0', fontSize: '14px', fontWeight: '600' }}>Jane Smith</span>
+            <span style={{ color: '#64748B', fontSize: '12px' }}>March 15, 2026</span>
+          </div>
+        </div>
+        <div style={{
+          color: '#475569',
+          fontSize: '13px',
+          fontWeight: '600',
+          letterSpacing: '0.05em',
+        }}>
+          dev.blog
+        </div>
+      </div>
+
+      {/* Bottom-left accent stripe */}
+      <div style={{
+        position: 'absolute',
+        bottom: '0',
+        left: '0',
+        right: '0',
+        height: '3px',
+        background: 'linear-gradient(90deg, #F472B6, #38BDF8, #A3E635)',
+      }} />
+    </div>
+  );
+}`;
+
+const badgeComponentCode = `interface BadgeProps {
+  label: string;
+  color: string;
+}
+
+export function Badge({ label, color }: BadgeProps) {
+  return (
+    <span style={{ background: color, padding: '4px 12px', ... }}>
+      {label}
+    </span>
+  );
+}`;
+
+const usingComponentCode = `import type { CompositionConfig } from 'grafex';
+import { Badge } from './components/badge';
+
+export const config: CompositionConfig = { width: 1200, height: 630 };
+
+export default function OgImage() {
+  return (
+    <div style={{ background: '#1e293b', ... }}>
+      <Badge label="New" color="#a3e635" />
+      <div style={{ fontSize: '48px' }}>Grafex v0.1</div>
+    </div>
+  );
+}`;
 ---
 
 <DocsLayout
@@ -20,21 +224,10 @@ import CopyButton from '../../components/CopyButton.tsx';
       <div class="rounded-xl overflow-hidden border mb-4" style="border-color: var(--color-border-default);">
         <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
           <span class="text-xs font-mono" style="color: var(--color-text-muted);">example.tsx</span>
-          <CopyButton text={`import type { CompositionConfig } from 'grafex';\n\n// 1. Config — sets output dimensions\nexport const config: CompositionConfig = {\n  width: 1200,\n  height: 630,\n};\n\n// 2. Default export — the image layout\nexport default function MyImage() {\n  return <div style={{ color: 'white' }}>Hello</div>;\n}`} client:load />
+          <CopyButton text={overviewCode} client:load />
         </div>
-        <div class="p-4 overflow-x-auto" style="background: var(--color-bg-code); max-height: 500px; overflow-y: auto;">
-          <pre class="font-mono text-sm leading-relaxed"><code><span style="color:#F472B6">import</span><span style="color:#94A3B8"> type </span><span style="color:#94A3B8">{"{"} </span><span style="color:#38BDF8">CompositionConfig</span><span style="color:#94A3B8"> {"}"} </span><span style="color:#F472B6">from</span><span style="color:#A3E635"> 'grafex'</span><span style="color:#94A3B8">;</span>
-
-<span style="color:#64748B">// 1. Config — sets output dimensions</span>
-<span style="color:#F472B6">export</span><span style="color:#F472B6"> const</span><span style="color:#38BDF8"> config</span><span style="color:#94A3B8">:</span><span style="color:#38BDF8"> CompositionConfig</span><span style="color:#94A3B8"> = {"{"}</span>
-<span style="color:#38BDF8">  width</span><span style="color:#94A3B8">:</span><span style="color:#FB923C"> 1200</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">  height</span><span style="color:#94A3B8">:</span><span style="color:#FB923C"> 630</span><span style="color:#94A3B8">,</span>
-<span style="color:#94A3B8">{"}"};</span>
-
-<span style="color:#64748B">// 2. Default export — the image layout</span>
-<span style="color:#F472B6">export</span><span style="color:#F472B6"> default</span><span style="color:#F472B6"> function</span><span style="color:#38BDF8"> MyImage</span><span style="color:#94A3B8">() {"{"}</span>
-<span style="color:#F472B6">  return</span><span style="color:#94A3B8"> </span><span style="color:#F472B6">&lt;div</span><span style="color:#38BDF8"> style</span><span style="color:#94A3B8">={"{{"} </span><span style="color:#38BDF8">color</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'white'</span><span style="color:#94A3B8"> {"}}"}</span><span style="color:#F472B6">&gt;</span>Hello<span style="color:#F472B6">&lt;/div&gt;</span><span style="color:#94A3B8">;</span>
-<span style="color:#94A3B8">{"}"}</span></code></pre>
+        <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
+          <Code code={overviewCode} lang="tsx" theme={grafexTheme} />
         </div>
       </div>
       <p class="text-sm" style="color: var(--color-text-secondary);">The config is optional. If omitted, Grafex defaults to 1200×630.</p>
@@ -77,16 +270,10 @@ import CopyButton from '../../components/CopyButton.tsx';
       <div class="rounded-xl overflow-hidden border mb-4" style="border-color: var(--color-border-default);">
         <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
           <span class="text-xs uppercase tracking-wider font-medium" style="color: var(--color-text-muted);">TypeScript</span>
-          <CopyButton text={`interface CompositionConfig {\n  width?: number;   // Image width in pixels (default: 1200)\n  height?: number;  // Image height in pixels (default: 630)\n  format?: 'png';   // Output format (only PNG supported)\n  fonts?: string[]; // URLs to font stylesheets (e.g., Google Fonts)\n  scale?: number;   // Device pixel ratio (default: 1)\n}`} client:load />
+          <CopyButton text={compositionConfigCode} client:load />
         </div>
-        <div class="p-4 overflow-x-auto" style="background: var(--color-bg-code); max-height: 500px; overflow-y: auto;">
-          <pre class="font-mono text-sm leading-relaxed"><code><span style="color:#F472B6">interface</span><span style="color:#38BDF8"> CompositionConfig</span><span style="color:#94A3B8"> {"{"}</span>
-<span style="color:#38BDF8">  width</span><span style="color:#94A3B8">?:</span><span style="color:#F472B6"> number</span><span style="color:#94A3B8">;</span>   <span style="color:#64748B">// Image width in pixels (default: 1200)</span>
-<span style="color:#38BDF8">  height</span><span style="color:#94A3B8">?:</span><span style="color:#F472B6"> number</span><span style="color:#94A3B8">;</span>  <span style="color:#64748B">// Image height in pixels (default: 630)</span>
-<span style="color:#38BDF8">  format</span><span style="color:#94A3B8">?:</span><span style="color:#A3E635"> 'png'</span><span style="color:#94A3B8">;</span>   <span style="color:#64748B">// Output format (only PNG supported)</span>
-<span style="color:#38BDF8">  fonts</span><span style="color:#94A3B8">?:</span><span style="color:#F472B6"> string</span><span style="color:#94A3B8">[];</span> <span style="color:#64748B">// URLs to font stylesheets (e.g., Google Fonts)</span>
-<span style="color:#38BDF8">  scale</span><span style="color:#94A3B8">?:</span><span style="color:#F472B6"> number</span><span style="color:#94A3B8">;</span>   <span style="color:#64748B">// Device pixel ratio (default: 1)</span>
-<span style="color:#94A3B8">{"}"}</span></code></pre>
+        <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
+          <Code code={compositionConfigCode} lang="typescript" theme={grafexTheme} />
         </div>
       </div>
       <p class="text-sm mb-4" style="color: var(--color-text-secondary);">Dimensions can also be overridden at export time via CLI flags (<code class="font-mono" style="color: var(--color-primary);">--width</code>, <code class="font-mono" style="color: var(--color-primary);">--height</code>) or API options. CLI/API values take precedence over the config export.</p>
@@ -101,24 +288,10 @@ import CopyButton from '../../components/CopyButton.tsx';
       <div class="rounded-xl overflow-hidden border mb-4" style="border-color: var(--color-border-default);">
         <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
           <span class="text-xs font-mono" style="color: var(--color-text-muted);">card.tsx</span>
-          <CopyButton text={`import type { CompositionConfig } from 'grafex';\n\nexport const config: CompositionConfig = {\n  width: 1200,\n  height: 630,\n  fonts: [\n    'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap',\n  ],\n};\n\nexport default function Card() {\n  return (\n    <h1 style={{ fontFamily: "'Playfair Display', serif" }}>Hello</h1>\n  );\n}`} client:load />
+          <CopyButton text={customFontsCode} client:load />
         </div>
-        <div class="p-4 overflow-x-auto" style="background: var(--color-bg-code); max-height: 500px; overflow-y: auto;">
-          <pre class="font-mono text-sm leading-relaxed"><code><span style="color:#F472B6">import</span><span style="color:#94A3B8"> type {"{"} </span><span style="color:#38BDF8">CompositionConfig</span><span style="color:#94A3B8"> {"}"} </span><span style="color:#F472B6">from</span><span style="color:#A3E635"> 'grafex'</span><span style="color:#94A3B8">;</span>
-
-<span style="color:#F472B6">export</span><span style="color:#F472B6"> const</span><span style="color:#38BDF8"> config</span><span style="color:#94A3B8">:</span><span style="color:#38BDF8"> CompositionConfig</span><span style="color:#94A3B8"> = {"{"}</span>
-<span style="color:#38BDF8">  width</span><span style="color:#94A3B8">:</span><span style="color:#FB923C"> 1200</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">  height</span><span style="color:#94A3B8">:</span><span style="color:#FB923C"> 630</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">  fonts</span><span style="color:#94A3B8">: [</span>
-<span style="color:#A3E635">    'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap'</span><span style="color:#94A3B8">,</span>
-<span style="color:#94A3B8">  ],</span>
-<span style="color:#94A3B8">{"}"};</span>
-
-<span style="color:#F472B6">export</span><span style="color:#F472B6"> default</span><span style="color:#F472B6"> function</span><span style="color:#38BDF8"> Card</span><span style="color:#94A3B8">() {"{"}</span>
-<span style="color:#F472B6">  return</span><span style="color:#94A3B8"> (</span>
-<span style="color:#F472B6">    &lt;h1</span><span style="color:#38BDF8"> style</span><span style="color:#94A3B8">={"{{"} </span><span style="color:#38BDF8">fontFamily</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> "'Playfair Display', serif"</span><span style="color:#94A3B8"> {"}}"}&gt;</span>Hello<span style="color:#F472B6">&lt;/h1&gt;</span>
-<span style="color:#94A3B8">  );</span>
-<span style="color:#94A3B8">{"}"}</span></code></pre>
+        <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
+          <Code code={customFontsCode} lang="tsx" theme={grafexTheme} />
         </div>
       </div>
 
@@ -138,22 +311,10 @@ import CopyButton from '../../components/CopyButton.tsx';
       <div class="rounded-xl overflow-hidden border mb-6" style="border-color: var(--color-border-default);">
         <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
           <span class="text-xs font-mono" style="color: var(--color-text-muted);">example.tsx</span>
-          <CopyButton text={`<div\n  style={{\n    display: 'flex',\n    flexDirection: 'column',\n    background: 'linear-gradient(135deg, #667eea, #764ba2)',\n    padding: '40px',\n    gap: '16px',\n    borderRadius: '12px',\n    boxShadow: '0 8px 24px rgba(0,0,0,0.3)',\n  }}\n>\n  {/* content */}\n</div>`} client:load />
+          <CopyButton text={stylingCode} client:load />
         </div>
-        <div class="p-4 overflow-x-auto" style="background: var(--color-bg-code); max-height: 500px; overflow-y: auto;">
-          <pre class="font-mono text-sm leading-relaxed"><code><span style="color:#F472B6">&lt;div</span>
-<span style="color:#38BDF8">  style</span><span style="color:#94A3B8">={"{{"}</span>
-<span style="color:#38BDF8">    display</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'flex'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">    flexDirection</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'column'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">    background</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'linear-gradient(135deg, #667eea, #764ba2)'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">    padding</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '40px'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">    gap</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '16px'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">    borderRadius</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '12px'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">    boxShadow</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '0 8px 24px rgba(0,0,0,0.3)'</span><span style="color:#94A3B8">,</span>
-  <span style="color:#94A3B8">{"}}"}</span>
-<span style="color:#F472B6">&gt;</span>
-  <span style="color:#64748B">{"{"}</span><span style="color:#64748B">/* content */</span><span style="color:#64748B">{"}"}</span>
-<span style="color:#F472B6">&lt;/div&gt;</span></code></pre>
+        <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
+          <Code code={stylingCode} lang="tsx" theme={grafexTheme} />
         </div>
       </div>
 
@@ -175,20 +336,8 @@ import CopyButton from '../../components/CopyButton.tsx';
           <span class="text-xs font-mono" style="color: var(--color-text-muted);">blog-card.tsx</span>
           <CopyButton text={`import type { CompositionConfig } from 'grafex';\n\nexport const config: CompositionConfig = { width: 1200, height: 630 };\n\ninterface Props {\n  title: string;\n  date: string;\n}\n\nexport default function BlogCard({ title, date }: Props) {\n  return (\n    <div\n      style={{\n        width: '100%',\n        height: '100%',\n        display: 'flex',\n        flexDirection: 'column',\n        justifyContent: 'center',\n        padding: '80px',\n        background: '#0f172a',\n        color: 'white',\n        fontFamily: 'system-ui, sans-serif',\n      }}\n    >\n      <div style={{ fontSize: '48px', fontWeight: 'bold' }}>{title}</div>\n      <div style={{ fontSize: '20px', color: '#94a3b8', marginTop: '16px' }}>{date}</div>\n    </div>\n  );\n}`} client:load />
         </div>
-        <div class="p-4 overflow-x-auto" style="background: var(--color-bg-code); max-height: 500px; overflow-y: auto;">
-          <pre class="font-mono text-sm leading-relaxed"><code><span style="color:#F472B6">interface</span><span style="color:#38BDF8"> Props</span><span style="color:#94A3B8"> {"{"}</span>
-<span style="color:#38BDF8">  title</span><span style="color:#94A3B8">:</span><span style="color:#F472B6"> string</span><span style="color:#94A3B8">;</span>
-<span style="color:#38BDF8">  date</span><span style="color:#94A3B8">:</span><span style="color:#F472B6"> string</span><span style="color:#94A3B8">;</span>
-<span style="color:#94A3B8">{"}"}</span>
-
-<span style="color:#F472B6">export</span><span style="color:#F472B6"> default</span><span style="color:#F472B6"> function</span><span style="color:#38BDF8"> BlogCard</span><span style="color:#94A3B8">({"{"} </span><span style="color:#38BDF8">title</span><span style="color:#94A3B8">,</span><span style="color:#38BDF8"> date</span><span style="color:#94A3B8"> {"}"}:</span><span style="color:#38BDF8"> Props</span><span style="color:#94A3B8">) {"{"}</span>
-<span style="color:#F472B6">  return</span><span style="color:#94A3B8"> (</span>
-<span style="color:#F472B6">    &lt;div</span><span style="color:#38BDF8"> style</span><span style="color:#94A3B8">={"{{"} </span><span style="color:#38BDF8">padding</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '80px'</span><span style="color:#94A3B8">, ... {"}}"}</span><span style="color:#F472B6">&gt;</span>
-<span style="color:#F472B6">      &lt;div</span><span style="color:#38BDF8"> style</span><span style="color:#94A3B8">={"{{"} </span><span style="color:#38BDF8">fontSize</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '48px'</span><span style="color:#94A3B8"> {"}}"}</span><span style="color:#F472B6">&gt;</span><span style="color:#94A3B8">{"{"}</span><span style="color:#38BDF8">title</span><span style="color:#94A3B8">{"}"}</span><span style="color:#F472B6">&lt;/div&gt;</span>
-<span style="color:#F472B6">      &lt;div</span><span style="color:#38BDF8"> style</span><span style="color:#94A3B8">={"{{"} </span><span style="color:#38BDF8">color</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '#94a3b8'</span><span style="color:#94A3B8"> {"}}"}</span><span style="color:#F472B6">&gt;</span><span style="color:#94A3B8">{"{"}</span><span style="color:#38BDF8">date</span><span style="color:#94A3B8">{"}"}</span><span style="color:#F472B6">&lt;/div&gt;</span>
-<span style="color:#F472B6">    &lt;/div&gt;</span>
-  <span style="color:#94A3B8">);</span>
-<span style="color:#94A3B8">{"}"}</span></code></pre>
+        <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
+          <Code code={propsCode} lang="tsx" theme={grafexTheme} />
         </div>
       </div>
 
@@ -208,117 +357,10 @@ import CopyButton from '../../components/CopyButton.tsx';
       <div class="rounded-xl overflow-hidden border mb-4" style="border-color: var(--color-border-default);">
         <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
           <span class="text-xs font-mono" style="color: var(--color-text-muted);">og-card.tsx</span>
-          <CopyButton text={`export const config = {\n  width: 600,\n  height: 400,\n};\n\nexport default function OgCard() {\n  return (\n    <div style={{\n      width: '100%',\n      height: '100%',\n      background: 'linear-gradient(145deg, #0f172a 0%, #1e293b 100%)',\n      display: 'flex',\n      flexDirection: 'column',\n      justifyContent: 'space-between',\n      padding: '52px',\n      fontFamily: 'system-ui, -apple-system, sans-serif',\n      position: 'relative',\n      overflow: 'hidden',\n    }}>\n      {/* Top accent glow */}\n      <div style={{\n        position: 'absolute',\n        top: '-60px',\n        right: '-60px',\n        width: '300px',\n        height: '300px',\n        background: 'radial-gradient(circle, rgba(244,114,182,0.2) 0%, transparent 70%)',\n      }} />\n\n      {/* Top: tag */}\n      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', zIndex: 1 }}>\n        <div style={{\n          background: 'rgba(163,230,53,0.15)',\n          border: '1px solid rgba(163,230,53,0.3)',\n          borderRadius: '6px',\n          padding: '4px 12px',\n          color: '#A3E635',\n          fontSize: '12px',\n          fontWeight: '600',\n          letterSpacing: '0.08em',\n          textTransform: 'uppercase',\n        }}>\n          Tutorial\n        </div>\n        <span style={{ color: '#475569', fontSize: '13px' }}>5 min read</span>\n      </div>\n\n      {/* Middle: title */}\n      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', zIndex: 1 }}>\n        <div style={{\n          color: '#F1F5F9',\n          fontSize: '36px',\n          fontWeight: '700',\n          lineHeight: '1.2',\n          letterSpacing: '-0.5px',\n        }}>\n          Building Modern APIs\n        </div>\n        <div style={{ color: '#94A3B8', fontSize: '16px', lineHeight: '1.5' }}>\n          Best practices for REST and GraphQL in 2026\n        </div>\n      </div>\n\n      {/* Bottom: author + meta */}\n      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', zIndex: 1 }}>\n        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>\n          <div style={{\n            width: '36px',\n            height: '36px',\n            borderRadius: '50%',\n            background: 'linear-gradient(135deg, #F472B6, #38BDF8)',\n            display: 'flex',\n            alignItems: 'center',\n            justifyContent: 'center',\n            color: 'white',\n            fontSize: '14px',\n            fontWeight: '700',\n            flexShrink: 0,\n          }}>\n            JS\n          </div>\n          <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>\n            <span style={{ color: '#E2E8F0', fontSize: '14px', fontWeight: '600' }}>Jane Smith</span>\n            <span style={{ color: '#64748B', fontSize: '12px' }}>March 15, 2026</span>\n          </div>\n        </div>\n        <div style={{\n          color: '#475569',\n          fontSize: '13px',\n          fontWeight: '600',\n          letterSpacing: '0.05em',\n        }}>\n          dev.blog\n        </div>\n      </div>\n\n      {/* Bottom-left accent stripe */}\n      <div style={{\n        position: 'absolute',\n        bottom: '0',\n        left: '0',\n        right: '0',\n        height: '3px',\n        background: 'linear-gradient(90deg, #F472B6, #38BDF8, #A3E635)',\n      }} />\n    </div>\n  );\n}`} client:load />
+          <CopyButton text={ogCardFullCode} client:load />
         </div>
-        <div class="p-4 overflow-x-auto" style="background: var(--color-bg-code); max-height: 500px; overflow-y: auto;">
-          <pre class="font-mono text-sm leading-relaxed"><code><span style="color:#F472B6">export</span><span style="color:#F472B6"> const</span><span style="color:#38BDF8"> config</span><span style="color:#94A3B8"> = {"{"}</span>
-<span style="color:#38BDF8">  width</span><span style="color:#94A3B8">:</span><span style="color:#FB923C"> 600</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">  height</span><span style="color:#94A3B8">:</span><span style="color:#FB923C"> 400</span><span style="color:#94A3B8">,</span>
-<span style="color:#94A3B8">{"}"};</span>
-
-<span style="color:#F472B6">export</span><span style="color:#F472B6"> default</span><span style="color:#F472B6"> function</span><span style="color:#38BDF8"> OgCard</span><span style="color:#94A3B8">() {"{"}</span>
-<span style="color:#F472B6">  return</span><span style="color:#94A3B8"> (</span>
-<span style="color:#F472B6">    &lt;div</span><span style="color:#38BDF8"> style</span><span style="color:#94A3B8">={"{{"}</span>
-<span style="color:#38BDF8">      width</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '100%'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">      height</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '100%'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">      background</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'linear-gradient(145deg, #0f172a 0%, #1e293b 100%)'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">      display</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'flex'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">      flexDirection</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'column'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">      justifyContent</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'space-between'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">      padding</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '52px'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">      fontFamily</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'system-ui, -apple-system, sans-serif'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">      position</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'relative'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">      overflow</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'hidden'</span><span style="color:#94A3B8">,</span>
-<span style="color:#94A3B8">    {"}}"}&gt;</span>
-<span style="color:#94A3B8">      {"{"}/</span><span style="color:#94A3B8">* Top accent glow *{"/"}</span><span style="color:#94A3B8">{"}"}</span>
-<span style="color:#F472B6">      &lt;div</span><span style="color:#38BDF8"> style</span><span style="color:#94A3B8">={"{{"}</span>
-<span style="color:#38BDF8">        position</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'absolute'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">        top</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '-60px'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">        right</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '-60px'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">        width</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '300px'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">        height</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '300px'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">        background</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'radial-gradient(circle, rgba(244,114,182,0.2) 0%, transparent 70%)'</span><span style="color:#94A3B8">,</span>
-<span style="color:#94A3B8">      {"}"}</span><span style="color:#94A3B8">{"}"}</span><span style="color:#F472B6"> /&gt;</span>
-
-<span style="color:#94A3B8">      {"{"}/</span><span style="color:#94A3B8">* Top: tag *{"/"}</span><span style="color:#94A3B8">{"}"}</span>
-<span style="color:#F472B6">      &lt;div</span><span style="color:#38BDF8"> style</span><span style="color:#94A3B8">={"{{"} </span><span style="color:#38BDF8">display</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'flex'</span><span style="color:#94A3B8">, </span><span style="color:#38BDF8">alignItems</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'center'</span><span style="color:#94A3B8">, </span><span style="color:#38BDF8">gap</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '12px'</span><span style="color:#94A3B8">, </span><span style="color:#38BDF8">zIndex</span><span style="color:#94A3B8">:</span><span style="color:#FB923C"> 1</span><span style="color:#94A3B8"> {"}}"}&gt;</span>
-<span style="color:#F472B6">        &lt;div</span><span style="color:#38BDF8"> style</span><span style="color:#94A3B8">={"{{"}</span>
-<span style="color:#38BDF8">          background</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'rgba(163,230,53,0.15)'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">          border</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '1px solid rgba(163,230,53,0.3)'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">          borderRadius</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '6px'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">          padding</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '4px 12px'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">          color</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '#A3E635'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">          fontSize</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '12px'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">          fontWeight</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '600'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">          letterSpacing</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '0.08em'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">          textTransform</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'uppercase'</span><span style="color:#94A3B8">,</span>
-<span style="color:#94A3B8">        {"}}"}&gt;</span>
-          Tutorial
-<span style="color:#F472B6">        &lt;/div&gt;</span>
-<span style="color:#F472B6">        &lt;span</span><span style="color:#38BDF8"> style</span><span style="color:#94A3B8">={"{{"} </span><span style="color:#38BDF8">color</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '#475569'</span><span style="color:#94A3B8">, </span><span style="color:#38BDF8">fontSize</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '13px'</span><span style="color:#94A3B8"> {"}}"}&gt;</span>5 min read<span style="color:#F472B6">&lt;/span&gt;</span>
-<span style="color:#F472B6">      &lt;/div&gt;</span>
-
-<span style="color:#94A3B8">      {"{"}/</span><span style="color:#94A3B8">* Middle: title *{"/"}</span><span style="color:#94A3B8">{"}"}</span>
-<span style="color:#F472B6">      &lt;div</span><span style="color:#38BDF8"> style</span><span style="color:#94A3B8">={"{{"} </span><span style="color:#38BDF8">display</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'flex'</span><span style="color:#94A3B8">, </span><span style="color:#38BDF8">flexDirection</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'column'</span><span style="color:#94A3B8">, </span><span style="color:#38BDF8">gap</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '16px'</span><span style="color:#94A3B8">, </span><span style="color:#38BDF8">zIndex</span><span style="color:#94A3B8">:</span><span style="color:#FB923C"> 1</span><span style="color:#94A3B8"> {"}}"}&gt;</span>
-<span style="color:#F472B6">        &lt;div</span><span style="color:#38BDF8"> style</span><span style="color:#94A3B8">={"{{"}</span>
-<span style="color:#38BDF8">          color</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '#F1F5F9'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">          fontSize</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '36px'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">          fontWeight</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '700'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">          lineHeight</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '1.2'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">          letterSpacing</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '-0.5px'</span><span style="color:#94A3B8">,</span>
-<span style="color:#94A3B8">        {"}}"}&gt;</span>
-          Building Modern APIs
-<span style="color:#F472B6">        &lt;/div&gt;</span>
-<span style="color:#F472B6">        &lt;div</span><span style="color:#38BDF8"> style</span><span style="color:#94A3B8">={"{{"} </span><span style="color:#38BDF8">color</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '#94A3B8'</span><span style="color:#94A3B8">, </span><span style="color:#38BDF8">fontSize</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '16px'</span><span style="color:#94A3B8">, </span><span style="color:#38BDF8">lineHeight</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '1.5'</span><span style="color:#94A3B8"> {"}}"}&gt;</span>
-          Best practices for REST and GraphQL in 2026
-<span style="color:#F472B6">        &lt;/div&gt;</span>
-<span style="color:#F472B6">      &lt;/div&gt;</span>
-
-<span style="color:#94A3B8">      {"{"}/</span><span style="color:#94A3B8">* Bottom: author + meta *{"/"}</span><span style="color:#94A3B8">{"}"}</span>
-<span style="color:#F472B6">      &lt;div</span><span style="color:#38BDF8"> style</span><span style="color:#94A3B8">={"{{"} </span><span style="color:#38BDF8">display</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'flex'</span><span style="color:#94A3B8">, </span><span style="color:#38BDF8">alignItems</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'center'</span><span style="color:#94A3B8">, </span><span style="color:#38BDF8">justifyContent</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'space-between'</span><span style="color:#94A3B8">, </span><span style="color:#38BDF8">zIndex</span><span style="color:#94A3B8">:</span><span style="color:#FB923C"> 1</span><span style="color:#94A3B8"> {"}}"}&gt;</span>
-<span style="color:#F472B6">        &lt;div</span><span style="color:#38BDF8"> style</span><span style="color:#94A3B8">={"{{"} </span><span style="color:#38BDF8">display</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'flex'</span><span style="color:#94A3B8">, </span><span style="color:#38BDF8">alignItems</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'center'</span><span style="color:#94A3B8">, </span><span style="color:#38BDF8">gap</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '12px'</span><span style="color:#94A3B8"> {"}}"}&gt;</span>
-<span style="color:#F472B6">          &lt;div</span><span style="color:#38BDF8"> style</span><span style="color:#94A3B8">={"{{"}</span>
-<span style="color:#38BDF8">            width</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '36px'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">            height</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '36px'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">            borderRadius</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '50%'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">            background</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'linear-gradient(135deg, #F472B6, #38BDF8)'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">            display</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'flex'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">            alignItems</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'center'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">            justifyContent</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'center'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">            color</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'white'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">            fontSize</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '14px'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">            fontWeight</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '700'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">            flexShrink</span><span style="color:#94A3B8">:</span><span style="color:#FB923C"> 0</span><span style="color:#94A3B8">,</span>
-<span style="color:#94A3B8">          {"}}"}&gt;</span>
-            JS
-<span style="color:#F472B6">          &lt;/div&gt;</span>
-<span style="color:#F472B6">          &lt;div</span><span style="color:#38BDF8"> style</span><span style="color:#94A3B8">={"{{"} </span><span style="color:#38BDF8">display</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'flex'</span><span style="color:#94A3B8">, </span><span style="color:#38BDF8">flexDirection</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'column'</span><span style="color:#94A3B8">, </span><span style="color:#38BDF8">gap</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '2px'</span><span style="color:#94A3B8"> {"}}"}&gt;</span>
-<span style="color:#F472B6">            &lt;span</span><span style="color:#38BDF8"> style</span><span style="color:#94A3B8">={"{{"} </span><span style="color:#38BDF8">color</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '#E2E8F0'</span><span style="color:#94A3B8">, </span><span style="color:#38BDF8">fontSize</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '14px'</span><span style="color:#94A3B8">, </span><span style="color:#38BDF8">fontWeight</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '600'</span><span style="color:#94A3B8"> {"}}"}&gt;</span>Jane Smith<span style="color:#F472B6">&lt;/span&gt;</span>
-<span style="color:#F472B6">            &lt;span</span><span style="color:#38BDF8"> style</span><span style="color:#94A3B8">={"{{"} </span><span style="color:#38BDF8">color</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '#64748B'</span><span style="color:#94A3B8">, </span><span style="color:#38BDF8">fontSize</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '12px'</span><span style="color:#94A3B8"> {"}}"}&gt;</span>March 15, 2026<span style="color:#F472B6">&lt;/span&gt;</span>
-<span style="color:#F472B6">          &lt;/div&gt;</span>
-<span style="color:#F472B6">        &lt;/div&gt;</span>
-<span style="color:#F472B6">        &lt;div</span><span style="color:#38BDF8"> style</span><span style="color:#94A3B8">={"{{"}</span>
-<span style="color:#38BDF8">          color</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '#475569'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">          fontSize</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '13px'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">          fontWeight</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '600'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">          letterSpacing</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '0.05em'</span><span style="color:#94A3B8">,</span>
-<span style="color:#94A3B8">        {"}}"}&gt;</span>
-          dev.blog
-<span style="color:#F472B6">        &lt;/div&gt;</span>
-<span style="color:#F472B6">      &lt;/div&gt;</span>
-
-<span style="color:#94A3B8">      {"{"}/</span><span style="color:#94A3B8">* Bottom-left accent stripe *{"/"}</span><span style="color:#94A3B8">{"}"}</span>
-<span style="color:#F472B6">      &lt;div</span><span style="color:#38BDF8"> style</span><span style="color:#94A3B8">={"{{"}</span>
-<span style="color:#38BDF8">        position</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'absolute'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">        bottom</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '0'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">        left</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '0'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">        right</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '0'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">        height</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '3px'</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">        background</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'linear-gradient(90deg, #F472B6, #38BDF8, #A3E635)'</span><span style="color:#94A3B8">,</span>
-<span style="color:#94A3B8">      {"}"}</span><span style="color:#94A3B8">{"}"}</span><span style="color:#F472B6"> /&gt;</span>
-<span style="color:#F472B6">    &lt;/div&gt;</span>
-  <span style="color:#94A3B8">);</span>
-<span style="color:#94A3B8">{"}"}</span></code></pre>
+        <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
+          <Code code={ogCardFullCode} lang="tsx" theme={grafexTheme} />
         </div>
       </div>
 
@@ -349,19 +391,8 @@ import CopyButton from '../../components/CopyButton.tsx';
         <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
           <span class="text-xs font-mono" style="color: var(--color-text-muted);">components/badge.tsx</span>
         </div>
-        <div class="p-4 overflow-x-auto" style="background: var(--color-bg-code); max-height: 500px; overflow-y: auto;">
-          <pre class="font-mono text-sm leading-relaxed"><code><span style="color:#F472B6">interface</span><span style="color:#38BDF8"> BadgeProps</span><span style="color:#94A3B8"> {"{"}</span>
-<span style="color:#38BDF8">  label</span><span style="color:#94A3B8">:</span><span style="color:#F472B6"> string</span><span style="color:#94A3B8">;</span>
-<span style="color:#38BDF8">  color</span><span style="color:#94A3B8">:</span><span style="color:#F472B6"> string</span><span style="color:#94A3B8">;</span>
-<span style="color:#94A3B8">{"}"}</span>
-
-<span style="color:#F472B6">export</span><span style="color:#F472B6"> function</span><span style="color:#38BDF8"> Badge</span><span style="color:#94A3B8">({"{"} </span><span style="color:#38BDF8">label</span><span style="color:#94A3B8">,</span><span style="color:#38BDF8"> color</span><span style="color:#94A3B8"> {"}"}:</span><span style="color:#38BDF8"> BadgeProps</span><span style="color:#94A3B8">) {"{"}</span>
-<span style="color:#F472B6">  return</span><span style="color:#94A3B8"> (</span>
-<span style="color:#F472B6">    &lt;span</span><span style="color:#38BDF8"> style</span><span style="color:#94A3B8">={"{{"} </span><span style="color:#38BDF8">background</span><span style="color:#94A3B8">:</span><span style="color:#38BDF8"> color</span><span style="color:#94A3B8">,</span><span style="color:#38BDF8"> padding</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '4px 12px'</span><span style="color:#94A3B8">, ... {"}}"}</span><span style="color:#F472B6">&gt;</span>
-<span style="color:#94A3B8">      {"{"}</span><span style="color:#38BDF8">label</span><span style="color:#94A3B8">{"}"}</span>
-<span style="color:#F472B6">    &lt;/span&gt;</span>
-  <span style="color:#94A3B8">);</span>
-<span style="color:#94A3B8">{"}"}</span></code></pre>
+        <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
+          <Code code={badgeComponentCode} lang="tsx" theme={grafexTheme} />
         </div>
       </div>
 
@@ -369,20 +400,8 @@ import CopyButton from '../../components/CopyButton.tsx';
         <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
           <span class="text-xs font-mono" style="color: var(--color-text-muted);">og-image.tsx</span>
         </div>
-        <div class="p-4 overflow-x-auto" style="background: var(--color-bg-code); max-height: 500px; overflow-y: auto;">
-          <pre class="font-mono text-sm leading-relaxed"><code><span style="color:#F472B6">import</span><span style="color:#94A3B8"> type </span><span style="color:#94A3B8">{"{"} </span><span style="color:#38BDF8">CompositionConfig</span><span style="color:#94A3B8"> {"}"} </span><span style="color:#F472B6">from</span><span style="color:#A3E635"> 'grafex'</span><span style="color:#94A3B8">;</span>
-<span style="color:#F472B6">import</span><span style="color:#94A3B8"> {"{"} </span><span style="color:#38BDF8">Badge</span><span style="color:#94A3B8"> {"}"} </span><span style="color:#F472B6">from</span><span style="color:#A3E635"> './components/badge'</span><span style="color:#94A3B8">;</span>
-
-<span style="color:#F472B6">export</span><span style="color:#F472B6"> const</span><span style="color:#38BDF8"> config</span><span style="color:#94A3B8">:</span><span style="color:#38BDF8"> CompositionConfig</span><span style="color:#94A3B8"> = {"{"} </span><span style="color:#38BDF8">width</span><span style="color:#94A3B8">:</span><span style="color:#FB923C"> 1200</span><span style="color:#94A3B8">,</span><span style="color:#38BDF8"> height</span><span style="color:#94A3B8">:</span><span style="color:#FB923C"> 630</span><span style="color:#94A3B8"> {"}"};</span>
-
-<span style="color:#F472B6">export</span><span style="color:#F472B6"> default</span><span style="color:#F472B6"> function</span><span style="color:#38BDF8"> OgImage</span><span style="color:#94A3B8">() {"{"}</span>
-<span style="color:#F472B6">  return</span><span style="color:#94A3B8"> (</span>
-<span style="color:#F472B6">    &lt;div</span><span style="color:#38BDF8"> style</span><span style="color:#94A3B8">={"{{"} </span><span style="color:#38BDF8">background</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '#1e293b'</span><span style="color:#94A3B8">, ... {"}}"}</span><span style="color:#F472B6">&gt;</span>
-<span style="color:#F472B6">      &lt;Badge</span><span style="color:#38BDF8"> label</span><span style="color:#94A3B8">=</span><span style="color:#A3E635">"New"</span><span style="color:#38BDF8"> color</span><span style="color:#94A3B8">=</span><span style="color:#A3E635">"#a3e635"</span><span style="color:#F472B6"> /&gt;</span>
-<span style="color:#F472B6">      &lt;div</span><span style="color:#38BDF8"> style</span><span style="color:#94A3B8">={"{{"} </span><span style="color:#38BDF8">fontSize</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> '48px'</span><span style="color:#94A3B8"> {"}}"}</span><span style="color:#F472B6">&gt;</span>Grafex v0.1<span style="color:#F472B6">&lt;/div&gt;</span>
-<span style="color:#F472B6">    &lt;/div&gt;</span>
-  <span style="color:#94A3B8">);</span>
-<span style="color:#94A3B8">{"}"}</span></code></pre>
+        <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
+          <Code code={usingComponentCode} lang="tsx" theme={grafexTheme} />
         </div>
       </div>
     </section>

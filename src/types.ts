@@ -3,7 +3,8 @@ export interface RenderOptions {
   width?: number;
   height?: number;
   scale?: number;
-  format?: 'png';
+  format?: 'png' | 'jpeg';
+  quality?: number;
   browser?: 'webkit' | 'chromium';
 }
 
@@ -12,13 +13,14 @@ export interface RenderResult {
   width: number;
   height: number;
   scale: number;
-  format: 'png';
+  format: 'png' | 'jpeg';
 }
 
 export interface CompositionConfig {
   width?: number;
   height?: number;
   scale?: number;
-  format?: 'png';
+  format?: 'png' | 'jpeg';
+  quality?: number;
   fonts?: string[];
 }

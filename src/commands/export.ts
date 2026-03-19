@@ -12,7 +12,8 @@ Options:
   --width       Override composition width (pixels)
   --height      Override composition height (pixels)
   --scale       Device scale factor, e.g. 2 for retina (default: 1)
-  --format      Output format, must be "png" (default: png)
+  --format      Output format: png or jpeg (default: png)
+  --quality     JPEG quality 1-100 (default: 90, only applies to jpeg)
   --browser     Browser engine: webkit or chromium (default: webkit)
   --help, -h    Show this help text
 `.trim();
@@ -28,6 +29,7 @@ export async function runExport(args: string[]): Promise<void> {
       height: { type: 'string' },
       scale: { type: 'string' },
       format: { type: 'string' },
+      quality: { type: 'string' },
       browser: { type: 'string' },
       help: { type: 'boolean', short: 'h' },
     },
@@ -46,10 +48,27 @@ export async function runExport(args: string[]): Promise<void> {
 
   const outPath = values.out ?? './output.png';
 
-  const format = values.format ?? 'png';
-  if (format !== 'png') {
-    process.stderr.write('Only PNG format is supported in this version.\n');
+  const rawFormat = values.format as string | undefined;
+  const format = rawFormat === 'jpg' ? 'jpeg' : (rawFormat ?? 'png');
+  if (format !== 'png' && format !== 'jpeg') {
+    process.stderr.write(`Error: --format must be "png" or "jpeg", got "${rawFormat}".\n`);
     process.exit(1);
+  }
+
+  let quality: number | undefined;
+  if (values.quality !== undefined) {
+    const qualityStr = (values.quality as string).trim();
+    const n = Number(qualityStr);
+    if (!qualityStr || isNaN(n) || !Number.isInteger(n) || n < 1 || n > 100) {
+      process.stderr.write(
+        `Error: --quality must be an integer between 1 and 100, got "${values.quality}".\n`,
+      );
+      process.exit(1);
+    }
+    quality = n;
+    if (format === 'png') {
+      process.stderr.write('Warning: --quality has no effect for PNG format.\n');
+    }
   }
 
   const browser = values.browser ?? 'webkit';
@@ -107,6 +126,8 @@ export async function runExport(args: string[]): Promise<void> {
       width,
       height,
       scale,
+      format: format as 'png' | 'jpeg',
+      quality,
       browser: browser as 'webkit' | 'chromium',
     });
     try {
