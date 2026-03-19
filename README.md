@@ -246,6 +246,12 @@ npx playwright install webkit
 
 ---
 
+## Contributing
+
+We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup, architecture overview, code standards, and PR guidelines.
+
+---
+
 ## License
 
 MIT
