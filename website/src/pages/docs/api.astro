@@ -59,6 +59,7 @@ import CopyButton from '../../components/CopyButton.tsx';
                 ['options.width', 'number', 'Override composition width in pixels'],
                 ['options.height', 'number', 'Override composition height in pixels'],
                 ["options.browser", "'webkit'", "Browser engine (default: 'webkit')"],
+                ['options.scale', 'number', 'Device pixel ratio (default: 1)'],
               ].map(([param, type, desc]) => (
                 <tr style="border-bottom: 1px solid var(--color-border-default);">
                   <td class="px-4 py-3"><code class="font-mono text-xs" style="color: var(--color-primary);">{param}</code></td>
@@ -78,9 +79,10 @@ import CopyButton from '../../components/CopyButton.tsx';
         <div class="p-4 overflow-x-auto" style="background: var(--color-bg-code); max-height: 500px; overflow-y: auto;">
           <pre class="font-mono text-sm leading-relaxed"><code><span style="color:#F472B6">interface</span><span style="color:#38BDF8"> RenderResult</span><span style="color:#94A3B8"> {"{"}</span>
 <span style="color:#38BDF8">  buffer</span><span style="color:#94A3B8">:</span><span style="color:#38BDF8"> Buffer</span><span style="color:#94A3B8">;</span>   <span style="color:#64748B">// PNG image data</span>
-<span style="color:#38BDF8">  width</span><span style="color:#94A3B8">:</span><span style="color:#F472B6"> number</span><span style="color:#94A3B8">;</span>    <span style="color:#64748B">// Effective render width</span>
-<span style="color:#38BDF8">  height</span><span style="color:#94A3B8">:</span><span style="color:#F472B6"> number</span><span style="color:#94A3B8">;</span>   <span style="color:#64748B">// Effective render height</span>
+<span style="color:#38BDF8">  width</span><span style="color:#94A3B8">:</span><span style="color:#F472B6"> number</span><span style="color:#94A3B8">;</span>    <span style="color:#64748B">// Effective render width (after scaling)</span>
+<span style="color:#38BDF8">  height</span><span style="color:#94A3B8">:</span><span style="color:#F472B6"> number</span><span style="color:#94A3B8">;</span>   <span style="color:#64748B">// Effective render height (after scaling)</span>
 <span style="color:#38BDF8">  format</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> 'png'</span><span style="color:#94A3B8">;</span>    <span style="color:#64748B">// Output format</span>
+<span style="color:#38BDF8">  scale</span><span style="color:#94A3B8">:</span><span style="color:#F472B6"> number</span><span style="color:#94A3B8">;</span>    <span style="color:#64748B">// Device pixel ratio used</span>
 <span style="color:#94A3B8">{"}"}</span></code></pre>
         </div>
       </div>
@@ -194,15 +196,15 @@ import CopyButton from '../../components/CopyButton.tsx';
         {[
           {
             name: 'CompositionConfig',
-            code: `interface CompositionConfig {\n  width?: number;    // Image width in pixels (default: 1200)\n  height?: number;   // Image height in pixels (default: 630)\n  format?: 'png';    // Output format (only PNG supported)\n  fonts?: string[];  // URLs to load (e.g., Google Fonts)\n}`,
+            code: `interface CompositionConfig {\n  width?: number;   // Image width in pixels (default: 1200)\n  height?: number;  // Image height in pixels (default: 630)\n  format?: 'png';   // Output format (only PNG supported)\n  fonts?: string[]; // URLs to font stylesheets (e.g., Google Fonts)\n  scale?: number;   // Device pixel ratio (default: 1)\n}`,
           },
           {
             name: 'RenderResult',
-            code: `interface RenderResult {\n  buffer: Buffer;   // PNG image data\n  width: number;    // Effective render width\n  height: number;   // Effective render height\n  format: 'png';    // Output format\n}`,
+            code: `interface RenderResult {\n  buffer: Buffer;   // PNG image data\n  width: number;    // Effective render width (after scaling)\n  height: number;   // Effective render height (after scaling)\n  format: 'png';    // Output format\n  scale: number;    // Device pixel ratio used\n}`,
           },
           {
             name: 'RenderOptions',
-            code: `interface RenderOptions {\n  props?: Record<string, unknown>;  // Props passed to the composition\n  width?: number;                   // Override width in pixels\n  height?: number;                  // Override height in pixels\n  browser?: 'webkit';               // Browser engine\n}`,
+            code: `interface RenderOptions {\n  props?: Record<string, unknown>;  // Props passed to the composition\n  width?: number;                   // Override width in pixels\n  height?: number;                  // Override height in pixels\n  browser?: 'webkit';              // Browser engine\n  scale?: number;                  // Device pixel ratio (default: 1)\n}`,
           },
         ].map((type) => (
           <div>

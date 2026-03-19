@@ -25,16 +25,18 @@ export async function pipeline(
 
   const width = options.width ?? config.width ?? 1200;
   const height = options.height ?? config.height ?? 630;
+  const scale = options.scale ?? config.scale ?? 1;
 
   const componentHtml = String(component(options.props ?? {}));
   const html = renderToHTML(componentHtml, { width, height }, config.fonts);
 
-  const buffer = await manager.render(html, { width, height });
+  const buffer = await manager.render(html, { width, height }, scale);
 
   return {
     buffer,
-    width,
-    height,
+    width: Math.round(width * scale),
+    height: Math.round(height * scale),
+    scale,
     format: 'png',
   };
 }

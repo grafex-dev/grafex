@@ -80,6 +80,7 @@ interface CompositionConfig {
   height?: number;  // Image height in pixels (default: 630)
   format?: 'png';   // Output format (only PNG supported)
   fonts?: string[]; // URLs to font stylesheets (e.g., Google Fonts)
+  scale?: number;   // Device pixel ratio (default: 1)
 }
 ```
 
@@ -155,6 +156,7 @@ grafex export -f <file> [options]
 | `--props` | | string (JSON) | `{}` | Props to pass to the composition |
 | `--width` | | number | from config | Override composition width in pixels |
 | `--height` | | number | from config | Override composition height in pixels |
+| `--scale` | | number | `1` | Device pixel ratio — `2` for retina/high-DPI output |
 | `--format` | | string | `png` | Output format (only `png` supported) |
 | `--help` | `-h` | | | Show help text |
 
@@ -204,6 +206,7 @@ interface RenderResult {
   width: number;
   height: number;
   format: 'png';
+  scale: number;
 }
 ```
 
@@ -241,6 +244,7 @@ interface RenderOptions {
   width?: number;
   height?: number;
   browser?: 'webkit';
+  scale?: number;
 }
 
 interface CompositionConfig {

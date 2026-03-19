@@ -2,7 +2,7 @@ import { existsSync, readdirSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
 import { chromium, webkit } from 'playwright-core';
-import type { Browser, BrowserType, Page } from 'playwright-core';
+import type { Browser, BrowserContext, BrowserType, Page } from 'playwright-core';
 
 type Engine = 'webkit' | 'chromium';
 
@@ -94,7 +94,9 @@ function findBrowserBinary(engine: Engine): string | undefined {
 
 export class BrowserManager {
   private browser: Browser | null = null;
+  private context: BrowserContext | null = null;
   private page: Page | null = null;
+  private currentScale: number = 1;
   private launchPromise: Promise<void> | null = null;
   private idleTimer: ReturnType<typeof setTimeout> | null = null;
   private readonly engine: Engine;
@@ -115,7 +117,11 @@ export class BrowserManager {
     process.on('SIGTERM', this.sigtermHandler);
   }
 
-  async render(html: string, viewport: { width: number; height: number }): Promise<Buffer> {
+  async render(
+    html: string,
+    viewport: { width: number; height: number },
+    scale: number = 1,
+  ): Promise<Buffer> {
     if (findBrowserBinary(this.engine) === undefined) {
       throw new Error(`WebKit browser not found. Run: npx playwright install webkit`);
     }
@@ -126,6 +132,10 @@ export class BrowserManager {
       }
       await this.launchPromise;
       this.launchPromise = null;
+    }
+
+    if (this.page === null || scale !== this.currentScale) {
+      await this.createPage(scale);
     }
 
     const page = this.page!;
@@ -156,7 +166,9 @@ export class BrowserManager {
     if (this.browser) {
       const browser = this.browser;
       this.browser = null;
+      this.context = null;
       this.page = null;
+      this.currentScale = 0;
       await browser.close();
     }
   }
@@ -171,7 +183,15 @@ export class BrowserManager {
     }
 
     this.browser = await bt.launch(launchOptions);
-    this.page = await this.browser.newPage();
+  }
+
+  private async createPage(scale: number): Promise<void> {
+    if (this.context !== null) {
+      await this.context.close();
+    }
+    this.context = await this.browser!.newContext({ deviceScaleFactor: scale });
+    this.page = await this.context.newPage();
+    this.currentScale = scale;
   }
 
   private resetIdleTimer(): void {

@@ -67,16 +67,27 @@ npx grafex export -f card.tsx -o card.png
 
 Render a composition file to a PNG image.
 
-| Flag        | Short | Type          | Default        | Description                                        |
-| ----------- | ----- | ------------- | -------------- | -------------------------------------------------- |
-| `--file`    | `-f`  | string        | —              | Path to the `.tsx` composition file **(required)** |
-| `--out`     | `-o`  | string        | `./output.png` | Output file path                                   |
-| `--props`   |       | string (JSON) | `{}`           | Props to pass to the composition as a JSON object  |
-| `--width`   |       | number        | from `config`  | Override composition width in pixels               |
-| `--height`  |       | number        | from `config`  | Override composition height in pixels              |
-| `--format`  |       | string        | `png`          | Output format (only `png` supported)               |
-| `--browser` |       | string        | `webkit`       | Browser engine                                     |
-| `--help`    | `-h`  |               |                | Show help text                                     |
+| Flag        | Short | Type          | Default        | Description                                             |
+| ----------- | ----- | ------------- | -------------- | ------------------------------------------------------- |
+| `--file`    | `-f`  | string        | —              | Path to the `.tsx` composition file **(required)**      |
+| `--out`     | `-o`  | string        | `./output.png` | Output file path                                        |
+| `--props`   |       | string (JSON) | `{}`           | Props to pass to the composition as a JSON object       |
+| `--width`   |       | number        | from `config`  | Override composition width in pixels                    |
+| `--height`  |       | number        | from `config`  | Override composition height in pixels                   |
+| `--format`  |       | string        | `png`          | Output format (only `png` supported)                    |
+| `--scale`   |       | number        | `1`            | Device pixel ratio. Use `2` for retina/high-DPI output. |
+| `--browser` |       | string        | `webkit`       | Browser engine                                          |
+| `--help`    | `-h`  |               |                | Show help text                                          |
+
+> **High-DPI output:** Set `scale` to control the device pixel ratio. A 1200x630 composition with `scale: 2` produces a 2400x1260 PNG — same layout, double the pixel density. Works in the config, CLI, and API.
+>
+> ```tsx
+> export const config: CompositionConfig = {
+>   width: 1200,
+>   height: 630,
+>   scale: 2,
+> };
+> ```
 
 **Examples:**
 
