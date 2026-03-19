@@ -1,6 +1,11 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import CopyButton from '../../components/CopyButton.tsx';
+import { Code } from 'astro:components';
+import { grafexTheme } from '../../shiki-theme';
+
+const globalFlagsCode = `grafex --version    # Print version and exit
+grafex --help       # Print help text and exit`;
 ---
 
 <DocsLayout
@@ -15,7 +20,7 @@ import CopyButton from '../../components/CopyButton.tsx';
     <!-- grafex export -->
     <section class="mb-12">
       <h2 class="font-heading font-bold text-2xl mb-2" style="color: var(--color-text-primary);"><code class="font-mono" style="color: var(--color-primary);">grafex export</code></h2>
-      <p class="text-base leading-relaxed mb-6" style="color: var(--color-text-secondary);">Render a composition file to a PNG image.</p>
+      <p class="text-base leading-relaxed mb-6" style="color: var(--color-text-secondary);">Render a composition file to an image.</p>
 
       <div class="rounded-xl overflow-hidden border mb-8" style="border-color: var(--color-border-default);">
         <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
@@ -49,7 +54,8 @@ import CopyButton from '../../components/CopyButton.tsx';
                 ['--width', '', 'number', 'from config', 'Override composition width in pixels'],
                 ['--height', '', 'number', 'from config', 'Override composition height in pixels'],
                 ['--scale', '', 'number', '1', 'Device pixel ratio — 2 for retina/high-DPI output'],
-                ['--format', '', 'string', 'png', 'Output format (only png currently supported)'],
+                ['--format', '', 'string', 'png', 'Output format: png or jpeg'],
+                ['--quality', '', 'number', '90', 'JPEG quality 1–100 (only applies when format is jpeg)'],
                 ['--browser', '', 'string', 'webkit', 'Browser engine to use for rendering'],
                 ['--help', '-h', '', '', 'Show help text'],
               ].map(([flag, short, type, def, desc]) => (
@@ -78,6 +84,8 @@ import CopyButton from '../../components/CopyButton.tsx';
           { label: 'Override dimensions', cmd: 'grafex export -f card.tsx -o card.png --width 800 --height 400' },
           { label: 'Export to a specific directory', cmd: 'grafex export -f card.tsx -o ./images/card.png' },
           { label: 'Export at 2x resolution (retina)', cmd: 'grafex export -f card.tsx -o card@2x.png --scale 2' },
+          { label: 'Export as JPEG', cmd: 'grafex export -f card.tsx -o card.jpg --format jpeg' },
+          { label: 'Export as JPEG with custom quality', cmd: 'grafex export -f card.tsx -o card.jpg --format jpeg --quality 80' },
         ].map((ex) => (
           <div>
             <p class="text-sm mb-2 font-medium" style="color: var(--color-text-secondary);">{ex.label}:</p>
@@ -127,9 +135,8 @@ import CopyButton from '../../components/CopyButton.tsx';
         <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
           <span class="text-xs uppercase tracking-wider font-medium" style="color: var(--color-text-muted);">bash</span>
         </div>
-        <div class="p-4" style="background: var(--color-bg-code); max-height: 500px; overflow-y: auto;">
-          <pre class="font-mono text-sm leading-relaxed"><code><span style="color:#A3E635">grafex --version</span>    <span style="color:#64748B"># Print version and exit</span>
-<span style="color:#A3E635">grafex --help</span>       <span style="color:#64748B"># Print help text and exit</span></code></pre>
+        <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
+          <Code code={globalFlagsCode} lang="bash" theme={grafexTheme} />
         </div>
       </div>
     </section>

@@ -121,9 +121,13 @@ export class BrowserManager {
     html: string,
     viewport: { width: number; height: number },
     scale: number = 1,
+    format: 'png' | 'jpeg' = 'png',
+    quality?: number,
   ): Promise<Buffer> {
     if (findBrowserBinary(this.engine) === undefined) {
-      throw new Error(`WebKit browser not found. Run: npx playwright install webkit`);
+      throw new Error(
+        `${this.engine} browser not found. Run: npx playwright install ${this.engine}`,
+      );
     }
 
     if (!this.browser) {
@@ -149,9 +153,11 @@ export class BrowserManager {
     );
 
     const screenshotOptions =
-      this.engine === 'chromium'
-        ? { type: 'png' as const, omitBackground: true, optimizeForSpeed: true }
-        : { type: 'png' as const, omitBackground: true };
+      format === 'jpeg'
+        ? { type: 'jpeg' as const, quality: quality ?? 90, omitBackground: false }
+        : this.engine === 'chromium'
+          ? { type: 'png' as const, omitBackground: true, optimizeForSpeed: true }
+          : { type: 'png' as const, omitBackground: true };
 
     const buffer = await page.screenshot(screenshotOptions);
     this.resetIdleTimer();

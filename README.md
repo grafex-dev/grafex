@@ -65,7 +65,7 @@ npx grafex export -f card.tsx -o card.png
 
 ### `grafex export`
 
-Render a composition file to a PNG image.
+Render a composition file to an image.
 
 | Flag        | Short | Type          | Default        | Description                                             |
 | ----------- | ----- | ------------- | -------------- | ------------------------------------------------------- |
@@ -74,7 +74,8 @@ Render a composition file to a PNG image.
 | `--props`   |       | string (JSON) | `{}`           | Props to pass to the composition as a JSON object       |
 | `--width`   |       | number        | from `config`  | Override composition width in pixels                    |
 | `--height`  |       | number        | from `config`  | Override composition height in pixels                   |
-| `--format`  |       | string        | `png`          | Output format (only `png` supported)                    |
+| `--format`  |       | string        | `png`          | Output format (`png` or `jpeg`)                         |
+| `--quality` |       | number        | `90`           | JPEG quality 1–100 (only applies when format is `jpeg`) |
 | `--scale`   |       | number        | `1`            | Device pixel ratio. Use `2` for retina/high-DPI output. |
 | `--browser` |       | string        | `webkit`       | Browser engine                                          |
 | `--help`    | `-h`  |               |                | Show help text                                          |
@@ -130,21 +131,24 @@ const result = await render('./card.tsx', {
   browser: 'webkit',
 });
 
-// result.buffer  — Buffer containing PNG data
+// result.buffer  — Buffer containing image data
 // result.width   — effective render width
 // result.height  — effective render height
-// result.format  — 'png'
+// result.format  — 'png' | 'jpeg'
 ```
 
 **Parameters:**
 
-| Parameter         | Type                      | Description                          |
-| ----------------- | ------------------------- | ------------------------------------ |
-| `compositionPath` | `string`                  | Path to the `.tsx` composition file  |
-| `options.props`   | `Record<string, unknown>` | Props to pass to the composition     |
-| `options.width`   | `number`                  | Override composition width           |
-| `options.height`  | `number`                  | Override composition height          |
-| `options.browser` | `'webkit'`                | Browser engine (default: `'webkit'`) |
+| Parameter         | Type                      | Description                                              |
+| ----------------- | ------------------------- | -------------------------------------------------------- |
+| `compositionPath` | `string`                  | Path to the `.tsx` composition file                      |
+| `options.props`   | `Record<string, unknown>` | Props to pass to the composition                         |
+| `options.width`   | `number`                  | Override composition width                               |
+| `options.height`  | `number`                  | Override composition height                              |
+| `options.format`  | `'png' \| 'jpeg'`         | Output format (default: `'png'`)                         |
+| `options.quality` | `number`                  | JPEG quality 1–100 (default: `90`, only applies to JPEG) |
+| `options.scale`   | `number`                  | Device pixel ratio (default: `1`)                        |
+| `options.browser` | `'webkit' \| 'chromium'`  | Browser engine (default: `'webkit'`)                     |
 
 **Returns:** `Promise<RenderResult>` where `RenderResult` is:
 
@@ -153,7 +157,7 @@ interface RenderResult {
   buffer: Buffer;
   width: number;
   height: number;
-  format: 'png';
+  format: 'png' | 'jpeg';
 }
 ```
 

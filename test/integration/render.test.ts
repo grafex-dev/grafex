@@ -101,6 +101,42 @@ describe('render() — integration', () => {
   });
 });
 
+// --- JPEG format tests ---
+
+describe('render() — JPEG format', () => {
+  test('rendering with format "jpeg" produces a valid JPEG (magic bytes FF D8 FF)', async () => {
+    const { render } = await import('../../src/index.js');
+    const result = await render(resolve(fixturesDir, 'simple.tsx'), { format: 'jpeg' });
+    expect(result.buffer[0]).toBe(0xff);
+    expect(result.buffer[1]).toBe(0xd8);
+    expect(result.buffer[2]).toBe(0xff);
+  });
+
+  test('rendering with format "jpeg" sets result.format to "jpeg"', async () => {
+    const { render } = await import('../../src/index.js');
+    const result = await render(resolve(fixturesDir, 'simple.tsx'), { format: 'jpeg' });
+    expect(result.format).toBe('jpeg');
+  });
+
+  test('rendering with-jpeg.tsx fixture (config.format jpeg) produces valid JPEG', async () => {
+    const { render } = await import('../../src/index.js');
+    const result = await render(resolve(fixturesDir, 'with-jpeg.tsx'));
+    expect(result.buffer[0]).toBe(0xff);
+    expect(result.buffer[1]).toBe(0xd8);
+    expect(result.buffer[2]).toBe(0xff);
+    expect(result.format).toBe('jpeg');
+  });
+
+  test('JPEG at quality 50 produces a smaller buffer than quality 100', async () => {
+    const { render } = await import('../../src/index.js');
+    const [low, high] = await Promise.all([
+      render(resolve(fixturesDir, 'simple.tsx'), { format: 'jpeg', quality: 50 }),
+      render(resolve(fixturesDir, 'simple.tsx'), { format: 'jpeg', quality: 100 }),
+    ]);
+    expect(low.buffer.length).toBeLessThan(high.buffer.length);
+  });
+});
+
 // --- Timing tests (isolated BrowserManager) ---
 
 describe('render() — timing', () => {

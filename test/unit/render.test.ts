@@ -77,6 +77,8 @@ describe('pipeline() — dimensions', () => {
       expect.any(String),
       { width: 1200, height: 630 },
       1,
+      'png',
+      undefined,
     );
   });
 
@@ -100,6 +102,8 @@ describe('pipeline() — dimensions', () => {
       expect.any(String),
       expect.objectContaining({ width: 500 }),
       1,
+      'png',
+      undefined,
     );
   });
 
@@ -115,6 +119,8 @@ describe('pipeline() — dimensions', () => {
       expect.any(String),
       expect.objectContaining({ height: 250 }),
       1,
+      'png',
+      undefined,
     );
   });
 
@@ -271,7 +277,13 @@ describe('pipeline() — scale', () => {
   test('scale is passed as third argument to manager.render', async () => {
     const { pipeline } = await import('../../src/render.js');
     await pipeline(resolve(fixturesDir, 'simple.tsx'), { scale: 2 }, mockManager as any);
-    expect(mockManager.render).toHaveBeenCalledWith(expect.any(String), expect.any(Object), 2);
+    expect(mockManager.render).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.any(Object),
+      2,
+      'png',
+      undefined,
+    );
   });
 
   test('options.scale overrides config.scale', async () => {
@@ -321,5 +333,89 @@ describe('pipeline() — with-components fixture', () => {
     );
     expect(result).toBeDefined();
     expect(result.format).toBe('png');
+  });
+});
+
+describe('pipeline() — format resolution', () => {
+  let mockManager: ReturnType<typeof makeMockManager>;
+
+  beforeEach(() => {
+    mockManager = makeMockManager();
+  });
+
+  test('defaults to format "png" when no format is specified', async () => {
+    const { pipeline } = await import('../../src/render.js');
+    const result = await pipeline(resolve(fixturesDir, 'no-config.tsx'), {}, mockManager as any);
+    expect(result.format).toBe('png');
+  });
+
+  test('uses config.format when options.format is not set', async () => {
+    const { pipeline } = await import('../../src/render.js');
+    // with-jpeg.tsx exports config.format = 'jpeg'
+    const result = await pipeline(resolve(fixturesDir, 'with-jpeg.tsx'), {}, mockManager as any);
+    expect(result.format).toBe('jpeg');
+  });
+
+  test('options.format overrides config.format', async () => {
+    const { pipeline } = await import('../../src/render.js');
+    // with-jpeg.tsx exports config.format = 'jpeg'; options.format = 'png' should win
+    const result = await pipeline(
+      resolve(fixturesDir, 'with-jpeg.tsx'),
+      { format: 'png' },
+      mockManager as any,
+    );
+    expect(result.format).toBe('png');
+  });
+
+  test('format and quality are passed to manager.render for jpeg', async () => {
+    const { pipeline } = await import('../../src/render.js');
+    await pipeline(resolve(fixturesDir, 'with-jpeg.tsx'), {}, mockManager as any);
+    expect(mockManager.render).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.any(Object),
+      expect.any(Number),
+      'jpeg',
+      90,
+    );
+  });
+
+  test('resolves default quality 90 for jpeg when no quality specified', async () => {
+    const { pipeline } = await import('../../src/render.js');
+    await pipeline(resolve(fixturesDir, 'simple.tsx'), { format: 'jpeg' }, mockManager as any);
+    expect(mockManager.render).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.any(Object),
+      expect.any(Number),
+      'jpeg',
+      90,
+    );
+  });
+
+  test('passes custom quality through for jpeg', async () => {
+    const { pipeline } = await import('../../src/render.js');
+    await pipeline(
+      resolve(fixturesDir, 'simple.tsx'),
+      { format: 'jpeg', quality: 50 },
+      mockManager as any,
+    );
+    expect(mockManager.render).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.any(Object),
+      expect.any(Number),
+      'jpeg',
+      50,
+    );
+  });
+
+  test('quality is undefined for png', async () => {
+    const { pipeline } = await import('../../src/render.js');
+    await pipeline(resolve(fixturesDir, 'simple.tsx'), {}, mockManager as any);
+    expect(mockManager.render).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.any(Object),
+      expect.any(Number),
+      'png',
+      undefined,
+    );
   });
 });

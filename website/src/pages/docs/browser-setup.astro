@@ -1,6 +1,37 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import CopyButton from '../../components/CopyButton.tsx';
+import { Code } from 'astro:components';
+import { grafexTheme } from '../../shiki-theme';
+
+const autoInstallCode = `npm install grafex
+# WebKit is downloaded automatically`;
+
+const playwrightBrowsersPathCode = `export PLAYWRIGHT_BROWSERS_PATH=/path/to/browsers
+npx playwright install webkit
+grafex export -f card.tsx -o card.png`;
+
+const ciSetupCode = `npx playwright install-deps webkit
+npx playwright install webkit`;
+
+const githubActionsCode = `steps:
+  - uses: actions/checkout@v4
+
+  - uses: actions/setup-node@v4
+    with:
+      node-version: 20
+
+  - name: Install dependencies
+    run: npm ci
+
+  - name: Install WebKit system dependencies
+    run: npx playwright install-deps webkit
+
+  - name: Install WebKit
+    run: npx playwright install webkit
+
+  - name: Export image
+    run: npx grafex export -f card.tsx -o card.png`;
 ---
 
 <DocsLayout
@@ -22,9 +53,8 @@ import CopyButton from '../../components/CopyButton.tsx';
           <span class="text-xs uppercase tracking-wider font-medium" style="color: var(--color-text-muted);">bash</span>
           <CopyButton text="npm install grafex" client:load />
         </div>
-        <div class="p-4" style="background: var(--color-bg-code); max-height: 500px; overflow-y: auto;">
-          <pre class="font-mono text-sm leading-relaxed"><code><span style="color:#A3E635">npm install grafex</span>
-<span style="color:#64748B"># WebKit is downloaded automatically</span></code></pre>
+        <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
+          <Code code={autoInstallCode} lang="bash" theme={grafexTheme} />
         </div>
       </div>
 
@@ -71,10 +101,8 @@ import CopyButton from '../../components/CopyButton.tsx';
           <span class="text-xs uppercase tracking-wider font-medium" style="color: var(--color-text-muted);">bash</span>
           <CopyButton text="export PLAYWRIGHT_BROWSERS_PATH=/path/to/browsers\nnpx playwright install webkit\ngrafex export -f card.tsx -o card.png" client:load />
         </div>
-        <div class="p-4" style="background: var(--color-bg-code); max-height: 500px; overflow-y: auto;">
-          <pre class="font-mono text-sm leading-relaxed"><code><span style="color:#F472B6">export</span><span style="color:#38BDF8"> PLAYWRIGHT_BROWSERS_PATH</span><span style="color:#94A3B8">=</span><span style="color:#A3E635">/path/to/browsers</span>
-<span style="color:#A3E635">npx playwright install webkit</span>
-<span style="color:#A3E635">grafex export -f card.tsx -o card.png</span></code></pre>
+        <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
+          <Code code={playwrightBrowsersPathCode} lang="bash" theme={grafexTheme} />
         </div>
       </div>
 
@@ -91,9 +119,8 @@ import CopyButton from '../../components/CopyButton.tsx';
           <span class="text-xs uppercase tracking-wider font-medium" style="color: var(--color-text-muted);">bash</span>
           <CopyButton text="npx playwright install-deps webkit\nnpx playwright install webkit" client:load />
         </div>
-        <div class="p-4" style="background: var(--color-bg-code); max-height: 500px; overflow-y: auto;">
-          <pre class="font-mono text-sm leading-relaxed"><code><span style="color:#A3E635">npx playwright install-deps webkit</span>
-<span style="color:#A3E635">npx playwright install webkit</span></code></pre>
+        <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
+          <Code code={ciSetupCode} lang="bash" theme={grafexTheme} />
         </div>
       </div>
 
@@ -104,25 +131,8 @@ import CopyButton from '../../components/CopyButton.tsx';
           <span class="text-xs font-mono" style="color: var(--color-text-muted);">.github/workflows/images.yml</span>
           <CopyButton text={`steps:\n  - uses: actions/checkout@v4\n\n  - uses: actions/setup-node@v4\n    with:\n      node-version: 20\n\n  - name: Install dependencies\n    run: npm ci\n\n  - name: Install WebKit system dependencies\n    run: npx playwright install-deps webkit\n\n  - name: Install WebKit\n    run: npx playwright install webkit\n\n  - name: Export image\n    run: npx grafex export -f card.tsx -o card.png`} client:load />
         </div>
-        <div class="p-4 overflow-x-auto" style="background: var(--color-bg-code); max-height: 500px; overflow-y: auto;">
-          <pre class="font-mono text-sm leading-relaxed"><code><span style="color:#38BDF8">steps</span><span style="color:#94A3B8">:</span>
-<span style="color:#94A3B8">  - </span><span style="color:#38BDF8">uses</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> actions/checkout@v4</span>
-
-<span style="color:#94A3B8">  - </span><span style="color:#38BDF8">uses</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> actions/setup-node@v4</span>
-<span style="color:#38BDF8">    with</span><span style="color:#94A3B8">:</span>
-<span style="color:#38BDF8">      node-version</span><span style="color:#94A3B8">:</span><span style="color:#FB923C"> 20</span>
-
-<span style="color:#94A3B8">  - </span><span style="color:#38BDF8">name</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> Install dependencies</span>
-<span style="color:#38BDF8">    run</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> npm ci</span>
-
-<span style="color:#94A3B8">  - </span><span style="color:#38BDF8">name</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> Install WebKit system dependencies</span>
-<span style="color:#38BDF8">    run</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> npx playwright install-deps webkit</span>
-
-<span style="color:#94A3B8">  - </span><span style="color:#38BDF8">name</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> Install WebKit</span>
-<span style="color:#38BDF8">    run</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> npx playwright install webkit</span>
-
-<span style="color:#94A3B8">  - </span><span style="color:#38BDF8">name</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> Export image</span>
-<span style="color:#38BDF8">    run</span><span style="color:#94A3B8">:</span><span style="color:#A3E635"> npx grafex export -f card.tsx -o card.png</span></code></pre>
+        <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
+          <Code code={githubActionsCode} lang="yaml" theme={grafexTheme} />
         </div>
       </div>
 

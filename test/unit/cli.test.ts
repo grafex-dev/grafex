@@ -79,7 +79,46 @@ describe('export command — validation', () => {
   test('--format svg prints unsupported format error to stderr and exits 1', () => {
     const result = runCli(['export', '--file', 'test/fixtures/simple.tsx', '--format', 'svg']);
     expect(result.status).toBe(1);
-    expect(result.stderr).toContain('Only PNG format is supported in this version.');
+    expect(result.stderr).toContain('--format must be "png" or "jpeg"');
+  });
+
+  test('--format bmp prints unsupported format error to stderr and exits 1', () => {
+    const result = runCli(['export', '--file', 'test/fixtures/simple.tsx', '--format', 'bmp']);
+    expect(result.status).toBe(1);
+    expect(result.stderr).toContain('--format must be "png" or "jpeg"');
+  });
+
+  test('--format jpeg is accepted', () => {
+    const result = runCli(['export', '--file', 'test/fixtures/simple.tsx', '--format', 'jpeg']);
+    expect(result.stderr).not.toContain('--format must be "png" or "jpeg"');
+  });
+
+  test('--format jpg is accepted as alias for jpeg', () => {
+    const result = runCli(['export', '--file', 'test/fixtures/simple.tsx', '--format', 'jpg']);
+    expect(result.stderr).not.toContain('--format must be "png" or "jpeg"');
+  });
+
+  test('--quality 90 is accepted', () => {
+    const result = runCli(['export', '--file', 'test/fixtures/simple.tsx', '--quality', '90']);
+    expect(result.stderr).not.toContain('--quality must be');
+  });
+
+  test('--quality 0 prints error to stderr and exits 1', () => {
+    const result = runCli(['export', '--file', 'test/fixtures/simple.tsx', '--quality', '0']);
+    expect(result.status).toBe(1);
+    expect(result.stderr).toContain('--quality must be an integer between 1 and 100');
+  });
+
+  test('--quality 101 prints error to stderr and exits 1', () => {
+    const result = runCli(['export', '--file', 'test/fixtures/simple.tsx', '--quality', '101']);
+    expect(result.status).toBe(1);
+    expect(result.stderr).toContain('--quality must be an integer between 1 and 100');
+  });
+
+  test('--quality abc prints error to stderr and exits 1', () => {
+    const result = runCli(['export', '--file', 'test/fixtures/simple.tsx', '--quality', 'abc']);
+    expect(result.status).toBe(1);
+    expect(result.stderr).toContain('--quality must be an integer between 1 and 100');
   });
 
   test('--browser firefox prints error to stderr and exits 1', () => {

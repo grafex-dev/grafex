@@ -1,0 +1,35 @@
+---
+import { Code } from 'astro:components';
+import CopyButton from './CopyButton.tsx';
+import { grafexTheme } from '../shiki-theme';
+
+interface Props {
+  code: string;
+  lang?: string;
+  filename?: string;
+  showCopy?: boolean;
+  maxHeight?: string;
+}
+
+const { code, lang = 'typescript', filename, showCopy = true, maxHeight = '500px' } = Astro.props;
+---
+
+<div class="rounded-xl overflow-hidden border" style="border-color: var(--color-border-default);">
+  {filename && (
+    <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
+      <span class="text-xs font-mono" style="color: var(--color-text-muted);">{filename}</span>
+      {showCopy && <CopyButton text={code} client:load />}
+    </div>
+  )}
+  {!filename && showCopy && (
+    <div class="flex items-center justify-end px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
+      <CopyButton text={code} client:load />
+    </div>
+  )}
+  <div
+    class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed"
+    style={`max-height: ${maxHeight}; overflow-y: auto;`}
+  >
+    <Code code={code} lang={lang} theme={grafexTheme} />
+  </div>
+</div>

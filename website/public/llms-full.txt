@@ -76,11 +76,12 @@ Compositions are TSX files that describe your image layout. They use a custom JS
 
 ```ts
 interface CompositionConfig {
-  width?: number;   // Image width in pixels (default: 1200)
-  height?: number;  // Image height in pixels (default: 630)
-  format?: 'png';   // Output format (only PNG supported)
-  fonts?: string[]; // URLs to font stylesheets (e.g., Google Fonts)
-  scale?: number;   // Device pixel ratio (default: 1)
+  width?: number;          // Image width in pixels (default: 1200)
+  height?: number;         // Image height in pixels (default: 630)
+  format?: 'png' | 'jpeg'; // Output format (default: 'png')
+  quality?: number;        // JPEG quality 1-100 (default: 90)
+  fonts?: string[];        // URLs to font stylesheets (e.g., Google Fonts)
+  scale?: number;          // Device pixel ratio (default: 1)
 }
 ```
 
@@ -143,7 +144,7 @@ Compositions can import components from other files. Grafex bundles everything w
 
 ### `grafex export`
 
-Render a composition file to a PNG image.
+Render a composition file to an image.
 
 ```bash
 grafex export -f <file> [options]
@@ -157,7 +158,8 @@ grafex export -f <file> [options]
 | `--width` | | number | from config | Override composition width in pixels |
 | `--height` | | number | from config | Override composition height in pixels |
 | `--scale` | | number | `1` | Device pixel ratio — `2` for retina/high-DPI output |
-| `--format` | | string | `png` | Output format (only `png` supported) |
+| `--format` | | string | `png` | Output format: `png` or `jpeg` |
+| `--quality` | | number | `90` | JPEG quality 1–100 (only applies when format is `jpeg`) |
 | `--help` | `-h` | | | Show help text |
 
 Examples:
@@ -205,7 +207,7 @@ interface RenderResult {
   buffer: Buffer;
   width: number;
   height: number;
-  format: 'png';
+  format: 'png' | 'jpeg';
   scale: number;
 }
 ```
@@ -243,6 +245,8 @@ interface RenderOptions {
   props?: Record<string, unknown>;
   width?: number;
   height?: number;
+  format?: 'png' | 'jpeg';
+  quality?: number;
   browser?: 'webkit';
   scale?: number;
 }
@@ -250,8 +254,10 @@ interface RenderOptions {
 interface CompositionConfig {
   width?: number;
   height?: number;
-  format?: 'png';
+  format?: 'png' | 'jpeg';
+  quality?: number;
   fonts?: string[];
+  scale?: number;
 }
 ```
 
