@@ -73,10 +73,11 @@ describe('pipeline() — dimensions', () => {
     const result = await pipeline(resolve(fixturesDir, 'no-config.tsx'), {}, mockManager as any);
     expect(result.width).toBe(1200);
     expect(result.height).toBe(630);
-    expect(mockManager.render).toHaveBeenCalledWith(expect.any(String), {
-      width: 1200,
-      height: 630,
-    });
+    expect(mockManager.render).toHaveBeenCalledWith(
+      expect.any(String),
+      { width: 1200, height: 630 },
+      1,
+    );
   });
 
   test('uses config dimensions from composition', async () => {
@@ -98,6 +99,7 @@ describe('pipeline() — dimensions', () => {
     expect(mockManager.render).toHaveBeenCalledWith(
       expect.any(String),
       expect.objectContaining({ width: 500 }),
+      1,
     );
   });
 
@@ -112,6 +114,7 @@ describe('pipeline() — dimensions', () => {
     expect(mockManager.render).toHaveBeenCalledWith(
       expect.any(String),
       expect.objectContaining({ height: 250 }),
+      1,
     );
   });
 
@@ -227,6 +230,78 @@ describe('pipeline() — fonts passthrough', () => {
     await pipeline(resolve(fixturesDir, 'simple.tsx'), {}, mockManager as any);
     const [html] = mockManager.render.mock.calls[0] as [string, unknown];
     expect(html).not.toContain('<link rel="stylesheet"');
+  });
+});
+
+describe('pipeline() — scale', () => {
+  let mockManager: ReturnType<typeof makeMockManager>;
+
+  beforeEach(() => {
+    mockManager = makeMockManager();
+  });
+
+  test('default scale is 1 when neither options nor config specifies scale', async () => {
+    const { pipeline } = await import('../../src/render.js');
+    const result = await pipeline(resolve(fixturesDir, 'no-config.tsx'), {}, mockManager as any);
+    expect(result.scale).toBe(1);
+  });
+
+  test('result.scale reflects options.scale', async () => {
+    const { pipeline } = await import('../../src/render.js');
+    const result = await pipeline(
+      resolve(fixturesDir, 'simple.tsx'),
+      { scale: 2 },
+      mockManager as any,
+    );
+    expect(result.scale).toBe(2);
+  });
+
+  test('result.width and result.height are physical pixels (CSS * scale)', async () => {
+    const { pipeline } = await import('../../src/render.js');
+    // simple.tsx config: width 800, height 400
+    const result = await pipeline(
+      resolve(fixturesDir, 'simple.tsx'),
+      { scale: 2 },
+      mockManager as any,
+    );
+    expect(result.width).toBe(1600);
+    expect(result.height).toBe(800);
+  });
+
+  test('scale is passed as third argument to manager.render', async () => {
+    const { pipeline } = await import('../../src/render.js');
+    await pipeline(resolve(fixturesDir, 'simple.tsx'), { scale: 2 }, mockManager as any);
+    expect(mockManager.render).toHaveBeenCalledWith(expect.any(String), expect.any(Object), 2);
+  });
+
+  test('options.scale overrides config.scale', async () => {
+    const { pipeline } = await import('../../src/render.js');
+    // with-scale.tsx exports config.scale = 2; options.scale = 3 should win
+    const result = await pipeline(
+      resolve(fixturesDir, 'with-scale.tsx'),
+      { scale: 3 },
+      mockManager as any,
+    );
+    expect(result.scale).toBe(3);
+  });
+
+  test('config.scale is used when options.scale is not set', async () => {
+    const { pipeline } = await import('../../src/render.js');
+    // with-scale.tsx exports config.scale = 2
+    const result = await pipeline(resolve(fixturesDir, 'with-scale.tsx'), {}, mockManager as any);
+    expect(result.scale).toBe(2);
+  });
+
+  test('fractional scale 1.5 is accepted and propagated', async () => {
+    const { pipeline } = await import('../../src/render.js');
+    const result = await pipeline(
+      resolve(fixturesDir, 'simple.tsx'),
+      { scale: 1.5 },
+      mockManager as any,
+    );
+    expect(result.scale).toBe(1.5);
+    expect(result.width).toBe(800 * 1.5);
+    expect(result.height).toBe(400 * 1.5);
   });
 });
 

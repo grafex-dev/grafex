@@ -110,4 +110,38 @@ describe('export command — validation', () => {
     const result = runCli(['export', '--file', 'test/fixtures/simple.tsx', '--width', '1.0']);
     expect(result.stderr).not.toContain('--width must be a numeric value');
   });
+
+  test('--scale 0 prints error to stderr and exits 1', () => {
+    const result = runCli(['export', '--file', 'test/fixtures/simple.tsx', '--scale', '0']);
+    expect(result.status).toBe(1);
+    expect(result.stderr).toContain('--scale must be a positive number');
+  });
+
+  test('--scale -1 prints error to stderr and exits 1', () => {
+    const result = runCli(['export', '--file', 'test/fixtures/simple.tsx', '--scale', '-1']);
+    expect(result.status).toBe(1);
+    expect(result.stderr).toContain('--scale must be a positive number');
+  });
+
+  test('--scale abc prints error to stderr and exits 1', () => {
+    const result = runCli(['export', '--file', 'test/fixtures/simple.tsx', '--scale', 'abc']);
+    expect(result.status).toBe(1);
+    expect(result.stderr).toContain('--scale must be a positive number');
+  });
+
+  test('--scale Infinity prints error to stderr and exits 1', () => {
+    const result = runCli(['export', '--file', 'test/fixtures/simple.tsx', '--scale', 'Infinity']);
+    expect(result.status).toBe(1);
+    expect(result.stderr).toContain('--scale must be a positive number');
+  });
+
+  test('--scale 1.5 is accepted (fractional scale)', () => {
+    const result = runCli(['export', '--file', 'test/fixtures/simple.tsx', '--scale', '1.5']);
+    expect(result.stderr).not.toContain('--scale must be a positive number');
+  });
+
+  test('--scale 0.5 is accepted (sub-1 scale)', () => {
+    const result = runCli(['export', '--file', 'test/fixtures/simple.tsx', '--scale', '0.5']);
+    expect(result.stderr).not.toContain('--scale must be a positive number');
+  });
 });

@@ -11,6 +11,7 @@ Options:
   --props       Props to pass as JSON (default: {})
   --width       Override composition width (pixels)
   --height      Override composition height (pixels)
+  --scale       Device scale factor, e.g. 2 for retina (default: 1)
   --format      Output format, must be "png" (default: png)
   --browser     Browser engine: webkit or chromium (default: webkit)
   --help, -h    Show this help text
@@ -25,6 +26,7 @@ export async function runExport(args: string[]): Promise<void> {
       props: { type: 'string' },
       width: { type: 'string' },
       height: { type: 'string' },
+      scale: { type: 'string' },
       format: { type: 'string' },
       browser: { type: 'string' },
       help: { type: 'boolean', short: 'h' },
@@ -88,11 +90,23 @@ export async function runExport(args: string[]): Promise<void> {
     height = n;
   }
 
+  let scale: number | undefined;
+  if (values.scale !== undefined) {
+    const scaleStr = (values.scale as string).trim();
+    const n = Number(scaleStr);
+    if (!scaleStr || !isFinite(n) || n <= 0) {
+      process.stderr.write(`Error: --scale must be a positive number, got "${values.scale}".\n`);
+      process.exit(1);
+    }
+    scale = n;
+  }
+
   try {
     const result = await render(values.file as string, {
       props,
       width,
       height,
+      scale,
       browser: browser as 'webkit' | 'chromium',
     });
     try {

@@ -63,6 +63,28 @@ describe('render() — integration', () => {
     expect(result.height).toBe(512);
   });
 
+  test('render() with scale: 2 returns result.scale of 2', async () => {
+    const { render } = await import('../../src/index.js');
+    const result = await render(resolve(fixturesDir, 'simple.tsx'), { scale: 2 });
+    expect(result.scale).toBe(2);
+  });
+
+  test('render() with scale: 2 produces physical pixel dimensions double the CSS dimensions', async () => {
+    const { render } = await import('../../src/index.js');
+    // simple.tsx config: width 800, height 400
+    const result = await render(resolve(fixturesDir, 'simple.tsx'), { scale: 2 });
+    expect(result.width).toBe(1600);
+    expect(result.height).toBe(800);
+  });
+
+  test('render() with scale: 1 produces same dimensions as default (no scale)', async () => {
+    const { render } = await import('../../src/index.js');
+    const result = await render(resolve(fixturesDir, 'simple.tsx'), { scale: 1 });
+    expect(result.width).toBe(800);
+    expect(result.height).toBe(400);
+    expect(result.scale).toBe(1);
+  });
+
   test('two sequential render() calls both succeed (browser reuse)', async () => {
     const { render } = await import('../../src/index.js');
     const result1 = await render(resolve(fixturesDir, 'simple.tsx'));
@@ -133,6 +155,25 @@ describe('render() — close and re-launch', () => {
       expect(result.buffer[1]).toBe(0x50);
       expect(result.buffer[2]).toBe(0x4e);
       expect(result.buffer[3]).toBe(0x47);
+    } finally {
+      await manager.close();
+    }
+  });
+
+  test('scale switch on same manager produces correct physical dimensions (context recreation)', async () => {
+    const { pipeline } = await import('../../src/render.js');
+    const manager = new BrowserManager();
+    try {
+      // simple.tsx: width 800, height 400
+      const result1 = await pipeline(resolve(fixturesDir, 'simple.tsx'), { scale: 1 }, manager);
+      expect(result1.width).toBe(800);
+      expect(result1.height).toBe(400);
+      expect(result1.scale).toBe(1);
+
+      const result2 = await pipeline(resolve(fixturesDir, 'simple.tsx'), { scale: 2 }, manager);
+      expect(result2.width).toBe(1600);
+      expect(result2.height).toBe(800);
+      expect(result2.scale).toBe(2);
     } finally {
       await manager.close();
     }
