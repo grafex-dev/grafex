@@ -116,11 +116,13 @@ test: add integration test for --props flag
 ## Submitting a Pull Request
 
 1. **Fork** the repo and create a branch from `main`:
+
    ```bash
    git checkout -b feat/my-feature
    ```
 
 2. **Implement** your change. Write tests. Make sure everything passes:
+
    ```bash
    npm run typecheck
    npm test
