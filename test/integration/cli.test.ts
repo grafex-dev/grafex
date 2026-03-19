@@ -58,7 +58,8 @@ describe('export command — error cases', () => {
     expect(result.stderr.trim().length).toBeGreaterThan(0);
   });
 
-  test('--format svg exits 1 with unsupported format message in stderr', () => {
+  test('--format svg exits 0 and writes a valid SVG file', () => {
+    const outPath = '/tmp/grafex-svg-test.svg';
     const result = runCli([
       'export',
       '--file',
@@ -66,10 +67,13 @@ describe('export command — error cases', () => {
       '--format',
       'svg',
       '--out',
-      '/tmp/grafex-svg-test.png',
+      outPath,
     ]);
-    expect(result.status).toBe(1);
-    expect(result.stderr).toContain('Only PNG format is supported in this version.');
+    expect(result.status).toBe(0);
+    expect(result.stdout.trim()).toBe(outPath);
+    const content = readFileSync(outPath, 'utf-8');
+    expect(content).toContain('<svg');
+    expect(content).toContain('</svg>');
   });
 });
 

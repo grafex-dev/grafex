@@ -136,3 +136,36 @@ ${componentHtml}
 </body>
 </html>`;
 }
+
+export function renderToSVG(
+  componentHtml: string,
+  viewport: { width: number; height: number },
+  scale: number = 1,
+  fonts?: string[],
+): string {
+  const { width, height } = viewport;
+  const physicalWidth = Math.round(width * scale);
+  const physicalHeight = Math.round(height * scale);
+  const fontLinks =
+    fonts && fonts.length > 0
+      ? `${fonts
+          .map((url) => `<link rel="stylesheet" href="${escapeHtml(url)}" crossorigin/>`)
+          .join('\n')}\n`
+      : '';
+  return `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xhtml="http://www.w3.org/1999/xhtml" width="${physicalWidth}" height="${physicalHeight}" viewBox="0 0 ${width} ${height}">
+<foreignObject width="${width}" height="${height}">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta charset="utf-8"/>
+${fontLinks}<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { width: ${width}px; height: ${height}px; overflow: hidden; }
+</style>
+</head>
+<body>
+${componentHtml}
+</body>
+</html>
+</foreignObject>
+</svg>`;
+}

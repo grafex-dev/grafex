@@ -76,10 +76,9 @@ describe('export command — validation', () => {
     expect(result.stderr.length).toBeGreaterThan(0);
   });
 
-  test('--format svg prints unsupported format error to stderr and exits 1', () => {
+  test('--format svg is accepted (does not error on format validation)', () => {
     const result = runCli(['export', '--file', 'test/fixtures/simple.tsx', '--format', 'svg']);
-    expect(result.status).toBe(1);
-    expect(result.stderr).toContain('Only PNG format is supported in this version.');
+    expect(result.stderr).not.toContain('--format must be');
   });
 
   test('--browser firefox prints error to stderr and exits 1', () => {
