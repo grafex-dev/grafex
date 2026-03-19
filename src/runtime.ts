@@ -115,11 +115,18 @@ export function renderToHTML(
   componentHtml: string,
   viewport: { width: number; height: number },
   fonts?: string[],
+  css?: string[],
 ): string {
   const fontLinks =
     fonts && fonts.length > 0
       ? fonts
           .map((url) => `<link rel="stylesheet" href="${escapeHtml(url)}" crossorigin>`)
+          .join('\n') + '\n'
+      : '';
+  const cssStyles =
+    css && css.length > 0
+      ? css
+          .map((content) => `<style>${content.replace(/<\/style>/gi, '<\\/style>')}</style>`)
           .join('\n') + '\n'
       : '';
   return `<!DOCTYPE html>
@@ -130,7 +137,7 @@ ${fontLinks}<style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { width: ${viewport.width}px; height: ${viewport.height}px; overflow: hidden; }
 </style>
-</head>
+${cssStyles}</head>
 <body>
 ${componentHtml}
 </body>

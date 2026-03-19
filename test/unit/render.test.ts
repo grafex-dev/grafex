@@ -317,6 +317,37 @@ describe('pipeline() — scale', () => {
   });
 });
 
+describe('pipeline() — css passthrough', () => {
+  let mockManager: ReturnType<typeof makeMockManager>;
+
+  beforeEach(() => {
+    mockManager = makeMockManager();
+  });
+
+  test('config.css contents are present as style tags in the HTML passed to the browser', async () => {
+    const { pipeline } = await import('../../src/render.js');
+    await pipeline(resolve(fixturesDir, 'with-css.tsx'), {}, mockManager as any);
+    const [html] = mockManager.render.mock.calls[0] as [string, unknown];
+    expect(html).toContain('<style>');
+    expect(html).toContain('.grafex-test');
+  });
+
+  test('missing css file throws descriptive error with path', async () => {
+    const { pipeline } = await import('../../src/render.js');
+    await expect(
+      pipeline(resolve(fixturesDir, 'with-missing-css.tsx'), {}, mockManager as any),
+    ).rejects.toThrow('with-missing-css.tsx');
+  });
+
+  test('composition without css config produces only reset style tag', async () => {
+    const { pipeline } = await import('../../src/render.js');
+    await pipeline(resolve(fixturesDir, 'simple.tsx'), {}, mockManager as any);
+    const [html] = mockManager.render.mock.calls[0] as [string, unknown];
+    const styleCount = (html.match(/<style>/g) ?? []).length;
+    expect(styleCount).toBe(1);
+  });
+});
+
 describe('pipeline() — with-components fixture', () => {
   let mockManager: ReturnType<typeof makeMockManager>;
 

@@ -1,4 +1,5 @@
-import { resolve } from 'node:path';
+import { resolve, dirname } from 'node:path';
+import { readFile } from 'node:fs/promises';
 import { transpile } from './transpile.js';
 import { renderToHTML } from './runtime.js';
 import { BrowserManager } from './browser.js';
@@ -29,8 +30,21 @@ export async function pipeline(
   const format = options.format ?? config.format ?? 'png';
   const quality = options.quality ?? config.quality ?? (format === 'jpeg' ? 90 : undefined);
 
+  const compositionDir = dirname(absolutePath);
+  const cssContents: string[] = [];
+  if (config.css && config.css.length > 0) {
+    for (const cssPath of config.css) {
+      const resolvedCssPath = resolve(compositionDir, cssPath);
+      try {
+        cssContents.push(await readFile(resolvedCssPath, 'utf-8'));
+      } catch {
+        throw new Error(`CSS file not found: "${resolvedCssPath}" (referenced in ${absolutePath})`);
+      }
+    }
+  }
+
   const componentHtml = String(component(options.props ?? {}));
-  const html = renderToHTML(componentHtml, { width, height }, config.fonts);
+  const html = renderToHTML(componentHtml, { width, height }, config.fonts, cssContents);
 
   const buffer = await manager.render(html, { width, height }, scale, format, quality);
 

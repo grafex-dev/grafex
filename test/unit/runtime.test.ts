@@ -326,6 +326,53 @@ describe('h() — style and script raw content (no escaping)', () => {
   });
 });
 
+describe('renderToHTML — css', () => {
+  test('injects style tags for each CSS string in head', () => {
+    const css = ['body { color: red; }', '.title { font-size: 64px; }'];
+    const html = renderToHTML('<p>hi</p>', { width: 1200, height: 630 }, undefined, css);
+    expect(html).toContain('<style>body { color: red; }</style>');
+    expect(html).toContain('<style>.title { font-size: 64px; }</style>');
+  });
+
+  test('style tags appear inside head', () => {
+    const css = ['.foo { color: blue; }'];
+    const html = renderToHTML('<p>hi</p>', { width: 800, height: 600 }, undefined, css);
+    const headClose = html.indexOf('</head>');
+    const stylePos = html.lastIndexOf('<style>');
+    expect(stylePos).toBeGreaterThan(-1);
+    expect(stylePos).toBeLessThan(headClose);
+  });
+
+  test('css style tags appear after font link tags', () => {
+    const fonts = ['https://fonts.googleapis.com/css2?family=Inter&display=swap'];
+    const css = ['.foo { color: blue; }'];
+    const html = renderToHTML('<p>hi</p>', { width: 800, height: 600 }, fonts, css);
+    const linkPos = html.indexOf('<link rel="stylesheet"');
+    const cssStylePos = html.indexOf('<style>.foo');
+    expect(linkPos).toBeGreaterThan(-1);
+    expect(cssStylePos).toBeGreaterThan(linkPos);
+  });
+
+  test('</style> in css content is escaped to prevent early tag termination', () => {
+    const css = ['/* </style> trick */ body { color: red; }'];
+    const html = renderToHTML('<p>hi</p>', { width: 800, height: 600 }, undefined, css);
+    expect(html).not.toContain('</style> trick');
+    expect(html).toContain('<\\/style>');
+  });
+
+  test('empty css array produces no extra style tags beyond reset', () => {
+    const html = renderToHTML('<p>hi</p>', { width: 800, height: 600 }, undefined, []);
+    const styleCount = (html.match(/<style>/g) ?? []).length;
+    expect(styleCount).toBe(1);
+  });
+
+  test('undefined css produces no extra style tags beyond reset', () => {
+    const html = renderToHTML('<p>hi</p>', { width: 800, height: 600 });
+    const styleCount = (html.match(/<style>/g) ?? []).length;
+    expect(styleCount).toBe(1);
+  });
+});
+
 describe('renderToHTML — fonts', () => {
   test('injects link tags for each font URL in head', () => {
     const fonts = [

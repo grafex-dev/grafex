@@ -193,6 +193,51 @@ import { h, Fragment, renderToHTML, BrowserManager } from 'grafex';
 
 ---
 
+## CSS Files
+
+Load external CSS files by specifying paths in `config.css`. Paths are resolved relative to the composition file:
+
+```tsx
+export const config: CompositionConfig = {
+  width: 1200,
+  height: 630,
+  css: ['./styles.css'],
+};
+```
+
+This works with any CSS — plain stylesheets, Tailwind output, Sass output, anything that produces a `.css` file. The contents are injected as `<style>` tags in the HTML `<head>` before rendering.
+
+**Tailwind CSS example:**
+
+```bash
+# 1. Generate the CSS
+npx tailwindcss -i ./input.css -o ./styles.css
+```
+
+```tsx
+// card.tsx
+export const config: CompositionConfig = {
+  width: 1200,
+  height: 630,
+  css: ['./styles.css'],
+};
+
+export default function Card() {
+  return (
+    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-500 to-purple-600 text-white">
+      <h1 className="text-6xl font-bold">Hello Tailwind</h1>
+    </div>
+  );
+}
+```
+
+```bash
+# 2. Export the composition
+npx grafex export -f card.tsx -o card.png
+```
+
+---
+
 ## Browser Installation
 
 WebKit is downloaded automatically when you run `npm install` via the `postinstall` script:
