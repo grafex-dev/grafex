@@ -2,7 +2,7 @@ import { pipeline, browserManager as defaultBrowserManager } from './render.js';
 import { BrowserManager } from './browser.js';
 import type { RenderOptions, RenderResult } from './types.js';
 
-export { h, Fragment, renderToHTML } from './runtime.js';
+export { h, Fragment, renderToHTML, renderToSVG } from './runtime.js';
 export { BrowserManager } from './browser.js';
 export type { RenderOptions, RenderResult } from './types.js';
 

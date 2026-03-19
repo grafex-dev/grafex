@@ -323,3 +323,146 @@ describe('pipeline() — with-components fixture', () => {
     expect(result.format).toBe('png');
   });
 });
+
+describe('pipeline() — SVG format', () => {
+  let mockManager: ReturnType<typeof makeMockManager>;
+
+  beforeEach(() => {
+    mockManager = makeMockManager();
+  });
+
+  test('format "svg" returns result with format "svg"', async () => {
+    const { pipeline } = await import('../../src/render.js');
+    const result = await pipeline(
+      resolve(fixturesDir, 'simple.tsx'),
+      { format: 'svg' },
+      mockManager as any,
+    );
+    expect(result.format).toBe('svg');
+  });
+
+  test('SVG output does not call manager.render (no browser needed)', async () => {
+    const { pipeline } = await import('../../src/render.js');
+    await pipeline(resolve(fixturesDir, 'simple.tsx'), { format: 'svg' }, mockManager as any);
+    expect(mockManager.render).not.toHaveBeenCalled();
+  });
+
+  test('SVG buffer contains valid SVG markup', async () => {
+    const { pipeline } = await import('../../src/render.js');
+    const result = await pipeline(
+      resolve(fixturesDir, 'simple.tsx'),
+      { format: 'svg' },
+      mockManager as any,
+    );
+    const svg = result.buffer.toString('utf-8');
+    expect(svg).toContain('<svg');
+    expect(svg).toContain('xmlns="http://www.w3.org/2000/svg"');
+    expect(svg).toContain('<foreignObject');
+    expect(svg).toContain('</svg>');
+  });
+
+  test('SVG buffer contains component HTML inside foreignObject', async () => {
+    const { pipeline } = await import('../../src/render.js');
+    const result = await pipeline(
+      resolve(fixturesDir, 'simple.tsx'),
+      { format: 'svg' },
+      mockManager as any,
+    );
+    const svg = result.buffer.toString('utf-8');
+    expect(svg).toContain('Hello, Grafex');
+  });
+
+  test('SVG width/height attributes match composition dimensions', async () => {
+    const { pipeline } = await import('../../src/render.js');
+    // simple.tsx: width 800, height 400
+    const result = await pipeline(
+      resolve(fixturesDir, 'simple.tsx'),
+      { format: 'svg' },
+      mockManager as any,
+    );
+    const svg = result.buffer.toString('utf-8');
+    expect(svg).toContain('width="800"');
+    expect(svg).toContain('height="400"');
+    expect(result.width).toBe(800);
+    expect(result.height).toBe(400);
+  });
+
+  test('SVG scale applies to intrinsic width/height attributes', async () => {
+    const { pipeline } = await import('../../src/render.js');
+    const result = await pipeline(
+      resolve(fixturesDir, 'simple.tsx'),
+      { format: 'svg', scale: 2 },
+      mockManager as any,
+    );
+    const svg = result.buffer.toString('utf-8');
+    // Physical canvas is 2x, viewBox stays at logical size
+    expect(svg).toContain('width="1600"');
+    expect(svg).toContain('height="800"');
+    expect(svg).toContain('viewBox="0 0 800 400"');
+    expect(result.width).toBe(1600);
+    expect(result.height).toBe(800);
+    expect(result.scale).toBe(2);
+  });
+
+  test('SVG format includes fonts link tags when config.fonts is set', async () => {
+    const { pipeline } = await import('../../src/render.js');
+    const result = await pipeline(
+      resolve(fixturesDir, 'with-fonts.tsx'),
+      { format: 'svg' },
+      mockManager as any,
+    );
+    const svg = result.buffer.toString('utf-8');
+    expect(svg).toContain('<link rel="stylesheet"');
+    expect(svg).toContain('fonts.googleapis.com');
+  });
+
+  test('SVG result.buffer is a Buffer instance', async () => {
+    const { pipeline } = await import('../../src/render.js');
+    const result = await pipeline(
+      resolve(fixturesDir, 'simple.tsx'),
+      { format: 'svg' },
+      mockManager as any,
+    );
+    expect(Buffer.isBuffer(result.buffer)).toBe(true);
+  });
+});
+
+describe('runtime.ts — renderToSVG', () => {
+  test('renderToSVG is exported from runtime', async () => {
+    const runtime = await import('../../src/runtime.js');
+    expect(typeof runtime.renderToSVG).toBe('function');
+  });
+
+  test('renderToSVG returns a string containing svg element', async () => {
+    const { renderToSVG } = await import('../../src/runtime.js');
+    const svg = renderToSVG('<div>hello</div>', { width: 100, height: 50 });
+    expect(svg).toContain('<svg');
+    expect(svg).toContain('</svg>');
+  });
+
+  test('renderToSVG embeds content inside foreignObject', async () => {
+    const { renderToSVG } = await import('../../src/runtime.js');
+    const svg = renderToSVG('<p>test content</p>', { width: 200, height: 100 });
+    expect(svg).toContain('<foreignObject');
+    expect(svg).toContain('<p>test content</p>');
+  });
+
+  test('renderToSVG includes viewBox with logical dimensions', async () => {
+    const { renderToSVG } = await import('../../src/runtime.js');
+    const svg = renderToSVG('<div/>', { width: 400, height: 200 });
+    expect(svg).toContain('viewBox="0 0 400 200"');
+  });
+
+  test('renderToSVG scale multiplies physical width/height', async () => {
+    const { renderToSVG } = await import('../../src/runtime.js');
+    const svg = renderToSVG('<div/>', { width: 400, height: 200 }, 2);
+    expect(svg).toContain('width="800"');
+    expect(svg).toContain('height="400"');
+    expect(svg).toContain('viewBox="0 0 400 200"');
+  });
+
+  test('renderToSVG is exported from index', async () => {
+    const idx = await import('../../src/index.js');
+    expect(typeof (idx as any).renderToSVG).toBe('function');
+  });
+});

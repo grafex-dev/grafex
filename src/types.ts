@@ -1,9 +1,11 @@
+export type Format = 'png' | 'svg';
+
 export interface RenderOptions {
   props?: Record<string, unknown>;
   width?: number;
   height?: number;
   scale?: number;
-  format?: 'png';
+  format?: Format;
   browser?: 'webkit' | 'chromium';
 }
 
@@ -12,13 +14,13 @@ export interface RenderResult {
   width: number;
   height: number;
   scale: number;
-  format: 'png';
+  format: Format;
 }
 
 export interface CompositionConfig {
   width?: number;
   height?: number;
   scale?: number;
-  format?: 'png';
+  format?: Format;
   fonts?: string[];
 }

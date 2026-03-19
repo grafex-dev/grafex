@@ -7,13 +7,13 @@ Usage: grafex export --file <path> [options]
 
 Options:
   --file, -f    Path to the composition .tsx file (required)
-  --out, -o     Output file path (default: ./output.png)
+  --out, -o     Output file path (default: ./output.png or ./output.svg)
   --props       Props to pass as JSON (default: {})
   --width       Override composition width (pixels)
   --height      Override composition height (pixels)
-  --scale       Device scale factor, e.g. 2 for retina (default: 1)
-  --format      Output format, must be "png" (default: png)
-  --browser     Browser engine: webkit or chromium (default: webkit)
+  --scale       Scale factor, e.g. 2 for retina PNG or larger SVG canvas (default: 1)
+  --format      Output format: "png" or "svg" (default: png)
+  --browser     Browser engine: webkit or chromium (default: webkit, PNG only)
   --help, -h    Show this help text
 `.trim();
 
@@ -44,13 +44,13 @@ export async function runExport(args: string[]): Promise<void> {
     process.exit(1);
   }
 
-  const outPath = values.out ?? './output.png';
-
   const format = values.format ?? 'png';
-  if (format !== 'png') {
-    process.stderr.write('Only PNG format is supported in this version.\n');
+  if (format !== 'png' && format !== 'svg') {
+    process.stderr.write(`Error: --format must be "png" or "svg", got "${format}".\n`);
     process.exit(1);
   }
+
+  const outPath = values.out ?? (format === 'svg' ? './output.svg' : './output.png');
 
   const browser = values.browser ?? 'webkit';
   if (browser !== 'webkit' && browser !== 'chromium') {
@@ -107,6 +107,7 @@ export async function runExport(args: string[]): Promise<void> {
       width,
       height,
       scale,
+      format: format as 'png' | 'svg',
       browser: browser as 'webkit' | 'chromium',
     });
     try {
