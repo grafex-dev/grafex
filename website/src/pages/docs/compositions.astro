@@ -18,12 +18,13 @@ export default function MyImage() {
 }`;
 
 const compositionConfigCode = `interface CompositionConfig {
-  width?: number;          // Image width in pixels (default: 1200)
-  height?: number;         // Image height in pixels (default: 630)
-  format?: 'png' | 'jpeg'; // Output format (default: 'png')
-  quality?: number;        // JPEG quality 1-100 (default: 90)
-  fonts?: string[];        // URLs to font stylesheets (e.g., Google Fonts)
-  scale?: number;          // Device pixel ratio (default: 1)
+  width?: number;           // Image width in pixels (default: 1200)
+  height?: number;          // Image height in pixels (default: 630)
+  format?: 'png' | 'jpeg';  // Output format (default: 'png')
+  quality?: number;         // JPEG quality 1-100 (default: 90)
+  fonts?: string[];         // URLs to font stylesheets
+  css?: string[];           // CSS file paths to inject
+  scale?: number;           // Device pixel ratio (default: 1)
 }`;
 
 const customFontsCode = `import type { CompositionConfig } from 'grafex';
@@ -300,6 +301,79 @@ export default function OgImage() {
           <span class="font-semibold" style="color: var(--color-accent-lime);">Tip: </span>
           Any CSS font URL works — Google Fonts, Adobe Fonts, or a self-hosted stylesheet. Grafex injects each URL as a <code class="font-mono">&lt;link&gt;</code> element before rendering.
         </p>
+      </div>
+    </section>
+
+    <!-- CSS Files -->
+    <section class="mb-12">
+      <h2 class="font-heading font-bold text-2xl mb-4" style="color: var(--color-text-primary);">CSS Files</h2>
+      <p class="text-base leading-relaxed mb-6" style="color: var(--color-text-secondary);">Load external CSS files by specifying paths in <code class="font-mono text-sm px-1 py-0.5 rounded" style="color: var(--color-primary); background: rgba(244,114,182,0.1);">config.css</code>. Paths are resolved relative to the composition file. The CSS is injected as <code class="font-mono">&lt;style&gt;</code> tags in the HTML <code class="font-mono">&lt;head&gt;</code> before rendering.</p>
+
+      <div class="rounded-xl overflow-hidden border mb-4" style="border-color: var(--color-border-default);">
+        <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
+          <span class="text-xs font-mono" style="color: var(--color-text-muted);">card.tsx</span>
+          <CopyButton text={`import type { CompositionConfig } from 'grafex';\n\nexport const config: CompositionConfig = {\n  width: 1200,\n  height: 630,\n  css: ['./styles.css'],\n};\n\nexport default function Card() {\n  return (\n    <div className="card">\n      <h1 className="title">Hello</h1>\n    </div>\n  );\n}`} client:load />
+        </div>
+        <div class="p-4 overflow-x-auto" style="background: var(--color-bg-code); max-height: 500px; overflow-y: auto;">
+          <pre class="font-mono text-sm leading-relaxed"><code><span style="color:#F472B6">import</span><span style="color:#94A3B8"> type {"{"} </span><span style="color:#38BDF8">CompositionConfig</span><span style="color:#94A3B8"> {"}"} </span><span style="color:#F472B6">from</span><span style="color:#A3E635"> 'grafex'</span><span style="color:#94A3B8">;</span>
+
+<span style="color:#F472B6">export</span><span style="color:#F472B6"> const</span><span style="color:#38BDF8"> config</span><span style="color:#94A3B8">:</span><span style="color:#38BDF8"> CompositionConfig</span><span style="color:#94A3B8"> = {"{"}</span>
+<span style="color:#38BDF8">  width</span><span style="color:#94A3B8">:</span><span style="color:#FB923C"> 1200</span><span style="color:#94A3B8">,</span>
+<span style="color:#38BDF8">  height</span><span style="color:#94A3B8">:</span><span style="color:#FB923C"> 630</span><span style="color:#94A3B8">,</span>
+<span style="color:#38BDF8">  css</span><span style="color:#94A3B8">: [</span><span style="color:#A3E635">'./styles.css'</span><span style="color:#94A3B8">],</span>
+<span style="color:#94A3B8">{"}"};</span>
+
+<span style="color:#F472B6">export</span><span style="color:#F472B6"> default</span><span style="color:#F472B6"> function</span><span style="color:#38BDF8"> Card</span><span style="color:#94A3B8">() {"{"}</span>
+<span style="color:#F472B6">  return</span><span style="color:#94A3B8"> (</span>
+<span style="color:#F472B6">    &lt;div</span><span style="color:#38BDF8"> className</span><span style="color:#94A3B8">=</span><span style="color:#A3E635">"card"</span><span style="color:#F472B6">&gt;</span>
+<span style="color:#F472B6">      &lt;h1</span><span style="color:#38BDF8"> className</span><span style="color:#94A3B8">=</span><span style="color:#A3E635">"title"</span><span style="color:#F472B6">&gt;</span>Hello<span style="color:#F472B6">&lt;/h1&gt;</span>
+<span style="color:#F472B6">    &lt;/div&gt;</span>
+<span style="color:#94A3B8">  );</span>
+<span style="color:#94A3B8">{"}"}</span></code></pre>
+        </div>
+      </div>
+
+      <div class="rounded-xl p-4 border-l-4 mb-6" style="background: rgba(163,230,53,0.08); border-left-color: var(--color-accent-lime);">
+        <p class="text-sm leading-relaxed" style="color: var(--color-text-primary);">
+          <span class="font-semibold" style="color: var(--color-accent-lime);">Tip: </span>
+          This is a generic file injection mechanism — it works with plain CSS, Tailwind output, Sass output, or any other `.css` file. Grafex doesn't care how the CSS was generated.
+        </p>
+      </div>
+
+      <h3 class="font-heading font-semibold text-lg mb-3" style="color: var(--color-text-primary);">Tailwind CSS recipe</h3>
+      <p class="text-base leading-relaxed mb-4" style="color: var(--color-text-secondary);">Run Tailwind's CLI to compile your stylesheet, then reference the output in <code class="font-mono text-sm" style="color: var(--color-primary);">config.css</code>.</p>
+
+      <div class="rounded-xl overflow-hidden border mb-4" style="border-color: var(--color-border-default);">
+        <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
+          <span class="text-xs font-mono" style="color: var(--color-text-muted);">terminal</span>
+        </div>
+        <div class="px-4 py-3 overflow-x-auto" style="background: var(--color-bg-code);">
+          <code class="font-mono text-sm" style="color: var(--color-accent-lime);">npx tailwindcss -i ./input.css -o ./styles.css</code>
+        </div>
+      </div>
+
+      <div class="rounded-xl overflow-hidden border" style="border-color: var(--color-border-default);">
+        <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
+          <span class="text-xs font-mono" style="color: var(--color-text-muted);">card.tsx</span>
+          <CopyButton text={`import type { CompositionConfig } from 'grafex';\n\nexport const config: CompositionConfig = {\n  width: 1200,\n  height: 630,\n  css: ['./styles.css'],\n};\n\nexport default function Card() {\n  return (\n    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-500 to-purple-600 text-white">\n      <h1 className="text-6xl font-bold">Hello Tailwind</h1>\n    </div>\n  );\n}`} client:load />
+        </div>
+        <div class="p-4 overflow-x-auto" style="background: var(--color-bg-code); max-height: 500px; overflow-y: auto;">
+          <pre class="font-mono text-sm leading-relaxed"><code><span style="color:#F472B6">import</span><span style="color:#94A3B8"> type {"{"} </span><span style="color:#38BDF8">CompositionConfig</span><span style="color:#94A3B8"> {"}"} </span><span style="color:#F472B6">from</span><span style="color:#A3E635"> 'grafex'</span><span style="color:#94A3B8">;</span>
+
+<span style="color:#F472B6">export</span><span style="color:#F472B6"> const</span><span style="color:#38BDF8"> config</span><span style="color:#94A3B8">:</span><span style="color:#38BDF8"> CompositionConfig</span><span style="color:#94A3B8"> = {"{"}</span>
+<span style="color:#38BDF8">  width</span><span style="color:#94A3B8">:</span><span style="color:#FB923C"> 1200</span><span style="color:#94A3B8">,</span>
+<span style="color:#38BDF8">  height</span><span style="color:#94A3B8">:</span><span style="color:#FB923C"> 630</span><span style="color:#94A3B8">,</span>
+<span style="color:#38BDF8">  css</span><span style="color:#94A3B8">: [</span><span style="color:#A3E635">'./styles.css'</span><span style="color:#94A3B8">],</span>
+<span style="color:#94A3B8">{"}"};</span>
+
+<span style="color:#F472B6">export</span><span style="color:#F472B6"> default</span><span style="color:#F472B6"> function</span><span style="color:#38BDF8"> Card</span><span style="color:#94A3B8">() {"{"}</span>
+<span style="color:#F472B6">  return</span><span style="color:#94A3B8"> (</span>
+<span style="color:#F472B6">    &lt;div</span><span style="color:#38BDF8"> className</span><span style="color:#94A3B8">=</span><span style="color:#A3E635">"w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-500 to-purple-600 text-white"</span><span style="color:#F472B6">&gt;</span>
+<span style="color:#F472B6">      &lt;h1</span><span style="color:#38BDF8"> className</span><span style="color:#94A3B8">=</span><span style="color:#A3E635">"text-6xl font-bold"</span><span style="color:#F472B6">&gt;</span>Hello Tailwind<span style="color:#F472B6">&lt;/h1&gt;</span>
+<span style="color:#F472B6">    &lt;/div&gt;</span>
+<span style="color:#94A3B8">  );</span>
+<span style="color:#94A3B8">{"}"}</span></code></pre>
+        </div>
       </div>
     </section>
 

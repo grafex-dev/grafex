@@ -244,7 +244,7 @@ const closeCallCode = `await close();`;
           <div class="rounded-xl overflow-hidden border" style="border-color: var(--color-border-default);">
             <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
               <span class="text-xs uppercase tracking-wider font-medium" style="color: var(--color-text-muted);">TypeScript</span>
-              <CopyButton text={`interface CompositionConfig {\n  width?: number;          // Image width in pixels (default: 1200)\n  height?: number;         // Image height in pixels (default: 630)\n  format?: 'png' | 'jpeg'; // Output format (default: 'png')\n  quality?: number;        // JPEG quality 1-100 (default: 90)\n  fonts?: string[];        // URLs to font stylesheets (e.g., Google Fonts)\n  css?: string[];           // CSS file paths to inject\n  scale?: number;          // Device pixel ratio (default: 1)\n}`} client:load />
+              <CopyButton text={compositionConfigTypeCode} client:load />
             </div>
             <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
               <Code code={compositionConfigTypeCode} lang="typescript" theme={grafexTheme} />

@@ -4,7 +4,7 @@
 
 Grafex works as both a CLI tool (`npx grafex export`) and a Node.js library (`import { render } from 'grafex'`). Compositions are plain TSX files that export a function component and a config object. The tool transpiles JSX via esbuild, renders HTML in a headless WebKit browser via Playwright, and screenshots the result to PNG.
 
-Key features: full CSS support (flexbox, grid, gradients, shadows, transforms), custom fonts via config.fonts (Google Fonts or any CSS URL), AI-friendly (compositions are easy for LLMs to write), sub-100ms warm renders, 2 runtime dependencies (playwright-core + esbuild).
+Key features: full CSS support (flexbox, grid, gradients, shadows, transforms), custom fonts via config.fonts (Google Fonts or any CSS URL), external CSS files via config.css (plain CSS, Tailwind output, Sass output, any .css file), AI-friendly (compositions are easy for LLMs to write), sub-100ms warm renders, 2 runtime dependencies (playwright-core + esbuild).
 
 ---
 
@@ -58,7 +58,7 @@ export default function Card() {
 
 A composition has two parts:
 1. Default export — a function that returns JSX. This is your image layout.
-2. Named `config` export — a `CompositionConfig` object that sets the output dimensions and optionally loads custom fonts.
+2. Named `config` export — a `CompositionConfig` object that sets the output dimensions and optionally loads custom fonts and CSS files.
 
 ### Export
 
@@ -76,12 +76,21 @@ Compositions are TSX files that describe your image layout. They use a custom JS
 
 ```ts
 interface CompositionConfig {
+<<<<<<< Updated upstream
   width?: number;          // Image width in pixels (default: 1200)
   height?: number;         // Image height in pixels (default: 630)
   format?: 'png' | 'jpeg'; // Output format (default: 'png')
   quality?: number;        // JPEG quality 1-100 (default: 90)
   fonts?: string[];        // URLs to font stylesheets (e.g., Google Fonts)
   scale?: number;          // Device pixel ratio (default: 1)
+=======
+  width?: number;   // Image width in pixels (default: 1200)
+  height?: number;  // Image height in pixels (default: 630)
+  format?: 'png';   // Output format (only PNG supported)
+  fonts?: string[]; // URLs to font stylesheets (e.g., Google Fonts)
+  css?: string[];   // Paths to CSS files (relative to the composition file)
+  scale?: number;   // Device pixel ratio (default: 1)
+>>>>>>> Stashed changes
 }
 ```
 
@@ -106,6 +115,28 @@ export default function Card() {
   );
 }
 ```
+
+### CSS Files
+
+Load external CSS files via `config.css`. Paths are resolved relative to the composition file. Works with plain CSS, Tailwind output, Sass output, or any `.css` file.
+
+```tsx
+export const config: CompositionConfig = {
+  width: 1200,
+  height: 630,
+  css: ['./styles.css'],
+};
+
+export default function Card() {
+  return (
+    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-500 to-purple-600 text-white">
+      <h1 className="text-6xl font-bold">Hello Tailwind</h1>
+    </div>
+  );
+}
+```
+
+Tailwind recipe: run `npx tailwindcss -i ./input.css -o ./styles.css` first, then reference the output in `config.css`.
 
 ### Styling
 
@@ -257,7 +288,11 @@ interface CompositionConfig {
   format?: 'png' | 'jpeg';
   quality?: number;
   fonts?: string[];
+<<<<<<< Updated upstream
   scale?: number;
+=======
+  css?: string[];
+>>>>>>> Stashed changes
 }
 ```
 

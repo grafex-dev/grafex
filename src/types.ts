@@ -23,4 +23,5 @@ export interface CompositionConfig {
   format?: 'png' | 'jpeg';
   quality?: number;
   fonts?: string[];
+  css?: string[];
 }
