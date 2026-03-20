@@ -1,13 +1,14 @@
 import { parseArgs } from 'node:util';
-import { writeFileSync } from 'node:fs';
-import { render, close } from '../index.js';
+import { writeFileSync, mkdirSync, existsSync, statSync } from 'node:fs';
+import { join } from 'node:path';
+import { render, renderAll, close, getCompositionConfig, hasVariants } from '../index.js';
 
 const HELP = `
 Usage: grafex export --file <path> [options]
 
 Options:
   --file, -f    Path to the composition .tsx file (required)
-  --out, -o     Output file path (default: ./output.png)
+  --out, -o     Output file path or directory (default: ./ for multi-variant)
   --props       Props to pass as JSON (default: {})
   --width       Override composition width (pixels)
   --height      Override composition height (pixels)
@@ -15,6 +16,7 @@ Options:
   --format      Output format: png or jpeg (default: png)
   --quality     JPEG quality 1-100 (default: 90, only applies to jpeg)
   --browser     Browser engine: webkit or chromium (default: webkit)
+  --variant     Render only the named variant
   --help, -h    Show this help text
 `.trim();
 
@@ -31,6 +33,7 @@ export async function runExport(args: string[]): Promise<void> {
       format: { type: 'string' },
       quality: { type: 'string' },
       browser: { type: 'string' },
+      variant: { type: 'string' },
       help: { type: 'boolean', short: 'h' },
     },
     strict: false,
@@ -45,8 +48,6 @@ export async function runExport(args: string[]): Promise<void> {
     process.stderr.write('Error: --file (-f) is required.\n');
     process.exit(1);
   }
-
-  const outPath = values.out ?? './output.png';
 
   const rawFormat = values.format as string | undefined;
   const format = rawFormat === 'jpg' ? 'jpeg' : (rawFormat ?? 'png');
@@ -120,23 +121,83 @@ export async function runExport(args: string[]): Promise<void> {
     scale = n;
   }
 
+  const variantName = values.variant as string | undefined;
+  const outPath = values.out as string | undefined;
+
+  const renderOptions = {
+    props,
+    width,
+    height,
+    scale,
+    format: format as 'png' | 'jpeg',
+    quality,
+    browser: browser as 'webkit' | 'chromium',
+  };
+
   try {
-    const result = await render(values.file as string, {
-      props,
-      width,
-      height,
-      scale,
-      format: format as 'png' | 'jpeg',
-      quality,
-      browser: browser as 'webkit' | 'chromium',
-    });
-    try {
-      writeFileSync(outPath as string, result.buffer);
-    } finally {
-      await close();
+    if (variantName !== undefined) {
+      // Single variant render
+      const singleOutPath = outPath ?? `./output.${format}`;
+      const result = await render(values.file as string, {
+        ...renderOptions,
+        variant: variantName,
+      });
+      try {
+        writeFileSync(singleOutPath, result.buffer);
+      } finally {
+        await close();
+      }
+      process.stdout.write(singleOutPath + '\n');
+    } else {
+      const config = await getCompositionConfig(values.file as string);
+
+      if (hasVariants(config)) {
+        // Multi-variant output
+        const isDir =
+          outPath === undefined ||
+          outPath.endsWith('/') ||
+          (existsSync(outPath) && statSync(outPath).isDirectory());
+
+        if (!isDir && outPath !== undefined) {
+          process.stderr.write(
+            'Error: Cannot use a single output file with multiple variants. Use a directory path or --variant.\n',
+          );
+          process.exit(1);
+        }
+
+        const dir = outPath ?? './';
+        if (!existsSync(dir)) {
+          mkdirSync(dir, { recursive: true });
+        }
+
+        const allResults = await renderAll(values.file as string, renderOptions);
+        const writtenPaths: string[] = [];
+        try {
+          for (const [name, result] of allResults) {
+            const filePath = join(dir, `${name}.${result.format}`);
+            writeFileSync(filePath, result.buffer);
+            writtenPaths.push(filePath);
+          }
+        } finally {
+          await close();
+        }
+        for (const p of writtenPaths) {
+          process.stdout.write(p + '\n');
+        }
+      } else {
+        // No variants — behave as before
+        const singleOutPath = outPath ?? './output.png';
+        const result = await render(values.file as string, renderOptions);
+        try {
+          writeFileSync(singleOutPath, result.buffer);
+        } finally {
+          await close();
+        }
+        process.stdout.write(singleOutPath + '\n');
+      }
     }
-    process.stdout.write(outPath + '\n');
   } catch (err) {
+    await close();
     process.stderr.write(`Error: ${(err as Error).message}\n`);
     process.exit(1);
   }

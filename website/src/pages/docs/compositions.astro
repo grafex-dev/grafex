@@ -25,6 +25,7 @@ const compositionConfigCode = `interface CompositionConfig {
   fonts?: string[];         // URLs to font stylesheets
   css?: string[];           // CSS file paths to inject
   scale?: number;           // Device pixel ratio (default: 1)
+  variants?: Record<string, VariantConfig>; // Named output variants
 }`;
 
 const customFontsCode = `import type { CompositionConfig } from 'grafex';
@@ -218,6 +219,50 @@ export default function OgImage() {
     </div>
   );
 }`;
+
+const variantsConfigCode = `import type { CompositionConfig } from 'grafex';
+
+export const config: CompositionConfig = {
+  width: 1200,
+  height: 630,
+  variants: {
+    og: {},
+    twitter: { height: 675 },
+    square: { width: 1080, height: 1080, props: { layout: 'square' } },
+  },
+};
+
+export default function Card({ layout = 'default' }: { layout?: string }) {
+  return (
+    <div style={{ width: '100%', height: '100%', background: '#1e293b', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '48px' }}>
+      {layout}
+    </div>
+  );
+}`;
+
+const variantsCliCode = `# Renders og.png, twitter.png, square.png (named after each variant)
+grafex export -f card.tsx
+
+# Same, but into a directory
+grafex export -f card.tsx -o ./images/
+
+# Export a single variant
+grafex export -f card.tsx --variant twitter -o twitter.png`;
+
+const variantsApiCode = `import { render, renderAll, close } from 'grafex';
+import { writeFileSync } from 'node:fs';
+
+// Single variant
+const twitter = await render('./card.tsx', { variant: 'twitter' });
+writeFileSync('twitter.png', twitter.buffer);
+
+// All variants
+const all = await renderAll('./card.tsx', { props: { title: 'Hello' } });
+for (const [name, result] of all) {
+  writeFileSync(\`\${name}.\${result.format}\`, result.buffer);
+}
+
+await close();`;
 ---
 
 <DocsLayout
@@ -519,6 +564,53 @@ export default function OgImage() {
         <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
           <Code code={usingComponentCode} lang="tsx" theme={grafexTheme} />
         </div>
+      </div>
+    </section>
+
+    <!-- Variants -->
+    <section class="mb-12">
+      <h2 class="font-heading font-bold text-2xl mb-4" style="color: var(--color-text-primary);">Variants</h2>
+      <p class="text-base leading-relaxed mb-6" style="color: var(--color-text-secondary);">
+        Produce multiple outputs from a single composition — different sizes, formats, or props. Define a <code class="font-mono text-sm px-1 py-0.5 rounded" style="color: var(--color-primary); background: rgba(244,114,182,0.1);">variants</code> record in your config. Each variant inherits from the base config and can override any field.
+      </p>
+
+      <div class="rounded-xl overflow-hidden border mb-6" style="border-color: var(--color-border-default);">
+        <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
+          <span class="text-xs font-mono" style="color: var(--color-text-muted);">card.tsx</span>
+          <CopyButton text={variantsConfigCode} client:load />
+        </div>
+        <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
+          <Code code={variantsConfigCode} lang="tsx" theme={grafexTheme} />
+        </div>
+      </div>
+
+      <h3 class="font-heading font-semibold text-lg mb-3" style="color: var(--color-text-primary);">CLI usage</h3>
+      <div class="rounded-xl overflow-hidden border mb-6" style="border-color: var(--color-border-default);">
+        <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
+          <span class="text-xs uppercase tracking-wider font-medium" style="color: var(--color-text-muted);">bash</span>
+          <CopyButton text={variantsCliCode} client:load />
+        </div>
+        <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
+          <Code code={variantsCliCode} lang="bash" theme={grafexTheme} />
+        </div>
+      </div>
+
+      <h3 class="font-heading font-semibold text-lg mb-3" style="color: var(--color-text-primary);">API usage</h3>
+      <div class="rounded-xl overflow-hidden border mb-6" style="border-color: var(--color-border-default);">
+        <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
+          <span class="text-xs uppercase tracking-wider font-medium" style="color: var(--color-text-muted);">TypeScript</span>
+          <CopyButton text={variantsApiCode} client:load />
+        </div>
+        <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
+          <Code code={variantsApiCode} lang="typescript" theme={grafexTheme} />
+        </div>
+      </div>
+
+      <div class="rounded-xl p-4 border-l-4" style="background: rgba(163,230,53,0.08); border-left-color: var(--color-accent-lime);">
+        <p class="text-sm leading-relaxed" style="color: var(--color-text-primary);">
+          <span class="font-semibold" style="color: var(--color-accent-lime);">Merge rules: </span>
+          CLI/API options override variant config, which overrides base config. Props are shallow-merged: variant props apply first, then CLI/API props override individual keys. Array fields (<code class="font-mono">fonts</code>, <code class="font-mono">css</code>) replace rather than merge.
+        </p>
       </div>
     </section>
   </article>

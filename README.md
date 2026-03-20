@@ -67,18 +67,19 @@ npx grafex export -f card.tsx -o card.png
 
 Render a composition file to an image.
 
-| Flag        | Short | Type          | Default        | Description                                             |
-| ----------- | ----- | ------------- | -------------- | ------------------------------------------------------- |
-| `--file`    | `-f`  | string        | —              | Path to the `.tsx` composition file **(required)**      |
-| `--out`     | `-o`  | string        | `./output.png` | Output file path                                        |
-| `--props`   |       | string (JSON) | `{}`           | Props to pass to the composition as a JSON object       |
-| `--width`   |       | number        | from `config`  | Override composition width in pixels                    |
-| `--height`  |       | number        | from `config`  | Override composition height in pixels                   |
-| `--format`  |       | string        | `png`          | Output format (`png` or `jpeg`)                         |
-| `--quality` |       | number        | `90`           | JPEG quality 1–100 (only applies when format is `jpeg`) |
-| `--scale`   |       | number        | `1`            | Device pixel ratio. Use `2` for retina/high-DPI output. |
-| `--browser` |       | string        | `webkit`       | Browser engine                                          |
-| `--help`    | `-h`  |               |                | Show help text                                          |
+| Flag        | Short | Type          | Default        | Description                                                   |
+| ----------- | ----- | ------------- | -------------- | ------------------------------------------------------------- |
+| `--file`    | `-f`  | string        | —              | Path to the `.tsx` composition file **(required)**            |
+| `--out`     | `-o`  | string        | `./output.png` | Output file path or directory (for multi-variant output)      |
+| `--props`   |       | string (JSON) | `{}`           | Props to pass to the composition as a JSON object             |
+| `--width`   |       | number        | from `config`  | Override composition width in pixels                          |
+| `--height`  |       | number        | from `config`  | Override composition height in pixels                         |
+| `--format`  |       | string        | `png`          | Output format (`png` or `jpeg`)                               |
+| `--quality` |       | number        | `90`           | JPEG quality 1–100 (only applies when format is `jpeg`)       |
+| `--scale`   |       | number        | `1`            | Device pixel ratio. Use `2` for retina/high-DPI output.       |
+| `--browser` |       | string        | `webkit`       | Browser engine                                                |
+| `--variant` |       | string        | (all)          | Render a single variant by name. Omit to render all variants. |
+| `--help`    | `-h`  |               |                | Show help text                                                |
 
 > **High-DPI output:** Set `scale` to control the device pixel ratio. A 1200x630 composition with `scale: 2` produces a 2400x1260 PNG — same layout, double the pixel density. Works in the config, CLI, and API.
 >
@@ -116,12 +117,12 @@ grafex --help       # Print help text and exit
 ## Library API
 
 ```ts
-import { render, close } from 'grafex';
+import { render, renderAll, close } from 'grafex';
 ```
 
 ### `render(compositionPath, options?)`
 
-Render a composition to a PNG buffer.
+Render a composition to an image buffer. Pass `options.variant` to render a specific variant.
 
 ```ts
 const result = await render('./card.tsx', {
@@ -149,6 +150,7 @@ const result = await render('./card.tsx', {
 | `options.quality` | `number`                  | JPEG quality 1–100 (default: `90`, only applies to JPEG) |
 | `options.scale`   | `number`                  | Device pixel ratio (default: `1`)                        |
 | `options.browser` | `'webkit' \| 'chromium'`  | Browser engine (default: `'webkit'`)                     |
+| `options.variant` | `string`                  | Named variant to render from `config.variants`           |
 
 **Returns:** `Promise<RenderResult>` where `RenderResult` is:
 
@@ -159,6 +161,22 @@ interface RenderResult {
   height: number;
   format: 'png' | 'jpeg';
 }
+```
+
+### `renderAll(compositionPath, options?)`
+
+Render all variants defined in `config.variants`. Returns a `Map<string, RenderResult>` keyed by variant name.
+
+```ts
+import { renderAll, close } from 'grafex';
+import { writeFileSync } from 'node:fs';
+
+const all = await renderAll('./card.tsx', { props: { title: 'Hello' } });
+for (const [name, result] of all) {
+  writeFileSync(`${name}.${result.format}`, result.buffer);
+}
+
+await close();
 ```
 
 ### `close()`
@@ -263,6 +281,69 @@ CSS `url()` references work too — both in inline styles and in external CSS fi
 ```
 
 Remote URLs (`http://`, `https://`) and data URLs are passed through unchanged.
+
+---
+
+## Variants
+
+Produce multiple outputs from a single composition — different sizes, formats, or props. Define a `variants` record in your config. Each variant inherits from the base config and can override any field:
+
+```tsx
+import type { CompositionConfig } from 'grafex';
+
+export const config: CompositionConfig = {
+  width: 1200,
+  height: 630,
+  variants: {
+    og: {},
+    twitter: { height: 675 },
+    square: { width: 1080, height: 1080, props: { layout: 'square' } },
+  },
+};
+
+export default function Card({ layout = 'default' }: { layout?: string }) {
+  return <div style={{ width: '100%', height: '100%' }}>{layout}</div>;
+}
+```
+
+**Export all variants:**
+
+```bash
+# Renders og.png, twitter.png, square.png (named after each variant)
+grafex export -f card.tsx
+
+# Same, but into a directory
+grafex export -f card.tsx -o ./images/
+```
+
+**Export a single variant:**
+
+```bash
+grafex export -f card.tsx --variant og -o card-og.png
+```
+
+**Library API:**
+
+```ts
+import { render, renderAll, close } from 'grafex';
+
+// Single variant
+const result = await render('./card.tsx', { variant: 'twitter' });
+
+// All variants
+const all = await renderAll('./card.tsx');
+for (const [name, result] of all) {
+  writeFileSync(`${name}.${result.format}`, result.buffer);
+}
+
+await close();
+```
+
+**Merge rules:**
+
+- CLI/API options override variant config, which overrides base config
+- `props` are shallow-merged: variant props apply first, then CLI/API props override individual keys
+- Array fields (`fonts`, `css`) replace the base value — they do not merge
 
 ---
 

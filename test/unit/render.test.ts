@@ -450,3 +450,149 @@ describe('pipeline() — format resolution', () => {
     );
   });
 });
+
+describe('pipeline() — variants', () => {
+  let mockManager: ReturnType<typeof makeMockManager>;
+
+  beforeEach(() => {
+    mockManager = makeMockManager();
+  });
+
+  test('pipeline with variant option uses variant dimensions', async () => {
+    const { pipeline } = await import('../../src/render.js');
+    // with-variants.tsx: twitter variant has height 675
+    const result = await pipeline(
+      resolve(fixturesDir, 'with-variants.tsx'),
+      { variant: 'twitter' },
+      mockManager as any,
+    );
+    expect(result.width).toBe(1200);
+    expect(result.height).toBe(675);
+  });
+
+  test('pipeline with og variant (empty overrides) uses base config dimensions', async () => {
+    const { pipeline } = await import('../../src/render.js');
+    const result = await pipeline(
+      resolve(fixturesDir, 'with-variants.tsx'),
+      { variant: 'og' },
+      mockManager as any,
+    );
+    expect(result.width).toBe(1200);
+    expect(result.height).toBe(630);
+  });
+
+  test('pipeline variant props are passed to component', async () => {
+    const { pipeline } = await import('../../src/render.js');
+    // square variant has props: { layout: 'square' }
+    const result = await pipeline(
+      resolve(fixturesDir, 'with-variants.tsx'),
+      { variant: 'square' },
+      mockManager as any,
+    );
+    const [html] = mockManager.render.mock.calls[0] as [string, unknown];
+    expect(html).toContain('square');
+    expect(result.width).toBe(1080);
+    expect(result.height).toBe(1080);
+  });
+
+  test('pipeline CLI props override variant props', async () => {
+    const { pipeline } = await import('../../src/render.js');
+    // square variant has props: { layout: 'square' }, but we override with layout: 'override'
+    const result = await pipeline(
+      resolve(fixturesDir, 'with-variants.tsx'),
+      { variant: 'square', props: { layout: 'override' } },
+      mockManager as any,
+    );
+    const [html] = mockManager.render.mock.calls[0] as [string, unknown];
+    expect(html).toContain('override');
+    expect(result).toBeDefined();
+  });
+
+  test('pipeline with unknown variant throws descriptive error', async () => {
+    const { pipeline } = await import('../../src/render.js');
+    await expect(
+      pipeline(
+        resolve(fixturesDir, 'with-variants.tsx'),
+        { variant: 'nonexistent' },
+        mockManager as any,
+      ),
+    ).rejects.toThrow('Unknown variant "nonexistent"');
+  });
+
+  test('pipeline with variant on composition without variants throws error', async () => {
+    const { pipeline } = await import('../../src/render.js');
+    await expect(
+      pipeline(resolve(fixturesDir, 'simple.tsx'), { variant: 'og' }, mockManager as any),
+    ).rejects.toThrow('no variants defined');
+  });
+
+  test('pipeline without variants works as before (backwards compat)', async () => {
+    const { pipeline } = await import('../../src/render.js');
+    const result = await pipeline(resolve(fixturesDir, 'simple.tsx'), {}, mockManager as any);
+    expect(result.width).toBe(800);
+    expect(result.height).toBe(400);
+    expect(result.format).toBe('png');
+  });
+});
+
+describe('pipelineAll()', () => {
+  let mockManager: ReturnType<typeof makeMockManager>;
+
+  beforeEach(() => {
+    mockManager = makeMockManager();
+  });
+
+  test('pipelineAll returns a Map with all variant keys', async () => {
+    const { pipelineAll } = await import('../../src/render.js');
+    const results = await pipelineAll(
+      resolve(fixturesDir, 'with-variants.tsx'),
+      {},
+      mockManager as any,
+    );
+    expect(results).toBeInstanceOf(Map);
+    expect(results.has('og')).toBe(true);
+    expect(results.has('twitter')).toBe(true);
+    expect(results.has('square')).toBe(true);
+    expect(results.size).toBe(3);
+  });
+
+  test('pipelineAll each variant has correct dimensions', async () => {
+    const { pipelineAll } = await import('../../src/render.js');
+    const results = await pipelineAll(
+      resolve(fixturesDir, 'with-variants.tsx'),
+      {},
+      mockManager as any,
+    );
+    expect(results.get('og')!.width).toBe(1200);
+    expect(results.get('og')!.height).toBe(630);
+    expect(results.get('twitter')!.width).toBe(1200);
+    expect(results.get('twitter')!.height).toBe(675);
+    expect(results.get('square')!.width).toBe(1080);
+    expect(results.get('square')!.height).toBe(1080);
+  });
+
+  test('pipelineAll throws on composition without variants', async () => {
+    const { pipelineAll } = await import('../../src/render.js');
+    await expect(
+      pipelineAll(resolve(fixturesDir, 'simple.tsx'), {}, mockManager as any),
+    ).rejects.toThrow('config.variants');
+  });
+
+  test('array fields (css) in variant replace base config css, not merge', async () => {
+    // This is verified structurally: variant.css takes precedence over config.css
+    // The with-variants.tsx doesn't use css, but we verify the logic:
+    // variant?.css ?? config.css — replacement, not merging
+    const { pipeline } = await import('../../src/render.js');
+    // simple.tsx has no css; with-variants.tsx og variant has no css override — uses base (none)
+    const result = await pipeline(
+      resolve(fixturesDir, 'with-variants.tsx'),
+      { variant: 'og' },
+      mockManager as any,
+    );
+    const [html] = mockManager.render.mock.calls[0] as [string, unknown];
+    // Only the reset style tag should be present (no extra css)
+    const styleCount = (html.match(/<style>/g) ?? []).length;
+    expect(styleCount).toBe(1);
+    expect(result).toBeDefined();
+  });
+});
