@@ -4,7 +4,7 @@
 
 Grafex works as both a CLI tool (`npx grafex export`) and a Node.js library (`import { render } from 'grafex'`). Compositions are plain TSX files that export a function component and a config object. The tool transpiles JSX via esbuild, renders HTML in a headless WebKit browser via Playwright, and screenshots the result to PNG.
 
-Key features: full CSS support (flexbox, grid, gradients, shadows, transforms), custom fonts via config.fonts (Google Fonts or any CSS URL), external CSS files via config.css (plain CSS, Tailwind output, Sass output, any .css file), local image embedding (reference local PNG/JPEG/GIF/WebP/SVG/AVIF/ICO/BMP files by path — they are embedded as base64 data URLs automatically), AI-friendly (compositions are easy for LLMs to write), sub-100ms warm renders, 2 runtime dependencies (playwright-core + esbuild).
+Key features: full CSS support (flexbox, grid, gradients, shadows, transforms), custom fonts via config.fonts (Google Fonts or any CSS URL), external CSS files via config.css (plain CSS, Tailwind output, Sass output, any .css file), local image embedding (reference local PNG/JPEG/GIF/WebP/SVG/AVIF/ICO/BMP files by path — they are embedded as base64 data URLs automatically), variants (produce multiple outputs from one composition — different sizes, formats, or props — via config.variants), AI-friendly (compositions are easy for LLMs to write), sub-100ms warm renders, 2 runtime dependencies (playwright-core + esbuild).
 
 ---
 
@@ -83,6 +83,18 @@ interface CompositionConfig {
   fonts?: string[];         // URLs to font stylesheets (e.g., Google Fonts)
   css?: string[];           // Paths to CSS files (relative to the composition file)
   scale?: number;           // Device pixel ratio (default: 1)
+  variants?: Record<string, VariantConfig>; // Named output variants
+}
+
+interface VariantConfig {
+  width?: number;
+  height?: number;
+  scale?: number;
+  format?: 'png' | 'jpeg';
+  quality?: number;
+  fonts?: string[];
+  css?: string[];
+  props?: Record<string, unknown>; // Props injected for this variant
 }
 ```
 
@@ -185,6 +197,28 @@ CSS `url()` references work too — both in inline styles and in external CSS fi
 
 Compositions can import components from other files. Grafex bundles everything with esbuild before rendering.
 
+### Variants
+
+Produce multiple outputs from a single composition — different sizes, formats, or props. Define a `variants` record in your config. Each variant inherits from the base config and can override any field:
+
+```tsx
+export const config: CompositionConfig = {
+  width: 1200,
+  height: 630,
+  variants: {
+    og: {},
+    twitter: { height: 675 },
+    square: { width: 1080, height: 1080, props: { layout: 'square' } },
+  },
+};
+
+export default function Card({ layout = 'default' }: { layout?: string }) {
+  return <div style={{ width: '100%', height: '100%' }}>{layout}</div>;
+}
+```
+
+Merge rules: CLI/API options override variant config, which overrides base config. Props are shallow-merged: variant props apply first, then CLI/API props override individual keys. Array fields (`fonts`, `css`) replace rather than merge.
+
 ---
 
 ## CLI Reference
@@ -200,13 +234,14 @@ grafex export -f <file> [options]
 | Flag | Short | Type | Default | Description |
 |---|---|---|---|---|
 | `--file` | `-f` | string | — | Path to the `.tsx` composition file (required) |
-| `--out` | `-o` | string | `./output.png` | Output file path |
+| `--out` | `-o` | string | `./output.png` | Output file path or directory (for multi-variant output) |
 | `--props` | | string (JSON) | `{}` | Props to pass to the composition |
 | `--width` | | number | from config | Override composition width in pixels |
 | `--height` | | number | from config | Override composition height in pixels |
 | `--scale` | | number | `1` | Device pixel ratio — `2` for retina/high-DPI output |
 | `--format` | | string | `png` | Output format: `png` or `jpeg` |
 | `--quality` | | number | `90` | JPEG quality 1–100 (only applies when format is `jpeg`) |
+| `--variant` | | string | (all) | Render a single variant by name. Omit to render all variants. |
 | `--help` | `-h` | | | Show help text |
 
 Examples:
@@ -215,6 +250,11 @@ Examples:
 grafex export -f card.tsx -o card.png
 grafex export -f card.tsx -o card.png --props '{"title":"Hello"}'
 grafex export -f card.tsx -o card.png --width 800 --height 400
+# Export all variants
+grafex export -f card.tsx
+grafex export -f card.tsx -o ./images/
+# Export a single variant
+grafex export -f card.tsx --variant twitter -o twitter.png
 ```
 
 Exit codes: 0 = success, 1 = error.
@@ -233,7 +273,7 @@ grafex --help       # Print help text and exit
 Use Grafex programmatically in Node.js applications.
 
 ```ts
-import { render, close } from 'grafex';
+import { render, renderAll, close } from 'grafex';
 ```
 
 ### `render(compositionPath, options?)`
@@ -247,6 +287,8 @@ const result = await render('./card.tsx', {
 // result.buffer is a Buffer containing PNG data
 ```
 
+Pass `options.variant` to render a specific variant from `config.variants`.
+
 Returns `Promise<RenderResult>`:
 
 ```ts
@@ -257,6 +299,18 @@ interface RenderResult {
   format: 'png' | 'jpeg';
   scale: number;
 }
+```
+
+### `renderAll(compositionPath, options?)`
+
+Render all variants defined in `config.variants`. Returns `Promise<Map<string, RenderResult>>`.
+
+```ts
+const all = await renderAll('./card.tsx', { props: { title: 'Hello' } });
+for (const [name, result] of all) {
+  writeFileSync(`${name}.${result.format}`, result.buffer);
+}
+await close();
 ```
 
 ### `close()`
@@ -296,6 +350,7 @@ interface RenderOptions {
   quality?: number;
   browser?: 'webkit';
   scale?: number;
+  variant?: string;  // Named variant from config.variants
 }
 
 interface CompositionConfig {
@@ -306,6 +361,7 @@ interface CompositionConfig {
   fonts?: string[];
   css?: string[];
   scale?: number;
+  variants?: Record<string, VariantConfig>;
 }
 ```
 

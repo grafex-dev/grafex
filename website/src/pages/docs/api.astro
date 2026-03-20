@@ -4,7 +4,7 @@ import CopyButton from '../../components/CopyButton.tsx';
 import { Code } from 'astro:components';
 import { grafexTheme } from '../../shiki-theme';
 
-const importCode = `import { render, close } from 'grafex';`;
+const importCode = `import { render, renderAll, close } from 'grafex';`;
 
 const renderCallCode = `const result = await render('./card.tsx', {
   props: { title: 'Hello' },
@@ -45,6 +45,25 @@ await close();`;
 
 const advancedImportCode = `import { h, Fragment, renderToHTML, BrowserManager } from 'grafex';`;
 
+const renderAllCallCode = `const all = await renderAll('./card.tsx', {
+  props: { title: 'Hello' },
+});
+
+for (const [name, result] of all) {
+  writeFileSync(\`\${name}.\${result.format}\`, result.buffer);
+}`;
+
+const variantConfigTypeCode = `interface VariantConfig {
+  width?: number;
+  height?: number;
+  scale?: number;
+  format?: 'png' | 'jpeg';
+  quality?: number;
+  fonts?: string[];
+  css?: string[];
+  props?: Record<string, unknown>; // Props injected for this variant
+}`;
+
 const compositionConfigTypeCode = `interface CompositionConfig {
   width?: number;           // Image width in pixels (default: 1200)
   height?: number;          // Image height in pixels (default: 630)
@@ -53,6 +72,7 @@ const compositionConfigTypeCode = `interface CompositionConfig {
   fonts?: string[];         // URLs to font stylesheets
   css?: string[];           // CSS file paths to inject
   scale?: number;           // Device pixel ratio (default: 1)
+  variants?: Record<string, VariantConfig>; // Named output variants
 }`;
 
 const renderResultFullTypeCode = `interface RenderResult {
@@ -71,6 +91,7 @@ const renderOptionsTypeCode = `interface RenderOptions {
   quality?: number;                 // JPEG quality 1-100 (default: 90)
   browser?: 'webkit';               // Browser engine
   scale?: number;                   // Device pixel ratio (default: 1)
+  variant?: string;                 // Named variant to render
 }`;
 
 const closeCallCode = `await close();`;
@@ -88,7 +109,7 @@ const closeCallCode = `await close();`;
     <div class="rounded-xl overflow-hidden border mb-12" style="border-color: var(--color-border-default);">
       <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
         <span class="text-xs uppercase tracking-wider font-medium" style="color: var(--color-text-muted);">TypeScript</span>
-        <CopyButton text="import { render, close } from 'grafex';" client:load />
+        <CopyButton text="import { render, renderAll, close } from 'grafex';" client:load />
       </div>
       <div class="overflow-x-auto [&_pre]:px-4 [&_pre]:py-3 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed">
         <Code code={importCode} lang="typescript" theme={grafexTheme} />
@@ -131,6 +152,7 @@ const closeCallCode = `await close();`;
                 ['options.quality', 'number', 'JPEG quality 1–100 (default: 90, only applies when format is jpeg)'],
                 ["options.browser", "'webkit'", "Browser engine (default: 'webkit')"],
                 ['options.scale', 'number', 'Device pixel ratio (default: 1)'],
+                ['options.variant', 'string', 'Named variant to render from config.variants'],
               ].map(([param, type, desc]) => (
                 <tr style="border-bottom: 1px solid var(--color-border-default);">
                   <td class="px-4 py-3"><code class="font-mono text-xs" style="color: var(--color-primary);">{param}</code></td>
@@ -162,6 +184,24 @@ const closeCallCode = `await close();`;
           <Code code={writeToFileCode} lang="typescript" theme={grafexTheme} />
         </div>
       </div>
+    </section>
+
+    <!-- renderAll() -->
+    <section class="mb-12">
+      <h2 class="font-heading font-bold text-2xl mb-2" style="color: var(--color-text-primary);"><code class="font-mono" style="color: var(--color-primary);">renderAll(compositionPath, options?)</code></h2>
+      <p class="text-base leading-relaxed mb-6" style="color: var(--color-text-secondary);">Render all variants defined in <code class="font-mono text-sm" style="color: var(--color-primary);">config.variants</code>. Returns a <code class="font-mono text-sm" style="color: var(--color-secondary);">Map&lt;string, RenderResult&gt;</code> keyed by variant name. Throws if the composition has no variants defined.</p>
+
+      <div class="rounded-xl overflow-hidden border mb-6" style="border-color: var(--color-border-default);">
+        <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
+          <span class="text-xs uppercase tracking-wider font-medium" style="color: var(--color-text-muted);">TypeScript</span>
+          <CopyButton text={renderAllCallCode} client:load />
+        </div>
+        <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
+          <Code code={renderAllCallCode} lang="typescript" theme={grafexTheme} />
+        </div>
+      </div>
+
+      <p class="text-sm mb-4" style="color: var(--color-text-secondary);">Accepts the same options as <code class="font-mono" style="color: var(--color-primary);">render()</code>, except <code class="font-mono" style="color: var(--color-primary);">variant</code> is ignored — all variants are always rendered.</p>
     </section>
 
     <!-- close() -->
@@ -239,6 +279,19 @@ const closeCallCode = `await close();`;
       <h2 class="font-heading font-bold text-2xl mb-6" style="color: var(--color-text-primary);">Types</h2>
 
       <div class="space-y-6">
+        <div>
+          <h3 class="font-heading font-semibold text-lg mb-3" style="color: var(--color-text-primary);">VariantConfig</h3>
+          <div class="rounded-xl overflow-hidden border" style="border-color: var(--color-border-default);">
+            <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
+              <span class="text-xs uppercase tracking-wider font-medium" style="color: var(--color-text-muted);">TypeScript</span>
+              <CopyButton text={variantConfigTypeCode} client:load />
+            </div>
+            <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
+              <Code code={variantConfigTypeCode} lang="typescript" theme={grafexTheme} />
+            </div>
+          </div>
+        </div>
+
         <div>
           <h3 class="font-heading font-semibold text-lg mb-3" style="color: var(--color-text-primary);">CompositionConfig</h3>
           <div class="rounded-xl overflow-hidden border" style="border-color: var(--color-border-default);">

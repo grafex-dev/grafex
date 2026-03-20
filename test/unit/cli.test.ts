@@ -184,3 +184,40 @@ describe('export command — validation', () => {
     expect(result.stderr).not.toContain('--scale must be a positive number');
   });
 });
+
+describe('export command — --variant flag', () => {
+  test('--variant is accepted as a valid flag (no "unknown option" error)', () => {
+    const result = runCli([
+      'export',
+      '--file',
+      'test/fixtures/with-variants.tsx',
+      '--variant',
+      'og',
+    ]);
+    expect(result.stderr).not.toContain('unknown option');
+    expect(result.stderr).not.toContain('Unknown option');
+  });
+
+  test('--variant with unknown variant name prints descriptive error to stderr', () => {
+    const result = runCli([
+      'export',
+      '--file',
+      'test/fixtures/with-variants.tsx',
+      '--variant',
+      'nonexistent',
+    ]);
+    expect(result.status).toBe(1);
+    expect(result.stderr).toContain('nonexistent');
+  });
+
+  test('--variant on composition without variants prints error to stderr', () => {
+    const result = runCli(['export', '--file', 'test/fixtures/simple.tsx', '--variant', 'og']);
+    expect(result.status).toBe(1);
+    expect(result.stderr.length).toBeGreaterThan(0);
+  });
+
+  test('--variant og appears in --help output', () => {
+    const result = runCli(['export', '--help']);
+    expect(result.stdout).toContain('--variant');
+  });
+});
