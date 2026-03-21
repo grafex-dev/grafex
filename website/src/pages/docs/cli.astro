@@ -132,6 +132,61 @@ grafex --help       # Print help text and exit`;
       </div>
     </section>
 
+    <!-- grafex dev -->
+    <section class="mb-12">
+      <h2 class="font-heading font-bold text-2xl mb-2" style="color: var(--color-text-primary);"><code class="font-mono" style="color: var(--color-primary);">grafex dev</code></h2>
+      <p class="text-base leading-relaxed mb-6" style="color: var(--color-text-secondary);">Start a live preview server that watches your composition and re-renders on every file change.</p>
+
+      <div class="rounded-xl overflow-hidden border mb-8" style="border-color: var(--color-border-default);">
+        <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
+          <span class="text-xs uppercase tracking-wider font-medium" style="color: var(--color-text-muted);">bash</span>
+          <CopyButton text="grafex dev -f <file> [options]" client:load />
+        </div>
+        <div class="px-4 py-3" style="background: var(--color-bg-code);">
+          <code class="font-mono text-sm" style="color: var(--color-accent-lime);">grafex dev -f &lt;file&gt; [options]</code>
+        </div>
+      </div>
+
+      <h3 class="font-heading font-semibold text-xl mb-4" style="color: var(--color-text-primary);">Flags</h3>
+
+      <div class="rounded-xl overflow-hidden border mb-8" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr style="background: var(--color-bg-surface-hover); border-bottom: 1px solid var(--color-border-default);">
+                <th class="text-left px-4 py-3 font-semibold" style="color: var(--color-text-primary);">Flag</th>
+                <th class="text-left px-4 py-3 font-semibold" style="color: var(--color-text-primary);">Short</th>
+                <th class="text-left px-4 py-3 font-semibold" style="color: var(--color-text-primary);">Type</th>
+                <th class="text-left px-4 py-3 font-semibold" style="color: var(--color-text-primary);">Default</th>
+                <th class="text-left px-4 py-3 font-semibold" style="color: var(--color-text-primary);">Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                ['--file', '-f', 'string', '—', 'Path to the .tsx composition file (required)'],
+                ['--port', '', 'number', '3000', 'Preview server port'],
+                ['--props', '', 'string (JSON)', '{}', 'Props to pass to the composition as a JSON object'],
+                ['--variant', '', 'string', '(first)', 'Show only the named variant (when composition has variants)'],
+                ['--help', '-h', '', '', 'Show help text'],
+              ].map(([flag, short, type, def, desc]) => (
+                <tr style="border-bottom: 1px solid var(--color-border-default);">
+                  <td class="px-4 py-3"><code class="font-mono text-xs" style="color: var(--color-primary);">{flag}</code></td>
+                  <td class="px-4 py-3"><code class="font-mono text-xs" style="color: short ? 'var(--color-secondary)' : 'var(--color-text-muted)'">{short || '—'}</code></td>
+                  <td class="px-4 py-3 text-xs" style="color: var(--color-text-muted);">{type || '—'}</td>
+                  <td class="px-4 py-3"><code class="font-mono text-xs" style="color: var(--color-accent-lime);">{def}</code></td>
+                  <td class="px-4 py-3 text-sm" style="color: var(--color-text-secondary);">{desc}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <p class="text-sm leading-relaxed" style="color: var(--color-text-secondary);">
+        The dev server watches the composition file, all its imports, CSS files from <code class="font-mono text-xs" style="color: var(--color-primary);">config.css</code>, and local image assets. Changes are debounced and the preview updates within ~100ms. Press <kbd style="background: var(--color-bg-surface); border: 1px solid var(--color-border-default); border-radius: 4px; padding: 1px 5px; font-size: 11px;">Ctrl+C</kbd> to stop.
+      </p>
+    </section>
+
     <!-- Global Flags -->
     <section>
       <h2 class="font-heading font-bold text-2xl mb-4" style="color: var(--color-text-primary);">Global Flags</h2>

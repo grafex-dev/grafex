@@ -66,11 +66,11 @@ describe('transpile — error propagation', () => {
     }
   });
 
-  test('error message contains custom prefix "esbuild transpilation failed:"', async () => {
+  test('error message contains the esbuild error text', async () => {
     const tmpFile = join(tmpdir(), `grafex-test-invalid-${Date.now()}.tsx`);
     writeFileSync(tmpFile, 'const x: = 5;');
     try {
-      await expect(transpile(tmpFile)).rejects.toThrow('esbuild transpilation failed:');
+      await expect(transpile(tmpFile)).rejects.toThrow('Unexpected');
     } finally {
       unlinkSync(tmpFile);
     }

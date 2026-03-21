@@ -67,6 +67,27 @@ describe('cli — subcommand routing', () => {
     expect(result.status).toBe(0);
     expect(result.stdout).toContain('--file');
   });
+
+  test('--help lists the dev command', () => {
+    const result = runCli(['--help']);
+    expect(result.status).toBe(0);
+    expect(result.stdout).toContain('dev');
+  });
+});
+
+describe('dev command — validation', () => {
+  test('dev --help exits 0 and shows dev help text', () => {
+    const result = runCli(['dev', '--help']);
+    expect(result.status).toBe(0);
+    expect(result.stdout).toContain('--file');
+    expect(result.stdout).toContain('--port');
+  });
+
+  test('dev without --file exits 1', () => {
+    const result = runCli(['dev']);
+    expect(result.status).toBe(1);
+    expect(result.stderr).toContain('--file');
+  });
 });
 
 describe('export command — validation', () => {
