@@ -105,6 +105,26 @@ grafex export -f card.tsx -o card.png --width 800 --height 400
 
 ```
 
+### `grafex dev`
+
+Start a live preview server that watches your composition and re-renders on every file change.
+
+```bash
+npx grafex dev -f card.tsx
+```
+
+| Flag        | Short | Type          | Default | Description                                                 |
+| ----------- | ----- | ------------- | ------- | ----------------------------------------------------------- |
+| `--file`    | `-f`  | string        | —       | Path to the `.tsx` composition file **(required)**          |
+| `--port`    |       | number        | `3000`  | Preview server port                                         |
+| `--props`   |       | string (JSON) | `{}`    | Props to pass to the composition as a JSON object           |
+| `--variant` |       | string        | (first) | Show only the named variant (when composition has variants) |
+| `--help`    | `-h`  |               |         | Show help text                                              |
+
+The dev server watches the composition file, all its imports, CSS files from `config.css`, and local image assets. Changes are debounced and the preview updates within ~100ms. Open `http://localhost:3000` to see the live preview.
+
+Press `Ctrl+C` to stop.
+
 ### Global flags
 
 ```bash

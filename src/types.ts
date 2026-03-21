@@ -1,14 +1,3 @@
-export interface VariantConfig {
-  width?: number;
-  height?: number;
-  scale?: number;
-  format?: 'png' | 'jpeg';
-  quality?: number;
-  fonts?: string[];
-  css?: string[];
-  props?: Record<string, unknown>;
-}
-
 export interface RenderOptions {
   props?: Record<string, unknown>;
   width?: number;
@@ -26,6 +15,17 @@ export interface RenderResult {
   height: number;
   scale: number;
   format: 'png' | 'jpeg';
+}
+
+export interface VariantConfig {
+  width?: number;
+  height?: number;
+  scale?: number;
+  format?: 'png' | 'jpeg';
+  quality?: number;
+  fonts?: string[];
+  css?: string[];
+  props?: Record<string, unknown>;
 }
 
 export interface CompositionConfig {
