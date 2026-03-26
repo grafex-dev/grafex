@@ -61,6 +61,24 @@ npx grafex export -f card.tsx -o card.png
 
 ---
 
+## TypeScript Setup
+
+For full JSX type-checking in your editor, add these compiler options to your `tsconfig.json`:
+
+```json
+{
+  "compilerOptions": {
+    "jsx": "react",
+    "jsxFactory": "h",
+    "jsxFragmentFactory": "Fragment"
+  }
+}
+```
+
+Grafex ships its own JSX type definitions (`JSX.Element`, `JSX.IntrinsicElements`, etc.). They are picked up automatically once the package is installed — no extra imports needed. The `h` and `Fragment` functions are injected at transpile time, so you never import them in composition files.
+
+---
+
 ## CLI Reference
 
 ### `grafex export`

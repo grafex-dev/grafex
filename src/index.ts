@@ -9,6 +9,7 @@ import { BrowserManager } from './browser.js';
 import type { RenderOptions, RenderResult, VariantConfig } from './types.js';
 
 export { h, Fragment, renderToHTML } from './runtime.js';
+export type { HtmlString } from './runtime.js';
 export { BrowserManager } from './browser.js';
 export type { RenderOptions, RenderResult, CompositionConfig, VariantConfig } from './types.js';
 

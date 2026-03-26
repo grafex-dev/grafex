@@ -203,6 +203,28 @@ export default function OgCard() {
       </ol>
     </section>
 
+    <!-- TypeScript Setup -->
+    <section class="mb-12">
+      <h2 class="font-heading font-bold text-2xl mb-4" style="color: var(--color-text-primary);">TypeScript Setup</h2>
+      <p class="text-base leading-relaxed mb-4" style="color: var(--color-text-secondary);">
+        For full JSX type-checking in your editor, add these compiler options to your <code class="font-mono text-sm px-1.5 py-0.5 rounded" style="color: var(--color-primary); background: rgba(244,114,182,0.1);">tsconfig.json</code>:
+      </p>
+
+      <div class="rounded-xl overflow-hidden border mb-4" style="border-color: var(--color-border-default);">
+        <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
+          <span class="text-xs font-mono" style="color: var(--color-text-muted);">tsconfig.json</span>
+          <CopyButton text={`{\n  "compilerOptions": {\n    "jsx": "react",\n    "jsxFactory": "h",\n    "jsxFragmentFactory": "Fragment"\n  }\n}`} client:load />
+        </div>
+        <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed">
+          <Code code={`{\n  "compilerOptions": {\n    "jsx": "react",\n    "jsxFactory": "h",\n    "jsxFragmentFactory": "Fragment"\n  }\n}`} lang="json" theme={grafexTheme} />
+        </div>
+      </div>
+
+      <p class="text-base leading-relaxed" style="color: var(--color-text-secondary);">
+        Grafex ships its own JSX type definitions. They are picked up automatically once the package is installed — no extra imports needed. The <code class="font-mono text-sm px-1.5 py-0.5 rounded" style="color: var(--color-primary); background: rgba(244,114,182,0.1);">h</code> and <code class="font-mono text-sm px-1.5 py-0.5 rounded" style="color: var(--color-primary); background: rgba(244,114,182,0.1);">Fragment</code> functions are injected at transpile time, so you never import them in composition files.
+      </p>
+    </section>
+
     <!-- Export -->
     <section class="mb-12">
       <h2 class="font-heading font-bold text-2xl mb-4" style="color: var(--color-text-primary);">Export</h2>
