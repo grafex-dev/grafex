@@ -95,7 +95,7 @@ Render a composition file to an image.
 | `--format`  |       | string        | `png`          | Output format (`png` or `jpeg`)                               |
 | `--quality` |       | number        | `90`           | JPEG quality 1–100 (only applies when format is `jpeg`)       |
 | `--scale`   |       | number        | `1`            | Device pixel ratio. Use `2` for retina/high-DPI output.       |
-| `--browser` |       | string        | `webkit`       | Browser engine                                                |
+| `--browser` |       | string        | `webkit`       | Browser engine: `webkit` or `chromium`                        |
 | `--variant` |       | string        | (all)          | Render a single variant by name. Omit to render all variants. |
 | `--help`    | `-h`  |               |                | Show help text                                                |
 
@@ -160,19 +160,19 @@ import { render, renderAll, close } from 'grafex';
 
 ### `render(compositionPath, options?)`
 
-Render a composition to an image buffer. Pass `options.variant` to render a specific variant.
+Render a composition to an image buffer. Pass `options.variant` to render a specific variant from `config.variants`.
 
 ```ts
 const result = await render('./card.tsx', {
   props: { title: 'Hello' },
   width: 1200,
   height: 630,
-  browser: 'webkit',
 });
 
 // result.buffer  — Buffer containing image data
 // result.width   — effective render width
 // result.height  — effective render height
+// result.scale   — device pixel ratio used
 // result.format  — 'png' | 'jpeg'
 ```
 
@@ -197,6 +197,7 @@ interface RenderResult {
   buffer: Buffer;
   width: number;
   height: number;
+  scale: number;
   format: 'png' | 'jpeg';
 }
 ```
@@ -404,6 +405,13 @@ To install only the browser binary without system dependencies:
 
 ```bash
 npx playwright-core install webkit
+```
+
+**Chromium (alternative engine):** Grafex also supports Chromium if you hit CSS compatibility issues. Install it separately and pass `--browser chromium` to the CLI or `browser: 'chromium'` in the API:
+
+```bash
+npx playwright install chromium
+grafex export -f card.tsx -o card.png --browser chromium
 ```
 
 ### `PLAYWRIGHT_BROWSERS_PATH`

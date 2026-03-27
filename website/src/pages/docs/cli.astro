@@ -56,7 +56,7 @@ grafex --help       # Print help text and exit`;
                 ['--scale', '', 'number', '1', 'Device pixel ratio — 2 for retina/high-DPI output'],
                 ['--format', '', 'string', 'png', 'Output format: png or jpeg'],
                 ['--quality', '', 'number', '90', 'JPEG quality 1–100 (only applies when format is jpeg)'],
-                ['--browser', '', 'string', 'webkit', 'Browser engine to use for rendering'],
+                ['--browser', '', 'string', 'webkit', 'Browser engine: webkit or chromium'],
                 ['--variant', '', 'string', '(all)', 'Render a single variant by name. Omit to render all variants.'],
                 ['--help', '-h', '', '', 'Show help text'],
               ].map(([flag, short, type, def, desc]) => (
@@ -183,7 +183,7 @@ grafex --help       # Print help text and exit`;
       </div>
 
       <p class="text-sm leading-relaxed" style="color: var(--color-text-secondary);">
-        The dev server watches the composition file, all its imports, CSS files from <code class="font-mono text-xs" style="color: var(--color-primary);">config.css</code>, and local image assets. Changes are debounced and the preview updates within ~100ms. Press <kbd style="background: var(--color-bg-surface); border: 1px solid var(--color-border-default); border-radius: 4px; padding: 1px 5px; font-size: 11px;">Ctrl+C</kbd> to stop.
+        The dev server watches the composition file, all its imports, CSS files from <code class="font-mono text-xs" style="color: var(--color-primary);">config.css</code>, and local image assets. Changes are debounced and the preview updates within ~100ms. Open <code class="font-mono text-xs" style="color: var(--color-primary);">http://localhost:3000</code> to see the live preview. Press <kbd style="background: var(--color-bg-surface); border: 1px solid var(--color-border-default); border-radius: 4px; padding: 1px 5px; font-size: 11px;">Ctrl+C</kbd> to stop.
       </p>
     </section>
 

@@ -7,6 +7,14 @@ import { grafexTheme } from '../../shiki-theme';
 const autoInstallCode = `npm install grafex
 # WebKit is downloaded automatically`;
 
+const chromiumInstallCode = `npx playwright install chromium`;
+
+const chromiumCliCode = `grafex export -f card.tsx -o card.png --browser chromium`;
+
+const chromiumApiCode = `const result = await render('./card.tsx', {
+  browser: 'chromium',
+});`;
+
 const playwrightBrowsersPathCode = `export PLAYWRIGHT_BROWSERS_PATH=/path/to/browsers
 npx playwright install webkit
 grafex export -f card.tsx -o card.png`;
@@ -88,6 +96,53 @@ const githubActionsCode = `steps:
             <code class="font-mono text-sm" style="color: var(--color-accent-lime);">npx playwright-core install webkit</code>
           </div>
         </div>
+      </div>
+    </section>
+
+    <!-- Chromium (Alternative Engine) -->
+    <section class="mb-12">
+      <h2 class="font-heading font-bold text-2xl mb-4" style="color: var(--color-text-primary);">Chromium (Alternative Engine)</h2>
+      <p class="text-base leading-relaxed mb-6" style="color: var(--color-text-secondary);">Grafex uses WebKit by default. Chromium is also supported if you hit CSS compatibility issues or need Chromium-specific rendering behavior. It requires a separate install:</p>
+
+      <div class="rounded-xl overflow-hidden border mb-6" style="border-color: var(--color-border-default);">
+        <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
+          <span class="text-xs uppercase tracking-wider font-medium" style="color: var(--color-text-muted);">bash</span>
+          <CopyButton text="npx playwright install chromium" client:load />
+        </div>
+        <div class="px-4 py-3" style="background: var(--color-bg-code);">
+          <code class="font-mono text-sm" style="color: var(--color-accent-lime);">npx playwright install chromium</code>
+        </div>
+      </div>
+
+      <p class="text-base leading-relaxed mb-4" style="color: var(--color-text-secondary);">Then pass <code class="font-mono text-sm px-1 py-0.5 rounded" style="color: var(--color-primary); background: rgba(244,114,182,0.1);">--browser chromium</code> to the CLI:</p>
+
+      <div class="rounded-xl overflow-hidden border mb-6" style="border-color: var(--color-border-default);">
+        <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
+          <span class="text-xs uppercase tracking-wider font-medium" style="color: var(--color-text-muted);">bash</span>
+          <CopyButton text="grafex export -f card.tsx -o card.png --browser chromium" client:load />
+        </div>
+        <div class="px-4 py-3" style="background: var(--color-bg-code);">
+          <code class="font-mono text-sm" style="color: var(--color-accent-lime);">grafex export -f card.tsx -o card.png --browser chromium</code>
+        </div>
+      </div>
+
+      <p class="text-base leading-relaxed mb-4" style="color: var(--color-text-secondary);">Or set <code class="font-mono text-sm px-1 py-0.5 rounded" style="color: var(--color-primary); background: rgba(244,114,182,0.1);">browser: 'chromium'</code> in the library API:</p>
+
+      <div class="rounded-xl overflow-hidden border mb-6" style="border-color: var(--color-border-default);">
+        <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
+          <span class="text-xs font-mono" style="color: var(--color-text-muted);">node</span>
+          <CopyButton text={`const result = await render('./card.tsx', {\n  browser: 'chromium',\n});`} client:load />
+        </div>
+        <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
+          <Code code={chromiumApiCode} lang="ts" theme={grafexTheme} />
+        </div>
+      </div>
+
+      <div class="rounded-xl p-4 border-l-4" style="background: rgba(56,189,248,0.08); border-left-color: var(--color-secondary);">
+        <p class="text-sm leading-relaxed" style="color: var(--color-text-primary);">
+          <span class="font-semibold" style="color: var(--color-secondary);">Note: </span>
+          WebKit is recommended for most use cases — it is smaller (~2 MB vs ~200 MB for Chromium) and downloaded automatically. Use Chromium only if you need specific rendering behavior that differs between engines.
+        </p>
       </div>
     </section>
 

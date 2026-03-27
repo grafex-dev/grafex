@@ -84,14 +84,14 @@ const renderResultFullTypeCode = `interface RenderResult {
 }`;
 
 const renderOptionsTypeCode = `interface RenderOptions {
-  props?: Record<string, unknown>;  // Props passed to the composition
-  width?: number;                   // Override width in pixels
-  height?: number;                  // Override height in pixels
-  format?: 'png' | 'jpeg';          // Output format (default: 'png')
-  quality?: number;                 // JPEG quality 1-100 (default: 90)
-  browser?: 'webkit';               // Browser engine
-  scale?: number;                   // Device pixel ratio (default: 1)
-  variant?: string;                 // Named variant to render
+  props?: Record<string, unknown>;    // Props passed to the composition
+  width?: number;                     // Override width in pixels
+  height?: number;                    // Override height in pixels
+  format?: 'png' | 'jpeg';            // Output format (default: 'png')
+  quality?: number;                   // JPEG quality 1-100 (default: 90)
+  browser?: 'webkit' | 'chromium';    // Browser engine (default: 'webkit')
+  scale?: number;                     // Device pixel ratio (default: 1)
+  variant?: string;                   // Named variant to render
 }`;
 
 const closeCallCode = `await close();`;
@@ -150,7 +150,7 @@ const closeCallCode = `await close();`;
                 ['options.height', 'number', 'Override composition height in pixels'],
                 ["options.format", "'png' | 'jpeg'", "Output format (default: 'png')"],
                 ['options.quality', 'number', 'JPEG quality 1–100 (default: 90, only applies when format is jpeg)'],
-                ["options.browser", "'webkit'", "Browser engine (default: 'webkit')"],
+                ["options.browser", "'webkit' | 'chromium'", "Browser engine (default: 'webkit')"],
                 ['options.scale', 'number', 'Device pixel ratio (default: 1)'],
                 ['options.variant', 'string', 'Named variant to render from config.variants'],
               ].map(([param, type, desc]) => (
@@ -261,7 +261,7 @@ const closeCallCode = `await close();`;
             {[
               ['h', 'JSX factory function'],
               ['Fragment', 'JSX fragment implementation'],
-              ['renderToHTML', 'Convert a composition to an HTML string without rendering to PNG'],
+              ['renderToHTML', 'Convert a composition to an HTML string without rendering to an image'],
               ['BrowserManager', 'Direct access to the browser lifecycle for custom workflows'],
             ].map(([name, desc]) => (
               <tr style="border-bottom: 1px solid var(--color-border-default);">
@@ -323,7 +323,7 @@ const closeCallCode = `await close();`;
           <div class="rounded-xl overflow-hidden border" style="border-color: var(--color-border-default);">
             <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
               <span class="text-xs uppercase tracking-wider font-medium" style="color: var(--color-text-muted);">TypeScript</span>
-              <CopyButton text={`interface RenderOptions {\n  props?: Record<string, unknown>;  // Props passed to the composition\n  width?: number;                   // Override width in pixels\n  height?: number;                  // Override height in pixels\n  format?: 'png' | 'jpeg';          // Output format (default: 'png')\n  quality?: number;                  // JPEG quality 1-100 (default: 90)\n  browser?: 'webkit';                // Browser engine\n  scale?: number;                    // Device pixel ratio (default: 1)\n}`} client:load />
+              <CopyButton text={`interface RenderOptions {\n  props?: Record<string, unknown>;    // Props passed to the composition\n  width?: number;                     // Override width in pixels\n  height?: number;                    // Override height in pixels\n  format?: 'png' | 'jpeg';            // Output format (default: 'png')\n  quality?: number;                   // JPEG quality 1-100 (default: 90)\n  browser?: 'webkit' | 'chromium';    // Browser engine (default: 'webkit')\n  scale?: number;                     // Device pixel ratio (default: 1)\n  variant?: string;                   // Named variant to render\n}`} client:load />
             </div>
             <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
               <Code code={renderOptionsTypeCode} lang="typescript" theme={grafexTheme} />
