@@ -1,10 +1,10 @@
 # Grafex
 
-> Grafex is an open-source developer tool for programmatic image composition. Write JSX/TSX compositions with full CSS support, export to PNG. Uses a real browser engine (WebKit) — not a CSS subset. No browser window, no server, no ceremony.
+> Grafex is an open-source developer tool for programmatic image composition. Write JSX/TSX compositions with full CSS support, export to PNG or JPEG. Uses a real browser engine (WebKit) — not a CSS subset. No browser window, no server, no ceremony.
 
-Grafex works as both a CLI tool (`npx grafex export`) and a Node.js library (`import { render } from 'grafex'`). Compositions are plain TSX files that export a function component and a config object. The tool transpiles JSX via esbuild, renders HTML in a headless WebKit browser via Playwright, and screenshots the result to PNG.
+Grafex works as both a CLI tool (`npx grafex export`) and a Node.js library (`import { render } from 'grafex'`). Compositions are plain TSX files that export a function component and a config object. The tool transpiles JSX via esbuild, renders HTML in a headless WebKit browser via Playwright, and screenshots the result to PNG or JPEG.
 
-Key features: full CSS support (flexbox, grid, gradients, shadows, transforms), custom fonts via config.fonts (Google Fonts or any CSS URL), external CSS files via config.css (plain CSS, Tailwind output, Sass output, any .css file), local image embedding (reference local PNG/JPEG/GIF/WebP/SVG/AVIF/ICO/BMP files by path — they are embedded as base64 data URLs automatically), variants (produce multiple outputs from one composition — different sizes, formats, or props — via config.variants), AI-friendly (compositions are easy for LLMs to write), sub-100ms warm renders, 2 runtime dependencies (playwright-core + esbuild).
+Key features: full CSS support (flexbox, grid, gradients, shadows, transforms), custom fonts via config.fonts (Google Fonts or any CSS URL), external CSS files via config.css (plain CSS, Tailwind output, Sass output, any .css file), local image embedding (reference local PNG/JPEG/GIF/WebP/SVG/AVIF/ICO/BMP files by path — they are embedded as base64 data URLs automatically), variants (produce multiple outputs from one composition — different sizes, formats, or props — via config.variants), AI-friendly (compositions are easy for LLMs to write), sub-100ms warm renders, 3 runtime dependencies (playwright-core, esbuild, csstype).
 
 ---
 
@@ -59,6 +59,22 @@ export default function Card() {
 A composition has two parts:
 1. Default export — a function that returns JSX. This is your image layout.
 2. Named `config` export — a `CompositionConfig` object that sets the output dimensions and optionally loads custom fonts and CSS files.
+
+### TypeScript Setup
+
+For full JSX type-checking in your editor, add these compiler options to your `tsconfig.json`:
+
+```json
+{
+  "compilerOptions": {
+    "jsx": "react",
+    "jsxFactory": "h",
+    "jsxFragmentFactory": "Fragment"
+  }
+}
+```
+
+Grafex ships its own JSX type definitions. They are picked up automatically once the package is installed — no extra imports needed. The `h` and `Fragment` functions are injected at transpile time, so you never import them in composition files.
 
 ### Export
 
@@ -241,6 +257,7 @@ grafex export -f <file> [options]
 | `--scale` | | number | `1` | Device pixel ratio — `2` for retina/high-DPI output |
 | `--format` | | string | `png` | Output format: `png` or `jpeg` |
 | `--quality` | | number | `90` | JPEG quality 1–100 (only applies when format is `jpeg`) |
+| `--browser` | | string | `webkit` | Browser engine: `webkit` or `chromium` |
 | `--variant` | | string | (all) | Render a single variant by name. Omit to render all variants. |
 | `--help` | `-h` | | | Show help text |
 
@@ -322,8 +339,8 @@ interface RenderResult {
   buffer: Buffer;
   width: number;
   height: number;
-  format: 'png' | 'jpeg';
   scale: number;
+  format: 'png' | 'jpeg';
 }
 ```
 
@@ -374,7 +391,7 @@ interface RenderOptions {
   height?: number;
   format?: 'png' | 'jpeg';
   quality?: number;
-  browser?: 'webkit';
+  browser?: 'webkit' | 'chromium';
   scale?: number;
   variant?: string;  // Named variant from config.variants
 }
@@ -404,8 +421,24 @@ Grafex renders using headless WebKit via Playwright.
 ### Manual Installation
 
 ```bash
+npx playwright install webkit
+```
+
+Or install only the browser binary without system dependencies:
+
+```bash
 npx playwright-core install webkit
 ```
+
+### Chromium (Alternative Engine)
+
+Grafex uses WebKit by default. Chromium is also supported — install it separately if you need Chromium-specific rendering or hit CSS compatibility issues:
+
+```bash
+npx playwright install chromium
+```
+
+Then pass `--browser chromium` to the CLI or `browser: 'chromium'` in the API. WebKit is recommended for most use cases (smaller download, installed automatically).
 
 ### PLAYWRIGHT_BROWSERS_PATH
 
@@ -413,7 +446,7 @@ Override browser cache location:
 
 ```bash
 export PLAYWRIGHT_BROWSERS_PATH=/path/to/browsers
-npx playwright-core install webkit
+npx playwright install webkit
 ```
 
 ### CI Setup (GitHub Actions)
@@ -426,13 +459,13 @@ steps:
       node-version: 20
   - run: npm ci
   - run: npx playwright install-deps webkit
-  - run: npx playwright-core install webkit
+  - run: npx playwright install webkit
   - run: npx grafex export -f card.tsx -o card.png
 ```
 
 ### Troubleshooting
 
-- "Browser not found": Run `npx playwright-core install webkit`
+- "Browser not found": Run `npx playwright install webkit`
 - "Missing system dependencies" (Linux): Run `npx playwright install-deps webkit`
 - Slow first render: Normal — browser launches once, subsequent renders are 5-50ms
 - Disk space: WebKit is ~2MB cached (vs Chromium 200MB+)
