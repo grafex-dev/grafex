@@ -206,6 +206,20 @@ describe('export command — validation', () => {
   });
 });
 
+describe('cli — init command routing', () => {
+  test('init --help exits 0 and shows init help text', () => {
+    const result = runCli(['init', '--help']);
+    expect(result.status).toBe(0);
+    expect(result.stdout).toContain('grafex init');
+  });
+
+  test('--help lists the init command', () => {
+    const result = runCli(['--help']);
+    expect(result.status).toBe(0);
+    expect(result.stdout).toContain('init');
+  });
+});
+
 describe('export command — --variant flag', () => {
   test('--variant is accepted as a valid flag (no "unknown option" error)', () => {
     const result = runCli([
