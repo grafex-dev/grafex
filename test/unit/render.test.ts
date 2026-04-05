@@ -596,3 +596,63 @@ describe('pipelineAll()', () => {
     expect(result).toBeDefined();
   });
 });
+
+describe('pipeline() — htmlAttributes passthrough', () => {
+  let mockManager: ReturnType<typeof makeMockManager>;
+
+  beforeEach(() => {
+    mockManager = makeMockManager();
+  });
+
+  test('config.htmlAttributes appear on <html> tag in HTML passed to browser', async () => {
+    const { pipeline } = await import('../../src/render.js');
+    await pipeline(resolve(fixturesDir, 'with-html-attributes.tsx'), {}, mockManager as any);
+    const [html] = mockManager.render.mock.calls[0] as [string, unknown];
+    expect(html).toContain('data-theme="dark"');
+    expect(html).toContain('lang="en"');
+  });
+
+  test('composition without htmlAttributes produces plain <html> tag', async () => {
+    const { pipeline } = await import('../../src/render.js');
+    await pipeline(resolve(fixturesDir, 'simple.tsx'), {}, mockManager as any);
+    const [html] = mockManager.render.mock.calls[0] as [string, unknown];
+    expect(html).toContain('<html>');
+  });
+
+  test('variant.htmlAttributes merges with config.htmlAttributes (variant key wins)', async () => {
+    const { pipeline } = await import('../../src/render.js');
+    await pipeline(
+      resolve(fixturesDir, 'with-html-attributes-variant.tsx'),
+      { variant: 'dark' },
+      mockManager as any,
+    );
+    const [html] = mockManager.render.mock.calls[0] as [string, unknown];
+    expect(html).toContain('data-theme="dark"');
+    expect(html).not.toContain('data-theme="light"');
+  });
+
+  test('base config.htmlAttributes used when variant does not override', async () => {
+    const { pipeline } = await import('../../src/render.js');
+    await pipeline(
+      resolve(fixturesDir, 'with-html-attributes-variant.tsx'),
+      { variant: 'default' },
+      mockManager as any,
+    );
+    const [html] = mockManager.render.mock.calls[0] as [string, unknown];
+    expect(html).toContain('data-theme="light"');
+  });
+
+  test('variant.htmlAttributes merges with config.htmlAttributes (base key preserved, variant key wins)', async () => {
+    const { pipeline } = await import('../../src/render.js');
+    // with-html-attributes-variant.tsx base: { lang: "en", "data-theme": "light" }
+    // dark variant: { "data-theme": "dark" } — overrides data-theme, lang is preserved
+    await pipeline(
+      resolve(fixturesDir, 'with-html-attributes-variant.tsx'),
+      { variant: 'dark' },
+      mockManager as any,
+    );
+    const [html] = mockManager.render.mock.calls[0] as [string, unknown];
+    expect(html).toContain('lang="en"');
+    expect(html).toContain('data-theme="dark"');
+  });
+});

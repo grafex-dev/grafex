@@ -116,6 +116,7 @@ export function renderToHTML(
   viewport: { width: number; height: number },
   fonts?: string[],
   css?: string[],
+  htmlAttributes?: Record<string, string>,
 ): string {
   const fontLinks =
     fonts && fonts.length > 0
@@ -129,8 +130,23 @@ export function renderToHTML(
           .map((content) => `<style>${content.replace(/<\/style>/gi, '<\\/style>')}</style>`)
           .join('\n') + '\n'
       : '';
+  const HTML_ATTR_KEY_RE = /^[a-zA-Z][a-zA-Z0-9\-_:.]*$/;
+  const htmlAttrs =
+    htmlAttributes && Object.keys(htmlAttributes).length > 0
+      ? ' ' +
+        Object.entries(htmlAttributes)
+          .map(([key, value]) => {
+            if (!HTML_ATTR_KEY_RE.test(key)) {
+              throw new Error(
+                `Invalid htmlAttributes key "${key}": keys must match /^[a-zA-Z][a-zA-Z0-9\\-_:.]*$/`,
+              );
+            }
+            return `${key}="${escapeHtml(value)}"`;
+          })
+          .join(' ')
+      : '';
   return `<!DOCTYPE html>
-<html>
+<html${htmlAttrs}>
 <head>
 <meta charset="utf-8">
 ${fontLinks}<style>

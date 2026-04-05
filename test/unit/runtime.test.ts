@@ -373,6 +373,111 @@ describe('renderToHTML — css', () => {
   });
 });
 
+describe('renderToHTML — htmlAttributes', () => {
+  test('adds a single attribute to <html> tag', () => {
+    const html = renderToHTML('<p>hi</p>', { width: 800, height: 600 }, undefined, undefined, {
+      'data-theme': 'dark',
+    });
+    expect(html).toContain('<html data-theme="dark">');
+  });
+
+  test('adds multiple attributes to <html> tag', () => {
+    const html = renderToHTML('<p>hi</p>', { width: 800, height: 600 }, undefined, undefined, {
+      'data-theme': 'dark',
+      lang: 'en',
+    });
+    expect(html).toContain('data-theme="dark"');
+    expect(html).toContain('lang="en"');
+  });
+
+  test('escapes special characters in attribute values', () => {
+    const html = renderToHTML('<p>hi</p>', { width: 800, height: 600 }, undefined, undefined, {
+      'data-value': '"hello"',
+    });
+    expect(html).toContain('data-value="&quot;hello&quot;"');
+  });
+
+  test('produces plain <html> tag when htmlAttributes is undefined', () => {
+    const html = renderToHTML('<p>hi</p>', { width: 800, height: 600 });
+    expect(html).toContain('<html>');
+  });
+
+  test('produces plain <html> tag when htmlAttributes is empty object', () => {
+    const html = renderToHTML('<p>hi</p>', { width: 800, height: 600 }, undefined, undefined, {});
+    expect(html).toContain('<html>');
+  });
+});
+
+describe('renderToHTML — htmlAttributes key validation', () => {
+  test('valid simple key passes without throwing', () => {
+    expect(() =>
+      renderToHTML('<p>hi</p>', { width: 800, height: 600 }, undefined, undefined, { lang: 'en' }),
+    ).not.toThrow();
+  });
+
+  test('valid data-* key passes without throwing', () => {
+    expect(() =>
+      renderToHTML('<p>hi</p>', { width: 800, height: 600 }, undefined, undefined, {
+        'data-theme': 'dark',
+      }),
+    ).not.toThrow();
+  });
+
+  test('valid aria-* key passes without throwing', () => {
+    expect(() =>
+      renderToHTML('<p>hi</p>', { width: 800, height: 600 }, undefined, undefined, {
+        'aria-label': 'main',
+      }),
+    ).not.toThrow();
+  });
+
+  test('valid xml:lang key passes without throwing', () => {
+    expect(() =>
+      renderToHTML('<p>hi</p>', { width: 800, height: 600 }, undefined, undefined, {
+        'xml:lang': 'en',
+      }),
+    ).not.toThrow();
+  });
+
+  test('empty string key throws descriptive error', () => {
+    expect(() =>
+      renderToHTML('<p>hi</p>', { width: 800, height: 600 }, undefined, undefined, { '': 'val' }),
+    ).toThrow(/invalid.*htmlAttributes.*key/i);
+  });
+
+  test('key starting with a digit throws descriptive error', () => {
+    expect(() =>
+      renderToHTML('<p>hi</p>', { width: 800, height: 600 }, undefined, undefined, {
+        '1bad': 'val',
+      }),
+    ).toThrow(/invalid.*htmlAttributes.*key/i);
+  });
+
+  test('key containing space throws descriptive error', () => {
+    expect(() =>
+      renderToHTML('<p>hi</p>', { width: 800, height: 600 }, undefined, undefined, {
+        'bad key': 'val',
+      }),
+    ).toThrow(/invalid.*htmlAttributes.*key/i);
+  });
+
+  test('key containing > throws descriptive error (HTML injection attempt)', () => {
+    expect(() =>
+      renderToHTML('<p>hi</p>', { width: 800, height: 600 }, undefined, undefined, {
+        'bad>key': 'val',
+      }),
+    ).toThrow(/invalid.*htmlAttributes.*key/i);
+  });
+
+  test('key containing " throws descriptive error (HTML injection attempt)', () => {
+    expect(() =>
+      renderToHTML('<p>hi</p>', { width: 800, height: 600 }, undefined, undefined, {
+        'bad"key': 'val',
+      }),
+    ).toThrow(/invalid.*htmlAttributes.*key/i);
+  });
+});
+
 describe('renderToHTML — fonts', () => {
   test('injects link tags for each font URL in head', () => {
     const fonts = [

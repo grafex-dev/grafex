@@ -26,6 +26,7 @@ export interface VariantConfig {
   fonts?: string[];
   css?: string[];
   props?: Record<string, unknown>;
+  htmlAttributes?: Record<string, string>;
 }
 
 export interface CompositionConfig {
@@ -37,4 +38,5 @@ export interface CompositionConfig {
   fonts?: string[];
   css?: string[];
   variants?: Record<string, VariantConfig>;
+  htmlAttributes?: Record<string, string>;
 }

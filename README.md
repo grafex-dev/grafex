@@ -283,6 +283,39 @@ import { h, Fragment, renderToHTML, BrowserManager } from 'grafex';
 
 ---
 
+## HTML Attributes
+
+Set arbitrary attributes on the root `<html>` element via `config.htmlAttributes`. This enables CSS selectors like `:root[data-theme="dark"]` used by Tailwind v4 and other theming systems:
+
+```tsx
+export const config: CompositionConfig = {
+  width: 1200,
+  height: 630,
+  htmlAttributes: {
+    'data-theme': 'dark',
+    lang: 'en',
+  },
+};
+```
+
+This renders as `<html data-theme="dark" lang="en">`. Attribute values are HTML-escaped automatically.
+
+Variants can override `htmlAttributes` — the variant's attributes are spread over the base config's attributes:
+
+```tsx
+export const config: CompositionConfig = {
+  width: 1200,
+  height: 630,
+  htmlAttributes: { 'data-theme': 'light' },
+  variants: {
+    light: {},
+    dark: { htmlAttributes: { 'data-theme': 'dark' } },
+  },
+};
+```
+
+---
+
 ## CSS Files
 
 Load external CSS files by specifying paths in `config.css`. Paths are resolved relative to the composition file:
@@ -416,6 +449,7 @@ await close();
 - CLI/API options override variant config, which overrides base config
 - `props` are shallow-merged: variant props apply first, then CLI/API props override individual keys
 - Array fields (`fonts`, `css`) replace the base value — they do not merge
+- `htmlAttributes`: variant attributes are spread over base config attributes (shallow merge)
 
 ---
 

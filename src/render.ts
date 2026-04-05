@@ -49,6 +49,10 @@ async function pipelineWithModule(
 
   const effectiveCss = variant?.css ?? config.css;
   const effectiveFonts = variant?.fonts ?? config.fonts;
+  const effectiveHtmlAttributes =
+    variant?.htmlAttributes !== undefined
+      ? { ...config.htmlAttributes, ...variant.htmlAttributes }
+      : config.htmlAttributes;
 
   const compositionDir = dirname(absolutePath);
   const cssContents: string[] = [];
@@ -67,7 +71,13 @@ async function pipelineWithModule(
 
   const resolvedProps = { ...(variant?.props ?? {}), ...(options.props ?? {}) };
   const componentHtml = String(component(resolvedProps));
-  const rawHtml = renderToHTML(componentHtml, { width, height }, effectiveFonts, cssContents);
+  const rawHtml = renderToHTML(
+    componentHtml,
+    { width, height },
+    effectiveFonts,
+    cssContents,
+    effectiveHtmlAttributes,
+  );
   const html = await embedLocalAssets(rawHtml, compositionDir);
 
   const buffer = await manager.render(html, { width, height }, scale, format, quality);
