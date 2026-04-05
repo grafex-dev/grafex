@@ -413,12 +413,15 @@ await close();`;
       <div class="rounded-xl p-4 border-l-4 mb-6" style="background: rgba(163,230,53,0.08); border-left-color: var(--color-accent-lime);">
         <p class="text-sm leading-relaxed" style="color: var(--color-text-primary);">
           <span class="font-semibold" style="color: var(--color-accent-lime);">Tip: </span>
-          This is a generic file injection mechanism — it works with plain CSS, Tailwind output, Sass output, or any other `.css` file. Grafex doesn't care how the CSS was generated.
+          This is a generic file injection mechanism — it works with plain CSS, Tailwind output, Sass output, or any other <code class="font-mono text-sm px-1.5 py-0.5 rounded" style="color: var(--color-primary); background: rgba(244,114,182,0.1);">.css</code> file. Grafex doesn't care how the CSS was generated.
         </p>
       </div>
 
-      <h3 class="font-heading font-semibold text-lg mb-3" style="color: var(--color-text-primary);">Tailwind CSS recipe</h3>
-      <p class="text-base leading-relaxed mb-4" style="color: var(--color-text-secondary);">Run Tailwind's CLI to compile your stylesheet, then reference the output in <code class="font-mono text-sm" style="color: var(--color-primary);">config.css</code>.</p>
+      <h3 class="font-heading font-semibold text-lg mb-3" style="color: var(--color-text-primary);">Tailwind CSS</h3>
+      <p class="text-base leading-relaxed mb-4" style="color: var(--color-text-secondary);">
+        Run Tailwind's CLI to compile your stylesheet, then reference the output in <code class="font-mono text-sm" style="color: var(--color-primary);">config.css</code>. In dev mode, Tailwind's <code class="font-mono text-sm">--watch</code> flag recompiles on every change, and Grafex detects the updated CSS file and re-renders automatically.
+        See the <a href="/docs/tailwind" class="transition-colors duration-150 text-[var(--color-primary)] hover:text-[var(--color-primary-hover)]">Tailwind CSS guide</a> for the full dev workflow, npm scripts, and a working example.
+      </p>
 
       <div class="rounded-xl overflow-hidden border mb-4" style="border-color: var(--color-border-default);">
         <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">

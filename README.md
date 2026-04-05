@@ -359,6 +359,39 @@ export default function Card() {
 npx grafex export -f card.tsx -o card.png
 ```
 
+**Live dev workflow with Tailwind:**
+
+Run Tailwind's `--watch` mode in one terminal and `grafex dev` in another. When you edit your composition, Tailwind recompiles `styles.css` and Grafex detects the CSS change and re-renders automatically — no manual steps in between.
+
+```bash
+# Terminal 1 — Tailwind watcher
+npx @tailwindcss/cli -i ./input.css -o ./styles.css --watch
+
+# Terminal 2 — Grafex dev server
+npx grafex dev -f card.tsx
+```
+
+Or wire both into a single `npm run dev` command with `concurrently`:
+
+```json
+{
+  "scripts": {
+    "dev": "concurrently \"npx @tailwindcss/cli -i ./input.css -o ./styles.css --watch\" \"npx grafex dev -f card.tsx\"",
+    "build": "npx @tailwindcss/cli -i ./input.css -o ./styles.css && npx grafex export -f card.tsx -o card.png"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.0.0",
+    "concurrently": "^9.0.0"
+  }
+}
+```
+
+> **Key DX feature:** `grafex dev` watches all CSS files listed in `config.css`. When Tailwind's `--watch` rewrites `styles.css`, Grafex picks up the change and re-renders within ~100ms. The two tools compose naturally — no plugins, no custom config.
+>
+> If `styles.css` doesn't exist yet when `grafex dev` starts, it renders without styles and re-renders automatically as soon as Tailwind creates the file — no pre-build step needed.
+
+See the [`examples/tailwind/`](./examples/tailwind/) directory for a complete working example.
+
 ---
 
 ## Local Images
