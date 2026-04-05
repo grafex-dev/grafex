@@ -9,7 +9,7 @@ import { renderToHTML } from '../runtime.js';
 import { BrowserManager } from '../browser.js';
 import { embedLocalAssets, embedCssAssets } from '../assets.js';
 import type { CompositionConfig } from '../types.js';
-import { logBanner, logRender, logChange, logError } from '../logger.js';
+import { logBanner, logRender, logChange, logError, logWarn } from '../logger.js';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -359,20 +359,28 @@ export async function startDevServer(
         // Read CSS files
         const cssContents: string[] = [];
         const cssPaths: string[] = [];
+        const missingCssPaths: string[] = [];
         if (config.css && config.css.length > 0) {
           for (const cssPath of config.css) {
             const resolvedCssPath = resolve(compositionDir, cssPath);
             cssPaths.push(resolvedCssPath);
-            let rawCss: string;
             try {
-              rawCss = await readFile(resolvedCssPath, 'utf-8');
-            } catch {
-              throw new Error(
-                `CSS file not found: "${resolvedCssPath}" (referenced in ${absolutePath})`,
-              );
+              const rawCss = await readFile(resolvedCssPath, 'utf-8');
+              cssContents.push(await embedCssAssets(rawCss, dirname(resolvedCssPath)));
+            } catch (err) {
+              if ((err as NodeJS.ErrnoException).code === 'ENOENT') {
+                // File doesn't exist yet — skip it, watch for it to appear
+                missingCssPaths.push(resolvedCssPath);
+              } else {
+                throw err;
+              }
             }
-            cssContents.push(await embedCssAssets(rawCss, dirname(resolvedCssPath)));
           }
+        }
+
+        if (missingCssPaths.length > 0) {
+          const names = missingCssPaths.map((p) => basename(p)).join(', ');
+          logWarn(`Waiting for CSS: ${names}`);
         }
 
         // Skip re-render if inputs haven't changed (macOS fs.watch fires multiple events per save)
@@ -418,6 +426,21 @@ export async function startDevServer(
         // Rebuild watchers
         const watchFiles = buildWatchList(absolutePath, inputs, cssPaths);
         rebuildWatchers(watchFiles);
+
+        // Watch directories of missing CSS files so we detect when they're created
+        for (const missing of missingCssPaths) {
+          const dir = dirname(missing);
+          try {
+            const watcher = watch(dir, (eventType, filename) => {
+              if (filename === basename(missing)) {
+                scheduleRender(undefined, basename(missing));
+              }
+            });
+            watchers.push(watcher);
+          } catch {
+            // directory doesn't exist either — nothing to watch
+          }
+        }
 
         if (variantsChanged) {
           sendSSE(state.sseClients, 'reload', {});

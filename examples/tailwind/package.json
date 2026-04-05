@@ -1,0 +1,13 @@
+{
+  "name": "grafex-tailwind-example",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"npx @tailwindcss/cli -i ./input.css -o ./styles.css --watch\" \"npx grafex dev -f card.tsx\"",
+    "build": "npx @tailwindcss/cli -i ./input.css -o ./styles.css && npx grafex export -f card.tsx -o card.png"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.0.0",
+    "concurrently": "^9.0.0",
+    "grafex": "^1.0.0"
+  }
+}
