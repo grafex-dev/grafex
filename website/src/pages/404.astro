@@ -1,59 +1,9 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
+import MarketingLayout from '../layouts/MarketingLayout.astro';
 ---
 
-<BaseLayout title="Page Not Found — Grafex" description="The page you're looking for doesn't exist.">
-  <!-- Skip link -->
-  <a
-    href="#main-content"
-    class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:rounded-lg focus:text-sm focus:font-semibold focus:text-heading focus:bg-surface focus:outline-2 focus:outline-ring"
-  >
-    Skip to content
-  </a>
-
-  <!-- Navigation -->
-  <header class="fixed top-0 left-0 right-0 z-40 h-16 border-b border-transparent bg-transparent">
-    <div class="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
-      <a href="/" class="font-heading font-bold text-xl transition-opacity duration-150 ease-out hover:opacity-80 text-heading">Grafex</a>
-
-      <!-- Desktop nav -->
-      <nav class="hidden md:flex items-center gap-8">
-        <a href="/docs/getting-started" class="text-sm transition-colors duration-150 text-body hover:text-heading no-underline">Docs</a>
-        <a href="https://github.com/grafex-dev/grafex" target="_blank" rel="noopener noreferrer" class="text-sm transition-colors duration-150 text-body hover:text-heading no-underline">GitHub</a>
-      </nav>
-
-      <div class="hidden md:block">
-        <a
-          href="/docs/getting-started"
-          class="px-5 py-2 rounded-lg text-sm font-semibold text-white transition-all hover:brightness-110 gradient-cta"
-        >
-          Get Started
-        </a>
-      </div>
-
-      <!-- Mobile hamburger -->
-      <button id="mobile-menu-btn" class="md:hidden p-2 rounded-md transition-colors text-body" aria-label="Open menu" aria-expanded="false">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-          <line x1="3" y1="6" x2="21" y2="6"/>
-          <line x1="3" y1="12" x2="21" y2="12"/>
-          <line x1="3" y1="18" x2="21" y2="18"/>
-        </svg>
-      </button>
-    </div>
-
-    <!-- Mobile menu -->
-    <div id="mobile-menu" class="hidden md:hidden border-t bg-base border-edge">
-      <nav class="px-6 py-4 flex flex-col gap-4">
-        <a href="/docs/getting-started" class="text-sm transition-colors duration-150 text-body hover:text-heading no-underline">Docs</a>
-        <a href="https://github.com/grafex-dev/grafex" target="_blank" rel="noopener noreferrer" class="text-sm transition-colors duration-150 text-body hover:text-heading no-underline">GitHub</a>
-        <a href="/docs/getting-started" class="mt-2 px-5 py-2.5 rounded-lg text-sm font-semibold text-white text-center gradient-cta">
-          Get Started
-        </a>
-      </nav>
-    </div>
-  </header>
-
-  <main id="main-content" class="relative min-h-screen flex items-center justify-center px-4 overflow-hidden">
+<MarketingLayout title="Page Not Found — Grafex" description="The page you're looking for doesn't exist.">
+  <div class="relative min-h-screen flex items-center justify-center px-4 overflow-hidden">
     <!-- Ambient glow -->
     <div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(ellipse at 50% 40%, rgba(244, 114, 182, 0.08), transparent 60%);"></div>
     <div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(ellipse at 60% 50%, rgba(56, 189, 248, 0.06), transparent 50%);"></div>
@@ -108,45 +58,5 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         </a>
       </div>
     </div>
-  </main>
-
-  <!-- Footer -->
-  <footer class="py-8 px-6 border-t border-edge bg-base">
-    <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-      <div class="flex items-center gap-3">
-        <span class="text-sm font-semibold text-body">Grafex</span>
-        <span class="text-xs text-muted">MIT License</span>
-      </div>
-      <nav class="flex items-center gap-6">
-        <a href="https://github.com/grafex-dev/grafex" target="_blank" rel="noopener noreferrer" class="text-sm transition-colors duration-150 text-body hover:text-heading no-underline">GitHub</a>
-        <a href="https://www.npmjs.com/package/grafex" target="_blank" rel="noopener noreferrer" class="text-sm transition-colors duration-150 text-body hover:text-heading no-underline">npm</a>
-        <a href="/docs/getting-started" class="text-sm transition-colors duration-150 text-body hover:text-heading no-underline">Docs</a>
-      </nav>
-    </div>
-  </footer>
-
-  <script>
-    const menuBtn = document.getElementById('mobile-menu-btn');
-    const mobileMenu = document.getElementById('mobile-menu');
-
-    menuBtn?.addEventListener('click', () => {
-      const isOpen = !mobileMenu?.classList.contains('hidden');
-      mobileMenu?.classList.toggle('hidden');
-      menuBtn.setAttribute('aria-expanded', String(!isOpen));
-    });
-
-    mobileMenu?.querySelectorAll('a').forEach(link => {
-      link.addEventListener('click', () => {
-        mobileMenu?.classList.add('hidden');
-        menuBtn?.setAttribute('aria-expanded', 'false');
-      });
-    });
-
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && !mobileMenu?.classList.contains('hidden')) {
-        mobileMenu?.classList.add('hidden');
-        menuBtn?.setAttribute('aria-expanded', 'false');
-      }
-    });
-  </script>
-</BaseLayout>
+  </div>
+</MarketingLayout>
