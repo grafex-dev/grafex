@@ -23,6 +23,14 @@ npx grafex export -f card.tsx -o card.png
 npm install grafex
 ```
 
+Scaffold the starter files:
+
+```bash
+npx grafex init
+```
+
+This creates a `tsconfig.json` with the correct JSX settings and a `composition.tsx` starter file.
+
 Write a composition:
 
 ```tsx
@@ -63,7 +71,13 @@ npx grafex export -f card.tsx -o card.png
 
 ## TypeScript Setup
 
-For full JSX type-checking in your editor, add these compiler options to your `tsconfig.json`:
+Run `grafex init` to generate the correct `tsconfig.json` automatically:
+
+```bash
+npx grafex init
+```
+
+Or add these compiler options to your `tsconfig.json` manually:
 
 ```json
 {
@@ -80,6 +94,25 @@ Grafex ships its own JSX type definitions (`JSX.Element`, `JSX.IntrinsicElements
 ---
 
 ## CLI Reference
+
+### `grafex init`
+
+Scaffold the minimal setup to start writing compositions. Run this in a new project after `npm install grafex`.
+
+```bash
+npx grafex init
+```
+
+Creates two files in the current directory:
+
+- `tsconfig.json` — TypeScript config with the correct JSX settings for Grafex
+- `composition.tsx` — A starter composition with a "Hello, Grafex!" example
+
+If either file already exists, it is skipped without error.
+
+| Flag     | Short | Description    |
+| -------- | ----- | -------------- |
+| `--help` | `-h`  | Show help text |
 
 ### `grafex export`
 
