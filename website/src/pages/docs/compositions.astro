@@ -26,6 +26,7 @@ const compositionConfigCode = `interface CompositionConfig {
   css?: string[];           // CSS file paths to inject
   scale?: number;           // Device pixel ratio (default: 1)
   variants?: Record<string, VariantConfig>; // Named output variants
+  htmlAttributes?: Record<string, string>;  // Attributes on the root <html> element
 }`;
 
 const customFontsCode = `import type { CompositionConfig } from 'grafex';
@@ -191,6 +192,25 @@ const localImageCode = `export default function Card() {
 
 const cssUrlCode = `.hero {
   background-image: url('./hero.jpg');
+}`;
+
+const htmlAttributesCode = `import type { CompositionConfig } from 'grafex';
+
+export const config: CompositionConfig = {
+  width: 1200,
+  height: 630,
+  htmlAttributes: {
+    'data-theme': 'dark',
+    lang: 'en',
+  },
+};
+
+export default function Card() {
+  return (
+    <div className="w-full h-full flex items-center justify-center">
+      <h1>Hello</h1>
+    </div>
+  );
 }`;
 
 const badgeComponentCode = `interface BadgeProps {
@@ -434,6 +454,31 @@ await close();`;
       </div>
     </section>
 
+    <!-- HTML Attributes -->
+    <section class="mb-12">
+      <h2 class="font-heading font-bold text-2xl mb-4" style="color: var(--color-text-primary);">HTML Attributes</h2>
+      <p class="text-base leading-relaxed mb-6" style="color: var(--color-text-secondary);">Set arbitrary attributes on the root <code class="font-mono text-sm px-1 py-0.5 rounded" style="color: var(--color-primary); background: rgba(244,114,182,0.1);">&lt;html&gt;</code> element via <code class="font-mono text-sm px-1 py-0.5 rounded" style="color: var(--color-primary); background: rgba(244,114,182,0.1);">config.htmlAttributes</code>. This enables CSS selectors like <code class="font-mono text-sm px-1 py-0.5 rounded" style="color: var(--color-primary); background: rgba(244,114,182,0.1);">:root[data-theme="dark"]</code> used by Tailwind v4 themes and other theming systems.</p>
+
+      <div class="rounded-xl overflow-hidden border mb-4" style="border-color: var(--color-border-default);">
+        <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
+          <span class="text-xs font-mono" style="color: var(--color-text-muted);">card.tsx</span>
+          <CopyButton text={htmlAttributesCode} client:load />
+        </div>
+        <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
+          <Code code={htmlAttributesCode} lang="tsx" theme={grafexTheme} />
+        </div>
+      </div>
+
+      <p class="text-sm mb-4" style="color: var(--color-text-secondary);">This renders as <code class="font-mono" style="color: var(--color-primary);">&lt;html data-theme="dark" lang="en"&gt;</code>. Attribute values are HTML-escaped automatically.</p>
+
+      <div class="rounded-xl p-4 border-l-4" style="background: rgba(163,230,53,0.08); border-left-color: var(--color-accent-lime);">
+        <p class="text-sm leading-relaxed" style="color: var(--color-text-primary);">
+          <span class="font-semibold" style="color: var(--color-accent-lime);">Variants: </span>
+          When a variant sets <code class="font-mono text-sm" style="color: var(--color-primary);">htmlAttributes</code>, its entries are spread over the base config's attributes. This means you can override individual keys per variant without repeating the rest.
+        </p>
+      </div>
+    </section>
+
     <!-- Local Images -->
     <section class="mb-12">
       <h2 class="font-heading font-bold text-2xl mb-4" style="color: var(--color-text-primary);">Images</h2>
@@ -609,7 +654,7 @@ await close();`;
       <div class="rounded-xl p-4 border-l-4" style="background: rgba(163,230,53,0.08); border-left-color: var(--color-accent-lime);">
         <p class="text-sm leading-relaxed" style="color: var(--color-text-primary);">
           <span class="font-semibold" style="color: var(--color-accent-lime);">Merge rules: </span>
-          CLI/API options override variant config, which overrides base config. Props are shallow-merged: variant props apply first, then CLI/API props override individual keys. Array fields (<code class="font-mono">fonts</code>, <code class="font-mono">css</code>) replace rather than merge.
+          CLI/API options override variant config, which overrides base config. Props are shallow-merged: variant props apply first, then CLI/API props override individual keys. Array fields (<code class="font-mono">fonts</code>, <code class="font-mono">css</code>) replace rather than merge. <code class="font-mono">htmlAttributes</code> are shallow-merged: variant attributes are spread over base config attributes.
         </p>
       </div>
     </section>

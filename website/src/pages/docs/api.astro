@@ -62,6 +62,7 @@ const variantConfigTypeCode = `interface VariantConfig {
   fonts?: string[];
   css?: string[];
   props?: Record<string, unknown>; // Props injected for this variant
+  htmlAttributes?: Record<string, string>; // Attributes on <html> (spread over base config)
 }`;
 
 const compositionConfigTypeCode = `interface CompositionConfig {
@@ -73,6 +74,7 @@ const compositionConfigTypeCode = `interface CompositionConfig {
   css?: string[];           // CSS file paths to inject
   scale?: number;           // Device pixel ratio (default: 1)
   variants?: Record<string, VariantConfig>; // Named output variants
+  htmlAttributes?: Record<string, string>;  // Attributes set on the root <html> element
 }`;
 
 const renderResultFullTypeCode = `interface RenderResult {
