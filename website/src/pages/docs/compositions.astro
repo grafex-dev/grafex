@@ -1,8 +1,8 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
-import CopyButton from '../../components/CopyButton.tsx';
-import { Code } from 'astro:components';
-import { grafexTheme } from '../../shiki-theme';
+import InlineCode from '../../components/InlineCode.astro';
+import Callout from '../../components/Callout.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
 
 const overviewCode = `import type { CompositionConfig } from 'grafex';
 
@@ -72,6 +72,8 @@ export default function BlogCard({ title, date }: Props) {
     </div>
   );
 }`;
+
+const propsExportCmd = `grafex export -f blog-card.tsx -o card.png --props '{"title":"My Post","date":"March 2026"}'`;
 
 const ogCardFullCode = `export const config = {
   width: 600,
@@ -283,6 +285,38 @@ for (const [name, result] of all) {
 }
 
 await close();`;
+
+const cssFilesCode = `import type { CompositionConfig } from 'grafex';
+
+export const config: CompositionConfig = {
+  width: 1200,
+  height: 630,
+  css: ['./styles.css'],
+};
+
+export default function Card() {
+  return (
+    <div className="card">
+      <h1 className="title">Hello</h1>
+    </div>
+  );
+}`;
+
+const tailwindCssCode = `import type { CompositionConfig } from 'grafex';
+
+export const config: CompositionConfig = {
+  width: 1200,
+  height: 630,
+  css: ['./styles.css'],
+};
+
+export default function Card() {
+  return (
+    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-500 to-purple-600 text-white">
+      <h1 className="text-6xl font-bold">Hello Tailwind</h1>
+    </div>
+  );
+}`;
 ---
 
 <DocsLayout
@@ -291,51 +325,43 @@ await close();`;
   currentPage="/docs/compositions"
 >
   <article>
-    <h1 class="font-heading font-bold text-4xl mb-2" style="color: var(--color-text-primary);">Compositions</h1>
-    <p class="text-lg mb-12" style="color: var(--color-text-secondary);">Compositions are TSX files that describe your image layout. They use a custom JSX runtime — not React — so there are no hooks, no state, and no effects. Just pure functions that return markup.</p>
+    <h1 class="font-heading font-bold text-4xl mb-2 text-heading">Compositions</h1>
+    <p class="text-lg mb-12 text-body">Compositions are TSX files that describe your image layout. They use a custom JSX runtime — not React — so there are no hooks, no state, and no effects. Just pure functions that return markup.</p>
 
     <!-- Overview -->
     <section class="mb-12">
-      <h2 class="font-heading font-bold text-2xl mb-4" style="color: var(--color-text-primary);">Overview</h2>
-      <p class="text-base leading-relaxed mb-6" style="color: var(--color-text-secondary);">Every composition exports two things:</p>
+      <h2 class="font-heading font-bold text-2xl mb-4 text-heading">Overview</h2>
+      <p class="text-base leading-relaxed mb-6 text-body">Every composition exports two things:</p>
 
-      <div class="rounded-xl overflow-hidden border mb-4" style="border-color: var(--color-border-default);">
-        <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
-          <span class="text-xs font-mono" style="color: var(--color-text-muted);">example.tsx</span>
-          <CopyButton text={overviewCode} client:load />
-        </div>
-        <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
-          <Code code={overviewCode} lang="tsx" theme={grafexTheme} />
-        </div>
-      </div>
-      <p class="text-sm" style="color: var(--color-text-secondary);">The config is optional. If omitted, Grafex defaults to 1200×630.</p>
+      <CodeBlock lang="tsx" label="example.tsx" code={overviewCode} />
+      <p class="text-sm text-body">The config is optional. If omitted, Grafex defaults to 1200×630.</p>
     </section>
 
     <!-- JSX Runtime -->
     <section class="mb-12">
-      <h2 class="font-heading font-bold text-2xl mb-4" style="color: var(--color-text-primary);">The JSX Runtime</h2>
-      <p class="text-base leading-relaxed mb-4" style="color: var(--color-text-secondary);">
-        Grafex provides its own <code class="font-mono text-sm px-1.5 py-0.5 rounded" style="color: var(--color-primary); background: rgba(244,114,182,0.1);">h()</code> and <code class="font-mono text-sm px-1.5 py-0.5 rounded" style="color: var(--color-primary); background: rgba(244,114,182,0.1);">Fragment</code> functions. You do not need to import React or configure a JSX pragma — Grafex handles the transform automatically via esbuild.
+      <h2 class="font-heading font-bold text-2xl mb-4 text-heading">The JSX Runtime</h2>
+      <p class="text-base leading-relaxed mb-4 text-body">
+        Grafex provides its own <InlineCode>h()</InlineCode> and <InlineCode>Fragment</InlineCode> functions. You do not need to import React or configure a JSX pragma — Grafex handles the transform automatically via esbuild.
       </p>
-      <p class="text-base leading-relaxed mb-6" style="color: var(--color-text-secondary);">Your components are called once to produce HTML. There is no virtual DOM, no reconciliation, no component lifecycle. Think of compositions as template functions, not interactive components.</p>
+      <p class="text-base leading-relaxed mb-6 text-body">Your components are called once to produce HTML. There is no virtual DOM, no reconciliation, no component lifecycle. Think of compositions as template functions, not interactive components.</p>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-        <div class="rounded-xl p-5 border" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
-          <p class="text-sm font-semibold mb-3" style="color: var(--color-accent-lime);">What works</p>
-          <ul class="space-y-1.5 text-sm" style="color: var(--color-text-secondary);">
-            <li>HTML elements (<code class="font-mono" style="color: var(--color-primary);">div</code>, <code class="font-mono" style="color: var(--color-primary);">span</code>, <code class="font-mono" style="color: var(--color-primary);">img</code>, <code class="font-mono" style="color: var(--color-primary);">svg</code>)</li>
-            <li>Inline styles via <code class="font-mono" style="color: var(--color-primary);">style</code> prop</li>
+        <div class="rounded-xl p-5 border bg-surface border-edge">
+          <p class="text-sm font-semibold mb-3 text-lime">What works</p>
+          <ul class="space-y-1.5 text-sm text-body">
+            <li>HTML elements (<InlineCode>div</InlineCode>, <InlineCode>span</InlineCode>, <InlineCode>img</InlineCode>, <InlineCode>svg</InlineCode>)</li>
+            <li>Inline styles via <InlineCode>style</InlineCode> prop</li>
             <li>Children, nesting, and composition</li>
             <li>Conditional rendering</li>
             <li>Array mapping</li>
-            <li>Fragment syntax (<code class="font-mono" style="color: var(--color-primary);">&lt;&gt;...&lt;/&gt;</code>)</li>
+            <li>Fragment syntax (<InlineCode>&lt;&gt;...&lt;/&gt;</InlineCode>)</li>
           </ul>
         </div>
-        <div class="rounded-xl p-5 border" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
-          <p class="text-sm font-semibold mb-3" style="color: var(--color-text-muted);">Does not apply</p>
-          <ul class="space-y-1.5 text-sm" style="color: var(--color-text-secondary);">
-            <li><code class="font-mono" style="color: var(--color-text-muted);">useState</code>, <code class="font-mono" style="color: var(--color-text-muted);">useEffect</code>, or any hooks</li>
-            <li>Event handlers (<code class="font-mono" style="color: var(--color-text-muted);">onClick</code>, etc.)</li>
+        <div class="rounded-xl p-5 border bg-surface border-edge">
+          <p class="text-sm font-semibold mb-3 text-muted">Does not apply</p>
+          <ul class="space-y-1.5 text-sm text-body">
+            <li><InlineCode>useState</InlineCode>, <InlineCode>useEffect</InlineCode>, or any hooks</li>
+            <li>Event handlers (<InlineCode>onClick</InlineCode>, etc.)</li>
             <li>Client-side interactivity</li>
           </ul>
         </div>
@@ -344,247 +370,116 @@ await close();`;
 
     <!-- CompositionConfig -->
     <section class="mb-12">
-      <h2 class="font-heading font-bold text-2xl mb-4" style="color: var(--color-text-primary);">CompositionConfig</h2>
-      <div class="rounded-xl overflow-hidden border mb-4" style="border-color: var(--color-border-default);">
-        <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
-          <span class="text-xs uppercase tracking-wider font-medium" style="color: var(--color-text-muted);">TypeScript</span>
-          <CopyButton text={compositionConfigCode} client:load />
-        </div>
-        <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
-          <Code code={compositionConfigCode} lang="typescript" theme={grafexTheme} />
-        </div>
-      </div>
-      <p class="text-sm mb-4" style="color: var(--color-text-secondary);">Dimensions can also be overridden at export time via CLI flags (<code class="font-mono" style="color: var(--color-primary);">--width</code>, <code class="font-mono" style="color: var(--color-primary);">--height</code>) or API options. CLI/API values take precedence over the config export.</p>
-      <p class="text-sm" style="color: var(--color-text-secondary);"><code class="font-mono" style="color: var(--color-primary);">scale</code> sets the device pixel ratio for rendering. The default is <code class="font-mono" style="color: var(--color-accent-lime);">1</code>. Set it to <code class="font-mono" style="color: var(--color-accent-lime);">2</code> for retina-quality output — the layout stays the same, but the image is rendered at double the pixel density. A 1200x630 composition at <code class="font-mono" style="color: var(--color-accent-lime);">scale: 2</code> outputs a 2400x1260 PNG. Accepts any positive number, including decimals like <code class="font-mono" style="color: var(--color-accent-lime);">1.5</code> or <code class="font-mono" style="color: var(--color-accent-lime);">0.5</code>. Like <code class="font-mono" style="color: var(--color-primary);">width</code> and <code class="font-mono" style="color: var(--color-primary);">height</code>, <code class="font-mono" style="color: var(--color-primary);">scale</code> can be overridden at export time via the <code class="font-mono" style="color: var(--color-primary);">--scale</code> CLI flag or the <code class="font-mono" style="color: var(--color-primary);">scale</code> option in the API.</p>
+      <h2 class="font-heading font-bold text-2xl mb-4 text-heading">CompositionConfig</h2>
+      <CodeBlock lang="typescript" code={compositionConfigCode} />
+      <p class="text-sm mb-4 text-body">Dimensions can also be overridden at export time via CLI flags (<InlineCode>--width</InlineCode>, <InlineCode>--height</InlineCode>) or API options. CLI/API values take precedence over the config export.</p>
+      <p class="text-sm text-body"><InlineCode>scale</InlineCode> sets the device pixel ratio for rendering. The default is <InlineCode>1</InlineCode>. Set it to <InlineCode>2</InlineCode> for retina-quality output — the layout stays the same, but the image is rendered at double the pixel density. A 1200x630 composition at <InlineCode>scale: 2</InlineCode> outputs a 2400x1260 PNG. Accepts any positive number, including decimals like <InlineCode>1.5</InlineCode> or <InlineCode>0.5</InlineCode>. Like <InlineCode>width</InlineCode> and <InlineCode>height</InlineCode>, <InlineCode>scale</InlineCode> can be overridden at export time via the <InlineCode>--scale</InlineCode> CLI flag or the <InlineCode>scale</InlineCode> option in the API.</p>
     </section>
 
     <!-- Custom Fonts -->
     <section class="mb-12">
-      <h2 class="font-heading font-bold text-2xl mb-4" style="color: var(--color-text-primary);">Custom Fonts</h2>
-      <p class="text-base leading-relaxed mb-6" style="color: var(--color-text-secondary);">Load external fonts by providing URLs in <code class="font-mono text-sm px-1 py-0.5 rounded" style="color: var(--color-primary); background: rgba(244,114,182,0.1);">config.fonts</code>. Grafex fetches each URL before rendering, so Google Fonts and any other CSS font URL work out of the box.</p>
+      <h2 class="font-heading font-bold text-2xl mb-4 text-heading">Custom Fonts</h2>
+      <p class="text-base leading-relaxed mb-6 text-body">Load external fonts by providing URLs in <InlineCode>config.fonts</InlineCode>. Grafex fetches each URL before rendering, so Google Fonts and any other CSS font URL work out of the box.</p>
 
-      <div class="rounded-xl overflow-hidden border mb-4" style="border-color: var(--color-border-default);">
-        <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
-          <span class="text-xs font-mono" style="color: var(--color-text-muted);">card.tsx</span>
-          <CopyButton text={customFontsCode} client:load />
-        </div>
-        <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
-          <Code code={customFontsCode} lang="tsx" theme={grafexTheme} />
-        </div>
-      </div>
+      <CodeBlock lang="tsx" label="card.tsx" code={customFontsCode} />
 
-      <div class="rounded-xl p-4 border-l-4" style="background: rgba(163,230,53,0.08); border-left-color: var(--color-accent-lime);">
-        <p class="text-sm leading-relaxed" style="color: var(--color-text-primary);">
-          <span class="font-semibold" style="color: var(--color-accent-lime);">Tip: </span>
-          Any CSS font URL works — Google Fonts, Adobe Fonts, or a self-hosted stylesheet. Grafex injects each URL as a <code class="font-mono">&lt;link&gt;</code> element before rendering.
-        </p>
-      </div>
+      <Callout type="lime" label="Tip:">
+          Any CSS font URL works — Google Fonts, Adobe Fonts, or a self-hosted stylesheet. Grafex injects each URL as a <InlineCode>&lt;link&gt;</InlineCode> element before rendering.
+      </Callout>
     </section>
 
     <!-- CSS Files -->
     <section class="mb-12">
-      <h2 class="font-heading font-bold text-2xl mb-4" style="color: var(--color-text-primary);">CSS Files</h2>
-      <p class="text-base leading-relaxed mb-6" style="color: var(--color-text-secondary);">Load external CSS files by specifying paths in <code class="font-mono text-sm px-1 py-0.5 rounded" style="color: var(--color-primary); background: rgba(244,114,182,0.1);">config.css</code>. Paths are resolved relative to the composition file. The CSS is injected as <code class="font-mono">&lt;style&gt;</code> tags in the HTML <code class="font-mono">&lt;head&gt;</code> before rendering.</p>
+      <h2 class="font-heading font-bold text-2xl mb-4 text-heading">CSS Files</h2>
+      <p class="text-base leading-relaxed mb-6 text-body">Load external CSS files by specifying paths in <InlineCode>config.css</InlineCode>. Paths are resolved relative to the composition file. The CSS is injected as <InlineCode>&lt;style&gt;</InlineCode> tags in the HTML <InlineCode>&lt;head&gt;</InlineCode> before rendering.</p>
 
-      <div class="rounded-xl overflow-hidden border mb-4" style="border-color: var(--color-border-default);">
-        <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
-          <span class="text-xs font-mono" style="color: var(--color-text-muted);">card.tsx</span>
-          <CopyButton text={`import type { CompositionConfig } from 'grafex';\n\nexport const config: CompositionConfig = {\n  width: 1200,\n  height: 630,\n  css: ['./styles.css'],\n};\n\nexport default function Card() {\n  return (\n    <div className="card">\n      <h1 className="title">Hello</h1>\n    </div>\n  );\n}`} client:load />
-        </div>
-        <div class="p-4 overflow-x-auto" style="background: var(--color-bg-code); max-height: 500px; overflow-y: auto;">
-          <pre class="font-mono text-sm leading-relaxed"><code><span style="color:#F472B6">import</span><span style="color:#94A3B8"> type {"{"} </span><span style="color:#38BDF8">CompositionConfig</span><span style="color:#94A3B8"> {"}"} </span><span style="color:#F472B6">from</span><span style="color:#A3E635"> 'grafex'</span><span style="color:#94A3B8">;</span>
+      <CodeBlock lang="tsx" label="card.tsx" code={cssFilesCode} />
 
-<span style="color:#F472B6">export</span><span style="color:#F472B6"> const</span><span style="color:#38BDF8"> config</span><span style="color:#94A3B8">:</span><span style="color:#38BDF8"> CompositionConfig</span><span style="color:#94A3B8"> = {"{"}</span>
-<span style="color:#38BDF8">  width</span><span style="color:#94A3B8">:</span><span style="color:#FB923C"> 1200</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">  height</span><span style="color:#94A3B8">:</span><span style="color:#FB923C"> 630</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">  css</span><span style="color:#94A3B8">: [</span><span style="color:#A3E635">'./styles.css'</span><span style="color:#94A3B8">],</span>
-<span style="color:#94A3B8">{"}"};</span>
+      <Callout type="lime" label="Tip:" class="mb-6">
+          This is a generic file injection mechanism — it works with plain CSS, Tailwind output, Sass output, or any other <InlineCode>.css</InlineCode> file. Grafex doesn't care how the CSS was generated.
+      </Callout>
 
-<span style="color:#F472B6">export</span><span style="color:#F472B6"> default</span><span style="color:#F472B6"> function</span><span style="color:#38BDF8"> Card</span><span style="color:#94A3B8">() {"{"}</span>
-<span style="color:#F472B6">  return</span><span style="color:#94A3B8"> (</span>
-<span style="color:#F472B6">    &lt;div</span><span style="color:#38BDF8"> className</span><span style="color:#94A3B8">=</span><span style="color:#A3E635">"card"</span><span style="color:#F472B6">&gt;</span>
-<span style="color:#F472B6">      &lt;h1</span><span style="color:#38BDF8"> className</span><span style="color:#94A3B8">=</span><span style="color:#A3E635">"title"</span><span style="color:#F472B6">&gt;</span>Hello<span style="color:#F472B6">&lt;/h1&gt;</span>
-<span style="color:#F472B6">    &lt;/div&gt;</span>
-<span style="color:#94A3B8">  );</span>
-<span style="color:#94A3B8">{"}"}</span></code></pre>
-        </div>
-      </div>
-
-      <div class="rounded-xl p-4 border-l-4 mb-6" style="background: rgba(163,230,53,0.08); border-left-color: var(--color-accent-lime);">
-        <p class="text-sm leading-relaxed" style="color: var(--color-text-primary);">
-          <span class="font-semibold" style="color: var(--color-accent-lime);">Tip: </span>
-          This is a generic file injection mechanism — it works with plain CSS, Tailwind output, Sass output, or any other <code class="font-mono text-sm px-1.5 py-0.5 rounded" style="color: var(--color-primary); background: rgba(244,114,182,0.1);">.css</code> file. Grafex doesn't care how the CSS was generated.
-        </p>
-      </div>
-
-      <h3 class="font-heading font-semibold text-lg mb-3" style="color: var(--color-text-primary);">Tailwind CSS</h3>
-      <p class="text-base leading-relaxed mb-4" style="color: var(--color-text-secondary);">
-        Run Tailwind's CLI to compile your stylesheet, then reference the output in <code class="font-mono text-sm" style="color: var(--color-primary);">config.css</code>. In dev mode, Tailwind's <code class="font-mono text-sm">--watch</code> flag recompiles on every change, and Grafex detects the updated CSS file and re-renders automatically.
-        See the <a href="/docs/tailwind" class="transition-colors duration-150 text-[var(--color-primary)] hover:text-[var(--color-primary-hover)]">Tailwind CSS guide</a> for the full dev workflow, npm scripts, and a working example.
+      <h3 class="font-heading font-semibold text-lg mb-3 text-heading">Tailwind CSS</h3>
+      <p class="text-base leading-relaxed mb-4 text-body">
+        Run Tailwind's CLI to compile your stylesheet, then reference the output in <InlineCode>config.css</InlineCode>. In dev mode, Tailwind's <InlineCode>--watch</InlineCode> flag recompiles on every change, and Grafex detects the updated CSS file and re-renders automatically.
+        See the <a href="/docs/tailwind" class="transition-colors duration-150 text-pink hover:text-pink-hover">Tailwind CSS guide</a> for the full dev workflow, npm scripts, and a working example.
       </p>
 
-      <div class="rounded-xl overflow-hidden border mb-4" style="border-color: var(--color-border-default);">
-        <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
-          <span class="text-xs font-mono" style="color: var(--color-text-muted);">terminal</span>
-        </div>
-        <div class="px-4 py-3 overflow-x-auto" style="background: var(--color-bg-code);">
-          <code class="font-mono text-sm" style="color: var(--color-accent-lime);">npx tailwindcss -i ./input.css -o ./styles.css</code>
-        </div>
-      </div>
+      <CodeBlock lang="bash" code="npx tailwindcss -i ./input.css -o ./styles.css" class="mb-6" />
 
-      <div class="rounded-xl overflow-hidden border" style="border-color: var(--color-border-default);">
-        <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
-          <span class="text-xs font-mono" style="color: var(--color-text-muted);">card.tsx</span>
-          <CopyButton text={`import type { CompositionConfig } from 'grafex';\n\nexport const config: CompositionConfig = {\n  width: 1200,\n  height: 630,\n  css: ['./styles.css'],\n};\n\nexport default function Card() {\n  return (\n    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-500 to-purple-600 text-white">\n      <h1 className="text-6xl font-bold">Hello Tailwind</h1>\n    </div>\n  );\n}`} client:load />
-        </div>
-        <div class="p-4 overflow-x-auto" style="background: var(--color-bg-code); max-height: 500px; overflow-y: auto;">
-          <pre class="font-mono text-sm leading-relaxed"><code><span style="color:#F472B6">import</span><span style="color:#94A3B8"> type {"{"} </span><span style="color:#38BDF8">CompositionConfig</span><span style="color:#94A3B8"> {"}"} </span><span style="color:#F472B6">from</span><span style="color:#A3E635"> 'grafex'</span><span style="color:#94A3B8">;</span>
-
-<span style="color:#F472B6">export</span><span style="color:#F472B6"> const</span><span style="color:#38BDF8"> config</span><span style="color:#94A3B8">:</span><span style="color:#38BDF8"> CompositionConfig</span><span style="color:#94A3B8"> = {"{"}</span>
-<span style="color:#38BDF8">  width</span><span style="color:#94A3B8">:</span><span style="color:#FB923C"> 1200</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">  height</span><span style="color:#94A3B8">:</span><span style="color:#FB923C"> 630</span><span style="color:#94A3B8">,</span>
-<span style="color:#38BDF8">  css</span><span style="color:#94A3B8">: [</span><span style="color:#A3E635">'./styles.css'</span><span style="color:#94A3B8">],</span>
-<span style="color:#94A3B8">{"}"};</span>
-
-<span style="color:#F472B6">export</span><span style="color:#F472B6"> default</span><span style="color:#F472B6"> function</span><span style="color:#38BDF8"> Card</span><span style="color:#94A3B8">() {"{"}</span>
-<span style="color:#F472B6">  return</span><span style="color:#94A3B8"> (</span>
-<span style="color:#F472B6">    &lt;div</span><span style="color:#38BDF8"> className</span><span style="color:#94A3B8">=</span><span style="color:#A3E635">"w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-500 to-purple-600 text-white"</span><span style="color:#F472B6">&gt;</span>
-<span style="color:#F472B6">      &lt;h1</span><span style="color:#38BDF8"> className</span><span style="color:#94A3B8">=</span><span style="color:#A3E635">"text-6xl font-bold"</span><span style="color:#F472B6">&gt;</span>Hello Tailwind<span style="color:#F472B6">&lt;/h1&gt;</span>
-<span style="color:#F472B6">    &lt;/div&gt;</span>
-<span style="color:#94A3B8">  );</span>
-<span style="color:#94A3B8">{"}"}</span></code></pre>
-        </div>
-      </div>
+      <CodeBlock lang="tsx" label="card.tsx" code={tailwindCssCode} />
     </section>
 
     <!-- HTML Attributes -->
     <section class="mb-12">
-      <h2 class="font-heading font-bold text-2xl mb-4" style="color: var(--color-text-primary);">HTML Attributes</h2>
-      <p class="text-base leading-relaxed mb-6" style="color: var(--color-text-secondary);">Set arbitrary attributes on the root <code class="font-mono text-sm px-1 py-0.5 rounded" style="color: var(--color-primary); background: rgba(244,114,182,0.1);">&lt;html&gt;</code> element via <code class="font-mono text-sm px-1 py-0.5 rounded" style="color: var(--color-primary); background: rgba(244,114,182,0.1);">config.htmlAttributes</code>. This enables CSS selectors like <code class="font-mono text-sm px-1 py-0.5 rounded" style="color: var(--color-primary); background: rgba(244,114,182,0.1);">:root[data-theme="dark"]</code> used by Tailwind v4 themes and other theming systems.</p>
+      <h2 class="font-heading font-bold text-2xl mb-4 text-heading">HTML Attributes</h2>
+      <p class="text-base leading-relaxed mb-6 text-body">Set arbitrary attributes on the root <InlineCode>&lt;html&gt;</InlineCode> element via <InlineCode>config.htmlAttributes</InlineCode>. This enables CSS selectors like <InlineCode>:root[data-theme="dark"]</InlineCode> used by Tailwind v4 themes and other theming systems.</p>
 
-      <div class="rounded-xl overflow-hidden border mb-4" style="border-color: var(--color-border-default);">
-        <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
-          <span class="text-xs font-mono" style="color: var(--color-text-muted);">card.tsx</span>
-          <CopyButton text={htmlAttributesCode} client:load />
-        </div>
-        <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
-          <Code code={htmlAttributesCode} lang="tsx" theme={grafexTheme} />
-        </div>
-      </div>
+      <CodeBlock lang="tsx" label="card.tsx" code={htmlAttributesCode} />
 
-      <p class="text-sm mb-4" style="color: var(--color-text-secondary);">This renders as <code class="font-mono" style="color: var(--color-primary);">&lt;html data-theme="dark" lang="en"&gt;</code>. Attribute values are HTML-escaped automatically.</p>
+      <p class="text-sm mb-4 text-body">This renders as <InlineCode>&lt;html data-theme="dark" lang="en"&gt;</InlineCode>. Attribute values are HTML-escaped automatically.</p>
 
-      <div class="rounded-xl p-4 border-l-4" style="background: rgba(163,230,53,0.08); border-left-color: var(--color-accent-lime);">
-        <p class="text-sm leading-relaxed" style="color: var(--color-text-primary);">
-          <span class="font-semibold" style="color: var(--color-accent-lime);">Variants: </span>
-          When a variant sets <code class="font-mono text-sm" style="color: var(--color-primary);">htmlAttributes</code>, its entries are spread over the base config's attributes. This means you can override individual keys per variant without repeating the rest.
-        </p>
-      </div>
+      <Callout type="lime" label="Variants:">
+          When a variant sets <InlineCode>htmlAttributes</InlineCode>, its entries are spread over the base config's attributes. This means you can override individual keys per variant without repeating the rest.
+      </Callout>
     </section>
 
     <!-- Local Images -->
     <section class="mb-12">
-      <h2 class="font-heading font-bold text-2xl mb-4" style="color: var(--color-text-primary);">Images</h2>
-      <p class="text-base leading-relaxed mb-6" style="color: var(--color-text-secondary);">Use local image files in <code class="font-mono text-sm px-1 py-0.5 rounded" style="color: var(--color-primary); background: rgba(244,114,182,0.1);">&lt;img&gt;</code> tags or CSS <code class="font-mono text-sm px-1 py-0.5 rounded" style="color: var(--color-primary); background: rgba(244,114,182,0.1);">background-image</code>. Grafex reads them from disk and embeds them as base64 data URLs automatically — no server or public URL needed.</p>
+      <h2 class="font-heading font-bold text-2xl mb-4 text-heading">Images</h2>
+      <p class="text-base leading-relaxed mb-6 text-body">Use local image files in <InlineCode>&lt;img&gt;</InlineCode> tags or CSS <InlineCode>background-image</InlineCode>. Grafex reads them from disk and embeds them as base64 data URLs automatically — no server or public URL needed.</p>
 
-      <div class="rounded-xl overflow-hidden border mb-4" style="border-color: var(--color-border-default);">
-        <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
-          <span class="text-xs font-mono" style="color: var(--color-text-muted);">card.tsx</span>
-          <CopyButton text={localImageCode} client:load />
-        </div>
-        <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
-          <Code code={localImageCode} lang="tsx" theme={grafexTheme} />
-        </div>
-      </div>
+      <CodeBlock lang="tsx" label="card.tsx" code={localImageCode} />
 
-      <p class="text-sm mb-4" style="color: var(--color-text-secondary);">Paths are resolved relative to the composition file. Supported formats: PNG, JPEG, GIF, WebP, SVG, AVIF, ICO, BMP. Remote URLs (<code class="font-mono" style="color: var(--color-primary);">http://</code>, <code class="font-mono" style="color: var(--color-primary);">https://</code>) and data URLs are passed through unchanged.</p>
+      <p class="text-sm mb-4 text-body">Paths are resolved relative to the composition file. Supported formats: PNG, JPEG, GIF, WebP, SVG, AVIF, ICO, BMP. Remote URLs (<InlineCode>http://</InlineCode>, <InlineCode>https://</InlineCode>) and data URLs are passed through unchanged.</p>
 
-      <p class="text-base leading-relaxed mb-4" style="color: var(--color-text-secondary);">CSS <code class="font-mono text-sm px-1 py-0.5 rounded" style="color: var(--color-primary); background: rgba(244,114,182,0.1);">url()</code> references work too — both in inline styles and in external CSS files loaded via <code class="font-mono text-sm px-1 py-0.5 rounded" style="color: var(--color-primary); background: rgba(244,114,182,0.1);">config.css</code>:</p>
+      <p class="text-base leading-relaxed mb-4 text-body">CSS <InlineCode>url()</InlineCode> references work too — both in inline styles and in external CSS files loaded via <InlineCode>config.css</InlineCode>:</p>
 
-      <div class="rounded-xl overflow-hidden border" style="border-color: var(--color-border-default);">
-        <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
-          <span class="text-xs font-mono" style="color: var(--color-text-muted);">styles.css</span>
-          <CopyButton text={cssUrlCode} client:load />
-        </div>
-        <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
-          <Code code={cssUrlCode} lang="css" theme={grafexTheme} />
-        </div>
-      </div>
+      <CodeBlock lang="css" label="styles.css" code={cssUrlCode} />
     </section>
 
     <!-- Styling -->
     <section class="mb-12">
-      <h2 class="font-heading font-bold text-2xl mb-4" style="color: var(--color-text-primary);">Styling</h2>
-      <p class="text-base leading-relaxed mb-6" style="color: var(--color-text-secondary);">Style compositions using the <code class="font-mono text-sm px-1 py-0.5 rounded" style="color: var(--color-primary); background: rgba(244,114,182,0.1);">style</code> prop with a CSS-in-JS object:</p>
+      <h2 class="font-heading font-bold text-2xl mb-4 text-heading">Styling</h2>
+      <p class="text-base leading-relaxed mb-6 text-body">Style compositions using the <InlineCode>style</InlineCode> prop with a CSS-in-JS object:</p>
 
-      <div class="rounded-xl overflow-hidden border mb-6" style="border-color: var(--color-border-default);">
-        <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
-          <span class="text-xs font-mono" style="color: var(--color-text-muted);">example.tsx</span>
-          <CopyButton text={stylingCode} client:load />
-        </div>
-        <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
-          <Code code={stylingCode} lang="tsx" theme={grafexTheme} />
-        </div>
-      </div>
+      <CodeBlock lang="tsx" label="example.tsx" code={stylingCode} class="mb-6" />
 
-      <div class="rounded-xl p-4 border-l-4" style="background: rgba(163,230,53,0.08); border-left-color: var(--color-accent-lime);">
-        <p class="text-sm leading-relaxed" style="color: var(--color-text-primary);">
-          <span class="font-semibold" style="color: var(--color-accent-lime);">Tip: </span>
-          Unlike Satori, Grafex supports the full CSS spec because it renders in a real browser engine. Flexbox, Grid, <code class="font-mono">calc()</code>, CSS variables, <code class="font-mono">z-index</code>, gradients, shadows, transforms — it all works.
-        </p>
-      </div>
+      <Callout type="lime" label="Tip:">
+          Unlike Satori, Grafex supports the full CSS spec because it renders in a real browser engine. Flexbox, Grid, <InlineCode>calc()</InlineCode>, CSS variables, <InlineCode>z-index</InlineCode>, gradients, shadows, transforms — it all works.
+      </Callout>
     </section>
 
     <!-- Props -->
     <section class="mb-12">
-      <h2 class="font-heading font-bold text-2xl mb-4" style="color: var(--color-text-primary);">Props</h2>
-      <p class="text-base leading-relaxed mb-6" style="color: var(--color-text-secondary);">Compositions can accept props for dynamic content. Pass them via the CLI (<code class="font-mono text-sm px-1 py-0.5 rounded" style="color: var(--color-primary); background: rgba(244,114,182,0.1);">--props</code>) or the API (<code class="font-mono text-sm px-1 py-0.5 rounded" style="color: var(--color-primary); background: rgba(244,114,182,0.1);">options.props</code>).</p>
+      <h2 class="font-heading font-bold text-2xl mb-4 text-heading">Props</h2>
+      <p class="text-base leading-relaxed mb-6 text-body">Compositions can accept props for dynamic content. Pass them via the CLI (<InlineCode>--props</InlineCode>) or the API (<InlineCode>options.props</InlineCode>).</p>
 
-      <div class="rounded-xl overflow-hidden border mb-4" style="border-color: var(--color-border-default);">
-        <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
-          <span class="text-xs font-mono" style="color: var(--color-text-muted);">blog-card.tsx</span>
-          <CopyButton text={`import type { CompositionConfig } from 'grafex';\n\nexport const config: CompositionConfig = { width: 1200, height: 630 };\n\ninterface Props {\n  title: string;\n  date: string;\n}\n\nexport default function BlogCard({ title, date }: Props) {\n  return (\n    <div\n      style={{\n        width: '100%',\n        height: '100%',\n        display: 'flex',\n        flexDirection: 'column',\n        justifyContent: 'center',\n        padding: '80px',\n        background: '#0f172a',\n        color: 'white',\n        fontFamily: 'system-ui, sans-serif',\n      }}\n    >\n      <div style={{ fontSize: '48px', fontWeight: 'bold' }}>{title}</div>\n      <div style={{ fontSize: '20px', color: '#94a3b8', marginTop: '16px' }}>{date}</div>\n    </div>\n  );\n}`} client:load />
-        </div>
-        <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
-          <Code code={propsCode} lang="tsx" theme={grafexTheme} />
-        </div>
-      </div>
+      <CodeBlock lang="tsx" label="blog-card.tsx" code={propsCode} />
 
-      <p class="text-sm mb-3" style="color: var(--color-text-secondary);">Export with props:</p>
-      <div class="rounded-xl overflow-hidden border" style="border-color: var(--color-border-default);">
-        <div class="px-4 py-3 overflow-x-auto" style="background: var(--color-bg-code);">
-          <code class="font-mono text-sm" style="color: var(--color-accent-lime);">grafex export -f blog-card.tsx -o card.png --props '{"{"}"title":"My Post","date":"March 2026"{"}"}'</code>
-        </div>
-      </div>
+      <p class="text-sm mb-3 text-body">Export with props:</p>
+      <CodeBlock lang="bash" code={propsExportCmd} />
     </section>
 
     <!-- Example: OG Card -->
     <section class="mb-12">
-      <h2 class="font-heading font-bold text-2xl mb-4" style="color: var(--color-text-primary);">Example: OG Card</h2>
-      <p class="text-base leading-relaxed mb-6" style="color: var(--color-text-secondary);">Here's a complete OG image composition and its rendered output. This is the kind of thing you'd generate at build time for every blog post.</p>
+      <h2 class="font-heading font-bold text-2xl mb-4 text-heading">Example: OG Card</h2>
+      <p class="text-base leading-relaxed mb-6 text-body">Here's a complete OG image composition and its rendered output. This is the kind of thing you'd generate at build time for every blog post.</p>
 
-      <div class="rounded-xl overflow-hidden border mb-4" style="border-color: var(--color-border-default);">
-        <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
-          <span class="text-xs font-mono" style="color: var(--color-text-muted);">og-card.tsx</span>
-          <CopyButton text={ogCardFullCode} client:load />
-        </div>
-        <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
-          <Code code={ogCardFullCode} lang="tsx" theme={grafexTheme} />
-        </div>
-      </div>
+      <CodeBlock lang="tsx" label="og-card.tsx" code={ogCardFullCode} />
 
-      <div class="rounded-xl overflow-hidden border" style="border-color: var(--color-border-default);">
-        <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
-          <span class="text-xs font-mono" style="color: var(--color-text-muted);">og-card.png</span>
-          <span class="text-xs" style="color: var(--color-text-muted);">600 × 400</span>
+      <div class="rounded-xl overflow-hidden border border-edge">
+        <div class="flex items-center justify-between px-4 py-2 border-b bg-surface border-edge">
+          <span class="text-xs font-mono text-muted">og-card.png</span>
+          <span class="text-xs text-muted">600 × 400</span>
         </div>
-        <div style="background: repeating-conic-gradient(var(--color-bg-surface) 0% 25%, var(--color-bg-surface-hover) 0% 50%) 0 0 / 16px 16px; padding: 24px; display: flex; justify-content: center;">
+        <div class="checkerboard p-6 flex justify-center">
           <img
             src="/examples/og-card.png"
             alt="Rendered OG card: Building Modern APIs"
             width="600"
             height="400"
-            style="max-width: 100%; border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.5);"
+            class="max-w-full rounded-lg shadow-lg"
             loading="lazy"
           />
         </div>
@@ -593,73 +488,32 @@ await close();`;
 
     <!-- Custom Components -->
     <section class="mb-12">
-      <h2 class="font-heading font-bold text-2xl mb-4" style="color: var(--color-text-primary);">Custom Components</h2>
-      <p class="text-base leading-relaxed mb-6" style="color: var(--color-text-secondary);">Compositions can import and use components from other files. Grafex bundles everything with esbuild before rendering.</p>
+      <h2 class="font-heading font-bold text-2xl mb-4 text-heading">Custom Components</h2>
+      <p class="text-base leading-relaxed mb-6 text-body">Compositions can import and use components from other files. Grafex bundles everything with esbuild before rendering.</p>
 
-      <div class="rounded-xl overflow-hidden border mb-4" style="border-color: var(--color-border-default);">
-        <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
-          <span class="text-xs font-mono" style="color: var(--color-text-muted);">components/badge.tsx</span>
-        </div>
-        <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
-          <Code code={badgeComponentCode} lang="tsx" theme={grafexTheme} />
-        </div>
-      </div>
+      <CodeBlock lang="tsx" label="components/badge.tsx" code={badgeComponentCode} showCopy={false} class="mb-6" />
 
-      <div class="rounded-xl overflow-hidden border" style="border-color: var(--color-border-default);">
-        <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
-          <span class="text-xs font-mono" style="color: var(--color-text-muted);">og-image.tsx</span>
-        </div>
-        <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
-          <Code code={usingComponentCode} lang="tsx" theme={grafexTheme} />
-        </div>
-      </div>
+      <CodeBlock lang="tsx" label="og-image.tsx" code={usingComponentCode} showCopy={false} />
     </section>
 
     <!-- Variants -->
     <section class="mb-12">
-      <h2 class="font-heading font-bold text-2xl mb-4" style="color: var(--color-text-primary);">Variants</h2>
-      <p class="text-base leading-relaxed mb-6" style="color: var(--color-text-secondary);">
-        Produce multiple outputs from a single composition — different sizes, formats, or props. Define a <code class="font-mono text-sm px-1 py-0.5 rounded" style="color: var(--color-primary); background: rgba(244,114,182,0.1);">variants</code> record in your config. Each variant inherits from the base config and can override any field.
+      <h2 class="font-heading font-bold text-2xl mb-4 text-heading">Variants</h2>
+      <p class="text-base leading-relaxed mb-6 text-body">
+        Produce multiple outputs from a single composition — different sizes, formats, or props. Define a <InlineCode>variants</InlineCode> record in your config. Each variant inherits from the base config and can override any field.
       </p>
 
-      <div class="rounded-xl overflow-hidden border mb-6" style="border-color: var(--color-border-default);">
-        <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
-          <span class="text-xs font-mono" style="color: var(--color-text-muted);">card.tsx</span>
-          <CopyButton text={variantsConfigCode} client:load />
-        </div>
-        <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
-          <Code code={variantsConfigCode} lang="tsx" theme={grafexTheme} />
-        </div>
-      </div>
+      <CodeBlock lang="tsx" label="card.tsx" code={variantsConfigCode} class="mb-6" />
 
-      <h3 class="font-heading font-semibold text-lg mb-3" style="color: var(--color-text-primary);">CLI usage</h3>
-      <div class="rounded-xl overflow-hidden border mb-6" style="border-color: var(--color-border-default);">
-        <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
-          <span class="text-xs uppercase tracking-wider font-medium" style="color: var(--color-text-muted);">bash</span>
-          <CopyButton text={variantsCliCode} client:load />
-        </div>
-        <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
-          <Code code={variantsCliCode} lang="bash" theme={grafexTheme} />
-        </div>
-      </div>
+      <h3 class="font-heading font-semibold text-lg mb-3 text-heading">CLI usage</h3>
+      <CodeBlock lang="bash" code={variantsCliCode} class="mb-6" />
 
-      <h3 class="font-heading font-semibold text-lg mb-3" style="color: var(--color-text-primary);">API usage</h3>
-      <div class="rounded-xl overflow-hidden border mb-6" style="border-color: var(--color-border-default);">
-        <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
-          <span class="text-xs uppercase tracking-wider font-medium" style="color: var(--color-text-muted);">TypeScript</span>
-          <CopyButton text={variantsApiCode} client:load />
-        </div>
-        <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
-          <Code code={variantsApiCode} lang="typescript" theme={grafexTheme} />
-        </div>
-      </div>
+      <h3 class="font-heading font-semibold text-lg mb-3 text-heading">API usage</h3>
+      <CodeBlock lang="typescript" code={variantsApiCode} class="mb-6" />
 
-      <div class="rounded-xl p-4 border-l-4" style="background: rgba(163,230,53,0.08); border-left-color: var(--color-accent-lime);">
-        <p class="text-sm leading-relaxed" style="color: var(--color-text-primary);">
-          <span class="font-semibold" style="color: var(--color-accent-lime);">Merge rules: </span>
-          CLI/API options override variant config, which overrides base config. Props are shallow-merged: variant props apply first, then CLI/API props override individual keys. Array fields (<code class="font-mono">fonts</code>, <code class="font-mono">css</code>) replace rather than merge. <code class="font-mono">htmlAttributes</code> are shallow-merged: variant attributes are spread over base config attributes.
-        </p>
-      </div>
+      <Callout type="lime" label="Merge rules:">
+          CLI/API options override variant config, which overrides base config. Props are shallow-merged: variant props apply first, then CLI/API props override individual keys. Array fields (<InlineCode>fonts</InlineCode>, <InlineCode>css</InlineCode>) replace rather than merge. <InlineCode>htmlAttributes</InlineCode> are shallow-merged: variant attributes are spread over base config attributes.
+      </Callout>
     </section>
   </article>
 </DocsLayout>

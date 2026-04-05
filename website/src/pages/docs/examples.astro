@@ -1,8 +1,6 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
-import CopyButton from '../../components/CopyButton.tsx';
-import { Code } from 'astro:components';
-import { grafexTheme } from '../../shiki-theme';
+import CodeBlock from '../../components/CodeBlock.astro';
 
 const examples = [
   {
@@ -62,46 +60,27 @@ const sources = Object.fromEntries(
 
 <DocsLayout title="Examples" currentPage="/docs/examples" description="Real compositions you can copy, modify, and render.">
   <div class="max-w-4xl">
-    <h1 class="font-heading text-4xl font-bold mb-4" style="color: var(--color-text-primary);">Examples</h1>
-    <p class="text-lg mb-12" style="color: var(--color-text-secondary);">
+    <h1 class="font-heading text-4xl font-bold mb-4 text-heading">Examples</h1>
+    <p class="text-lg mb-12 text-body">
       Real compositions you can copy, modify, and render. Each example shows the rendered output and the full source code.
     </p>
 
     <div class="space-y-16">
       {examples.map((ex) => (
         <div>
-          <h2 class="font-heading text-2xl font-semibold mb-2" style="color: var(--color-text-primary);">{ex.title}</h2>
-          <p class="text-base mb-4" style="color: var(--color-text-secondary);">{ex.desc}</p>
+          <h2 class="font-heading text-2xl font-semibold mb-2 text-heading">{ex.title}</h2>
+          <p class="text-base mb-4 text-body">{ex.desc}</p>
 
           {/* Rendered image */}
-          <div class="checkerboard rounded-xl overflow-hidden border mb-4 flex items-center justify-center p-4" style="border-color: var(--color-border-default);">
-            <img src={ex.img} alt={ex.title} class="block rounded-lg" style="max-width: 600px; width: 100%;" loading="lazy" />
+          <div class="checkerboard rounded-xl overflow-hidden border mb-4 flex items-center justify-center p-4 border-edge">
+            <img src={ex.img} alt={ex.title} class="block rounded-lg w-full max-w-[600px]" loading="lazy" />
           </div>
 
           {/* CLI command */}
-          <div class="rounded-lg px-4 py-3 flex items-center justify-between gap-3 border mb-4" style="background: var(--color-bg-code); border-color: var(--color-border-default);">
-            <div class="flex items-center gap-3 overflow-x-auto">
-              <span class="font-mono text-sm flex-shrink-0" style="color: var(--color-text-muted);">$</span>
-              <code class="font-mono text-sm whitespace-nowrap" style="color: var(--color-accent-lime);">{ex.cmd}</code>
-            </div>
-            <CopyButton text={ex.cmd} client:load />
-          </div>
+          <CodeBlock lang="bash" code={ex.cmd} />
 
           {/* Collapsible source */}
-          <details class="group rounded-xl overflow-hidden border" style="border-color: var(--color-border-default);">
-            <summary class="flex items-center justify-between px-4 py-3 cursor-pointer select-none hover:bg-[var(--color-bg-surface-hover)] transition-colors list-none [&::-webkit-details-marker]:hidden" style="background: var(--color-bg-surface);">
-              <div class="flex items-center gap-3">
-                <svg class="w-4 h-4 transition-transform duration-200 group-open:rotate-90" style="color: var(--color-text-muted);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <polyline points="9 6 15 12 9 18" />
-                </svg>
-                <span class="text-xs font-mono" style="color: var(--color-text-muted);">{ex.file}</span>
-              </div>
-              <CopyButton text={sources[ex.file]} client:load />
-            </summary>
-            <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 400px; overflow-y: auto;">
-              <Code code={sources[ex.file]} lang="tsx" theme={grafexTheme} />
-            </div>
-          </details>
+          <CodeBlock collapsible lang="tsx" label={ex.file} code={sources[ex.file]} maxHeight="400px" />
         </div>
       ))}
     </div>

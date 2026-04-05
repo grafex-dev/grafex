@@ -1,8 +1,8 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
-import CopyButton from '../../components/CopyButton.tsx';
-import { Code } from 'astro:components';
-import { grafexTheme } from '../../shiki-theme';
+import InlineCode from '../../components/InlineCode.astro';
+import Callout from '../../components/Callout.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
 
 const inputCssCode = `@import "tailwindcss";`;
 
@@ -80,153 +80,96 @@ const buildCmd = `npx @tailwindcss/cli -i ./input.css -o ./styles.css && npx gra
   currentPage="/docs/tailwind"
 >
   <article>
-    <h1 class="font-heading font-bold text-4xl mb-2" style="color: var(--color-text-primary);">Using Tailwind CSS</h1>
-    <p class="text-lg mb-12" style="color: var(--color-text-secondary);">Grafex works with Tailwind CSS out of the box. No plugins, no special config — just generate a CSS file and reference it in your composition.</p>
+    <h1 class="font-heading font-bold text-4xl mb-2 text-heading">Using Tailwind CSS</h1>
+    <p class="text-lg mb-12 text-body">Grafex works with Tailwind CSS out of the box. No plugins, no special config — just generate a CSS file and reference it in your composition.</p>
 
     <!-- Overview -->
     <section class="mb-12">
-      <h2 class="font-heading font-bold text-2xl mb-4" style="color: var(--color-text-primary);">How it works</h2>
-      <p class="text-base leading-relaxed mb-4" style="color: var(--color-text-secondary);">
-        Grafex's <code class="font-mono text-sm px-1.5 py-0.5 rounded" style="color: var(--color-primary); background: rgba(244,114,182,0.1);">config.css</code> field accepts an array of local CSS file paths. It's a generic injection mechanism — Grafex reads each file from disk and injects its contents as a <code class="font-mono">&lt;style&gt;</code> tag before rendering. This means any CSS preprocessor output works: plain CSS, Tailwind, Sass, PostCSS — anything that produces a <code class="font-mono">.css</code> file.
+      <h2 class="font-heading font-bold text-2xl mb-4 text-heading">How it works</h2>
+      <p class="text-base leading-relaxed mb-4 text-body">
+        Grafex's <InlineCode>config.css</InlineCode> field accepts an array of local CSS file paths. It's a generic injection mechanism — Grafex reads each file from disk and injects its contents as a <InlineCode>&lt;style&gt;</InlineCode> tag before rendering. This means any CSS preprocessor output works: plain CSS, Tailwind, Sass, PostCSS — anything that produces a <InlineCode>.css</InlineCode> file.
       </p>
-      <p class="text-base leading-relaxed mb-6" style="color: var(--color-text-secondary);">
-        The Tailwind workflow is: run Tailwind's CLI to compile your input file into a CSS output, then point <code class="font-mono text-sm px-1.5 py-0.5 rounded" style="color: var(--color-primary); background: rgba(244,114,182,0.1);">config.css</code> at that output. In dev mode, Tailwind's <code class="font-mono">--watch</code> flag recompiles on every file change, and Grafex watches the CSS file and re-renders automatically.
+      <p class="text-base leading-relaxed mb-6 text-body">
+        The Tailwind workflow is: run Tailwind's CLI to compile your input file into a CSS output, then point <InlineCode>config.css</InlineCode> at that output. In dev mode, Tailwind's <InlineCode>--watch</InlineCode> flag recompiles on every file change, and Grafex watches the CSS file and re-renders automatically.
       </p>
 
-      <div class="rounded-xl p-4 border-l-4" style="background: rgba(163,230,53,0.08); border-left-color: var(--color-accent-lime);">
-        <p class="text-sm leading-relaxed" style="color: var(--color-text-primary);">
-          <span class="font-semibold" style="color: var(--color-accent-lime);">Key DX feature: </span>
-          <code class="font-mono">grafex dev</code> watches all files listed in <code class="font-mono">config.css</code>. When Tailwind's <code class="font-mono">--watch</code> rewrites <code class="font-mono">styles.css</code>, Grafex detects the change and re-renders within ~100ms. The two tools compose naturally — edit your composition, see the result instantly. If <code class="font-mono">styles.css</code> doesn't exist yet at startup, <code class="font-mono">grafex dev</code> renders without it and re-renders as soon as the file appears — so <code class="font-mono">concurrently</code> just works with no pre-build step.
-        </p>
-      </div>
+      <Callout type="lime" label="Key DX feature:">
+          <InlineCode>grafex dev</InlineCode> watches all files listed in <InlineCode>config.css</InlineCode>. When Tailwind's <InlineCode>--watch</InlineCode> rewrites <InlineCode>styles.css</InlineCode>, Grafex detects the change and re-renders within ~100ms. The two tools compose naturally — edit your composition, see the result instantly. If <InlineCode>styles.css</InlineCode> doesn't exist yet at startup, <InlineCode>grafex dev</InlineCode> renders without it and re-renders as soon as the file appears — so <InlineCode>concurrently</InlineCode> just works with no pre-build step.
+      </Callout>
     </section>
 
     <!-- Setup -->
     <section class="mb-12">
-      <h2 class="font-heading font-bold text-2xl mb-4" style="color: var(--color-text-primary);">Setup</h2>
+      <h2 class="font-heading font-bold text-2xl mb-4 text-heading">Setup</h2>
 
-      <h3 class="font-heading font-semibold text-lg mb-3" style="color: var(--color-text-primary);">1. Install dependencies</h3>
+      <h3 class="font-heading font-semibold text-lg mb-3 text-heading">1. Install dependencies</h3>
 
-      <div class="rounded-xl overflow-hidden border mb-6" style="border-color: var(--color-border-default);">
-        <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
-          <span class="text-xs uppercase tracking-wider font-medium" style="color: var(--color-text-muted);">bash</span>
-          <CopyButton text="npm install --save-dev @tailwindcss/cli concurrently" client:load />
-        </div>
-        <div class="px-4 py-3" style="background: var(--color-bg-code);">
-          <code class="font-mono text-sm" style="color: var(--color-accent-lime);">npm install --save-dev @tailwindcss/cli concurrently</code>
-        </div>
-      </div>
+      <CodeBlock lang="bash" code="npm install --save-dev @tailwindcss/cli concurrently" class="mb-6" />
 
-      <h3 class="font-heading font-semibold text-lg mb-3" style="color: var(--color-text-primary);">2. Create your CSS input file</h3>
-      <p class="text-base leading-relaxed mb-4" style="color: var(--color-text-secondary);">Create <code class="font-mono text-sm px-1.5 py-0.5 rounded" style="color: var(--color-primary); background: rgba(244,114,182,0.1);">input.css</code> in the same directory as your composition:</p>
+      <h3 class="font-heading font-semibold text-lg mb-3 text-heading">2. Create your CSS input file</h3>
+      <p class="text-base leading-relaxed mb-4 text-body">Create <InlineCode>input.css</InlineCode> in the same directory as your composition:</p>
 
-      <div class="rounded-xl overflow-hidden border mb-6" style="border-color: var(--color-border-default);">
-        <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
-          <span class="text-xs font-mono" style="color: var(--color-text-muted);">input.css</span>
-          <CopyButton text={inputCssCode} client:load />
-        </div>
-        <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed">
-          <Code code={inputCssCode} lang="css" theme={grafexTheme} />
-        </div>
-      </div>
+      <CodeBlock lang="css" label="input.css" code={inputCssCode} class="mb-6" />
 
-      <h3 class="font-heading font-semibold text-lg mb-3" style="color: var(--color-text-primary);">3. Write your composition</h3>
-      <p class="text-base leading-relaxed mb-4" style="color: var(--color-text-secondary);">Reference the compiled output in <code class="font-mono text-sm px-1.5 py-0.5 rounded" style="color: var(--color-primary); background: rgba(244,114,182,0.1);">config.css</code> and use Tailwind utility classes via <code class="font-mono text-sm px-1.5 py-0.5 rounded" style="color: var(--color-primary); background: rgba(244,114,182,0.1);">className</code>:</p>
+      <h3 class="font-heading font-semibold text-lg mb-3 text-heading">3. Write your composition</h3>
+      <p class="text-base leading-relaxed mb-4 text-body">Reference the compiled output in <InlineCode>config.css</InlineCode> and use Tailwind utility classes via <InlineCode>className</InlineCode>:</p>
 
-      <div class="rounded-xl overflow-hidden border mb-6" style="border-color: var(--color-border-default);">
-        <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
-          <span class="text-xs font-mono" style="color: var(--color-text-muted);">card.tsx</span>
-          <CopyButton text={cardCode} client:load />
-        </div>
-        <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
-          <Code code={cardCode} lang="tsx" theme={grafexTheme} />
-        </div>
-      </div>
+      <CodeBlock lang="tsx" label="card.tsx" code={cardCode} class="mb-6" />
 
-      <h3 class="font-heading font-semibold text-lg mb-3" style="color: var(--color-text-primary);">4. Add npm scripts</h3>
-      <p class="text-base leading-relaxed mb-4" style="color: var(--color-text-secondary);">Add these scripts to your <code class="font-mono text-sm px-1.5 py-0.5 rounded" style="color: var(--color-primary); background: rgba(244,114,182,0.1);">package.json</code>:</p>
+      <h3 class="font-heading font-semibold text-lg mb-3 text-heading">4. Add npm scripts</h3>
+      <p class="text-base leading-relaxed mb-4 text-body">Add these scripts to your <InlineCode>package.json</InlineCode>:</p>
 
-      <div class="rounded-xl overflow-hidden border" style="border-color: var(--color-border-default);">
-        <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
-          <span class="text-xs font-mono" style="color: var(--color-text-muted);">package.json</span>
-          <CopyButton text={packageJsonCode} client:load />
-        </div>
-        <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed">
-          <Code code={packageJsonCode} lang="json" theme={grafexTheme} />
-        </div>
-      </div>
+      <CodeBlock lang="json" label="package.json" code={packageJsonCode} />
     </section>
 
     <!-- Development workflow -->
     <section class="mb-12">
-      <h2 class="font-heading font-bold text-2xl mb-4" style="color: var(--color-text-primary);">Development workflow</h2>
-      <p class="text-base leading-relaxed mb-6" style="color: var(--color-text-secondary);">
-        Run <code class="font-mono text-sm px-1.5 py-0.5 rounded" style="color: var(--color-primary); background: rgba(244,114,182,0.1);">npm run dev</code> to start both watchers at once. Or run them separately if you prefer:
+      <h2 class="font-heading font-bold text-2xl mb-4 text-heading">Development workflow</h2>
+      <p class="text-base leading-relaxed mb-6 text-body">
+        Run <InlineCode>npm run dev</InlineCode> to start both watchers at once. Or run them separately if you prefer:
       </p>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-        <div class="rounded-xl overflow-hidden border" style="border-color: var(--color-border-default);">
-          <div class="px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
-            <span class="text-xs font-mono" style="color: var(--color-text-muted);">Terminal 1 — Tailwind watcher</span>
-          </div>
-          <div class="px-4 py-3 overflow-x-auto" style="background: var(--color-bg-code);">
-            <code class="font-mono text-xs" style="color: var(--color-accent-lime);">{devTerminal1}</code>
-          </div>
-        </div>
-        <div class="rounded-xl overflow-hidden border self-start" style="border-color: var(--color-border-default);">
-          <div class="px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
-            <span class="text-xs font-mono" style="color: var(--color-text-muted);">Terminal 2 — Grafex dev server</span>
-          </div>
-          <div class="px-4 py-3 overflow-x-auto" style="background: var(--color-bg-code);">
-            <code class="font-mono text-xs" style="color: var(--color-accent-lime);">{devTerminal2}</code>
-          </div>
-        </div>
+        <CodeBlock lang="bash" label="Terminal 1 — Tailwind watcher" code={devTerminal1} showCopy={false} class="mb-0" />
+        <CodeBlock lang="bash" label="Terminal 2 — Grafex dev server" code={devTerminal2} showCopy={false} class="self-start mb-0" />
       </div>
 
-      <p class="text-base leading-relaxed" style="color: var(--color-text-secondary);">
-        Open <code class="font-mono text-sm px-1.5 py-0.5 rounded" style="color: var(--color-primary); background: rgba(244,114,182,0.1);">http://localhost:3000</code> to see the live preview. Edit your composition — the preview updates automatically.
+      <p class="text-base leading-relaxed text-body">
+        Open <InlineCode>http://localhost:3000</InlineCode> to see the live preview. Edit your composition — the preview updates automatically.
       </p>
     </section>
 
     <!-- Production build -->
     <section class="mb-12">
-      <h2 class="font-heading font-bold text-2xl mb-4" style="color: var(--color-text-primary);">Production build</h2>
-      <p class="text-base leading-relaxed mb-4" style="color: var(--color-text-secondary);">Compile the CSS once, then export the composition:</p>
+      <h2 class="font-heading font-bold text-2xl mb-4 text-heading">Production build</h2>
+      <p class="text-base leading-relaxed mb-4 text-body">Compile the CSS once, then export the composition:</p>
 
-      <div class="rounded-xl overflow-hidden border mb-4" style="border-color: var(--color-border-default);">
-        <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
-          <span class="text-xs uppercase tracking-wider font-medium" style="color: var(--color-text-muted);">bash</span>
-          <CopyButton text={buildCmd} client:load />
-        </div>
-        <div class="px-4 py-3 overflow-x-auto" style="background: var(--color-bg-code);">
-          <code class="font-mono text-sm" style="color: var(--color-accent-lime);">{buildCmd}</code>
-        </div>
-      </div>
+      <CodeBlock lang="bash" code={buildCmd} />
 
-      <p class="text-sm" style="color: var(--color-text-secondary);">Or use the <code class="font-mono" style="color: var(--color-primary);">npm run build</code> script from the setup step above.</p>
+      <p class="text-sm text-body">Or use the <InlineCode>npm run build</InlineCode> script from the setup step above.</p>
     </section>
 
     <!-- Working example -->
     <section class="mb-12">
-      <h2 class="font-heading font-bold text-2xl mb-4" style="color: var(--color-text-primary);">Working example</h2>
-      <p class="text-base leading-relaxed mb-4" style="color: var(--color-text-secondary);">
-        The <a href="https://github.com/grafex-dev/grafex/tree/main/examples/tailwind" style="color: var(--color-primary);">examples/tailwind/</a> directory in the repository contains a complete runnable example with all the files described on this page.
+      <h2 class="font-heading font-bold text-2xl mb-4 text-heading">Working example</h2>
+      <p class="text-base leading-relaxed mb-4 text-body">
+        The <a href="https://github.com/grafex-dev/grafex/tree/main/examples/tailwind" class="text-pink">examples/tailwind/</a> directory in the repository contains a complete runnable example with all the files described on this page.
       </p>
 
-      <div class="rounded-xl p-5 border" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
-        <p class="text-sm font-semibold mb-3" style="color: var(--color-text-primary);">Files in examples/tailwind/</p>
-        <ul class="space-y-1.5 text-sm font-mono" style="color: var(--color-text-secondary);">
-          <li><span style="color: var(--color-accent-lime);">input.css</span> — Tailwind CSS entry point</li>
-          <li><span style="color: var(--color-accent-lime);">card.tsx</span> — OG card composition using Tailwind classes</li>
-          <li><span style="color: var(--color-accent-lime);">package.json</span> — dev and build scripts</li>
-          <li><span style="color: var(--color-accent-lime);">tsconfig.json</span> — TypeScript/JSX settings</li>
+      <div class="rounded-xl p-5 border bg-surface border-edge">
+        <p class="text-sm font-semibold mb-3 text-heading">Files in examples/tailwind/</p>
+        <ul class="space-y-1.5 text-sm font-mono text-body">
+          <li><span class="text-lime">input.css</span> — Tailwind CSS entry point</li>
+          <li><span class="text-lime">card.tsx</span> — OG card composition using Tailwind classes</li>
+          <li><span class="text-lime">package.json</span> — dev and build scripts</li>
+          <li><span class="text-lime">tsconfig.json</span> — TypeScript/JSX settings</li>
         </ul>
       </div>
     </section>
 
     <!-- Notes -->
     <section>
-      <h2 class="font-heading font-bold text-2xl mb-6" style="color: var(--color-text-primary);">Related</h2>
+      <h2 class="font-heading font-bold text-2xl mb-6 text-heading">Related</h2>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {[
           { href: '/docs/compositions', title: 'Compositions', desc: 'CSS files, styling patterns, and the full config reference' },
@@ -234,10 +177,10 @@ const buildCmd = `npx @tailwindcss/cli -i ./input.css -o ./styles.css && npx gra
         ].map((item) => (
           <a
             href={item.href}
-            class="block rounded-xl p-5 border transition-all duration-200 bg-[var(--color-bg-surface)] border-[var(--color-border-default)] hover:border-[var(--color-border-strong)] hover:shadow-md"
+            class="block rounded-xl p-5 border transition-all duration-200 bg-surface border-edge hover:border-edge-strong hover:shadow-md"
           >
-            <div class="font-semibold mb-1" style="color: var(--color-primary);">{item.title}</div>
-            <div class="text-sm" style="color: var(--color-text-secondary);">{item.desc}</div>
+            <div class="font-semibold mb-1 text-pink">{item.title}</div>
+            <div class="text-sm text-body">{item.desc}</div>
           </a>
         ))}
       </div>

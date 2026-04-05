@@ -5,40 +5,85 @@
 @source "../components/**/*.{astro,tsx}";
 
 @theme {
-  --color-bg-base: #0b1120;
-  --color-bg-surface: #1e293b;
-  --color-bg-surface-hover: #263548;
-  --color-bg-code: #0f1729;
-  --color-bg-elevated: #283548;
+  /* Reset built-in palettes */
+  --color-*: initial;
+  --font-*: initial;
+  --shadow-*: initial;
 
-  --color-text-primary: #f1f5f9;
-  --color-text-secondary: #94a3b8;
-  --color-text-muted: #64748b;
-  --color-text-on-accent: #0b1120;
+  /* ── Surfaces ── */
+  --color-base: #0b1120;
+  --color-surface: #1e293b;
+  --color-surface-hover: #263548;
+  --color-codeblock: #0f1729;
+  --color-elevated: #283548;
 
-  --color-border-default: #1e293b;
-  --color-border-strong: #334155;
-  --color-border-focus: #f472b6;
+  /* ── Text ── */
+  --color-heading: #f1f5f9;
+  --color-body: #94a3b8;
+  --color-muted: #64748b;
+  --color-on-accent: #0b1120;
 
-  --color-primary: #f472b6;
-  --color-primary-hover: #f9a8d4;
+  /* ── Edges (borders) ── */
+  --color-edge: #1e293b;
+  --color-edge-strong: #334155;
+  --color-ring: #f472b6;
 
-  --color-secondary: #38bdf8;
-  --color-secondary-hover: #7dd3fc;
+  /* ── Pink (primary brand) ── */
+  --color-pink: #f472b6;
+  --color-pink-hover: #f9a8d4;
+  --color-pink-muted: rgba(244, 114, 182, 0.15);
 
-  --color-accent-lime: #a3e635;
-  --color-accent-lime-hover: #bef264;
+  /* ── Sky (secondary / informational) ── */
+  --color-sky: #38bdf8;
+  --color-sky-hover: #7dd3fc;
+  --color-sky-muted: rgba(56, 189, 248, 0.15);
 
-  --color-accent-amber: #fb923c;
-  --color-accent-amber-hover: #fdba74;
+  /* ── Lime (success / new) ── */
+  --color-lime: #a3e635;
+  --color-lime-hover: #bef264;
+  --color-lime-muted: rgba(163, 230, 53, 0.15);
 
+  /* ── Amber (warnings / tips) ── */
+  --color-amber: #fb923c;
+  --color-amber-hover: #fdba74;
+  --color-amber-muted: rgba(251, 146, 60, 0.15);
+
+  /* ── Purple (gradient accent) ── */
   --color-purple: #a855f7;
 
+  /* ── Semantic ── */
   --color-error: #f87171;
+  --color-error-muted: rgba(248, 113, 113, 0.15);
 
+  /* ── White / Black (needed since we reset) ── */
+  --color-white: #ffffff;
+  --color-black: #000000;
+  --color-transparent: transparent;
+  --color-current: currentColor;
+
+  /* ── Fonts ── */
   --font-heading: 'Space Grotesk', system-ui, sans-serif;
   --font-body: 'DM Sans', system-ui, sans-serif;
   --font-mono: 'IBM Plex Mono', monospace;
+
+  /* ── Shadows ── */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --shadow-glow-pink: 0 0 20px rgba(244, 114, 182, 0.2);
+  --shadow-glow-sky: 0 0 20px rgba(56, 189, 248, 0.15);
+}
+
+.gradient-hero {
+  background: linear-gradient(135deg, var(--color-pink), var(--color-sky));
+}
+.gradient-cta {
+  background: linear-gradient(135deg, var(--color-pink), var(--color-purple));
+}
+.gradient-text {
+  background: linear-gradient(135deg, var(--color-pink), var(--color-sky));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .checkerboard {
@@ -56,6 +101,12 @@
   background-color: #12121f;
 }
 
+.nav-scrolled {
+  background: color-mix(in srgb, var(--color-base) 92%, transparent);
+  backdrop-filter: blur(12px);
+  border-color: var(--color-edge);
+}
+
 @layer base {
   h2,
   h3 {
@@ -63,8 +114,8 @@
   }
 
   body {
-    background-color: var(--color-bg-base);
-    color: var(--color-text-primary);
+    background-color: var(--color-base);
+    color: var(--color-heading);
     font-family: var(--font-body);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -72,7 +123,7 @@
 
   * {
     scrollbar-width: thin;
-    scrollbar-color: var(--color-border-strong) transparent;
+    scrollbar-color: var(--color-edge-strong) transparent;
   }
 
   *::-webkit-scrollbar {
@@ -81,16 +132,16 @@
   }
 
   *::-webkit-scrollbar-track {
-    background: var(--color-bg-surface);
+    background: var(--color-surface);
   }
 
   *::-webkit-scrollbar-thumb {
-    background: var(--color-border-strong);
+    background: var(--color-edge-strong);
     border-radius: 4px;
   }
 
   *::-webkit-scrollbar-thumb:hover {
-    background: var(--color-text-muted);
+    background: var(--color-muted);
   }
 
   @media (prefers-reduced-motion: reduce) {
