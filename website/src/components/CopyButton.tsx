@@ -7,7 +7,6 @@ interface Props {
 
 export default function CopyButton({ text, className = '' }: Props) {
   const [copied, setCopied] = useState(false);
-  const [hovered, setHovered] = useState(false);
 
   const handleCopy = async () => {
     try {
@@ -19,20 +18,13 @@ export default function CopyButton({ text, className = '' }: Props) {
     }
   };
 
-  const color = copied
-    ? 'var(--color-accent-lime)'
-    : hovered
-      ? 'var(--color-text-primary)'
-      : 'var(--color-text-muted)';
-
   return (
     <button
       onClick={handleCopy}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
       aria-label={copied ? 'Copied!' : 'Copy to clipboard'}
-      className={`p-1.5 rounded transition-colors cursor-pointer ${className}`}
-      style={{ color }}
+      className={`p-1.5 rounded transition-colors cursor-pointer ${
+        copied ? 'text-lime' : 'text-muted hover:text-heading'
+      } ${className}`}
     >
       {copied ? (
         <svg

@@ -1,0 +1,23 @@
+---
+import { cn } from '../lib/cn';
+
+interface Props {
+  type: 'lime' | 'amber' | 'sky';
+  label: string;
+  class?: string;
+}
+
+const { type, label, class: extraClass } = Astro.props;
+
+const styles: Record<string, string> = {
+  lime: 'bg-lime-muted border-l-lime',
+  amber: 'bg-amber-muted border-l-amber',
+  sky: 'bg-sky-muted border-l-sky',
+};
+---
+
+<div class={cn('rounded-xl p-4 border-l-4', styles[type], extraClass)}>
+  <p class="text-sm leading-relaxed text-heading">
+    <span class={cn('font-semibold', `text-${type}`)}>{label} </span><slot />
+  </p>
+</div>

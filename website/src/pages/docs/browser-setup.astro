@@ -1,15 +1,11 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
-import CopyButton from '../../components/CopyButton.tsx';
-import { Code } from 'astro:components';
-import { grafexTheme } from '../../shiki-theme';
+import InlineCode from '../../components/InlineCode.astro';
+import Callout from '../../components/Callout.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
 
 const autoInstallCode = `npm install grafex
 # WebKit is downloaded automatically`;
-
-const chromiumInstallCode = `npx playwright install chromium`;
-
-const chromiumCliCode = `grafex export -f card.tsx -o card.png --browser chromium`;
 
 const chromiumApiCode = `const result = await render('./card.tsx', {
   browser: 'chromium',
@@ -48,187 +44,105 @@ const githubActionsCode = `steps:
   currentPage="/docs/browser-setup"
 >
   <article>
-    <h1 class="font-heading font-bold text-4xl mb-2" style="color: var(--color-text-primary);">Browser Setup</h1>
-    <p class="text-lg mb-12" style="color: var(--color-text-secondary);">Grafex renders compositions using a headless WebKit browser powered by Playwright. Most of the time, this is handled for you automatically.</p>
+    <h1 class="font-heading font-bold text-4xl mb-2 text-heading">Browser Setup</h1>
+    <p class="text-lg mb-12 text-body">Grafex renders compositions using a headless WebKit browser powered by Playwright. Most of the time, this is handled for you automatically.</p>
 
     <!-- Automatic Installation -->
     <section class="mb-12">
-      <h2 class="font-heading font-bold text-2xl mb-4" style="color: var(--color-text-primary);">Automatic Installation</h2>
-      <p class="text-base leading-relaxed mb-6" style="color: var(--color-text-secondary);">When you run <code class="font-mono text-sm px-1 py-0.5 rounded" style="color: var(--color-primary); background: rgba(244,114,182,0.1);">npm install grafex</code>, a postinstall script downloads the WebKit binary. No action needed.</p>
+      <h2 class="font-heading font-bold text-2xl mb-4 text-heading">Automatic Installation</h2>
+      <p class="text-base leading-relaxed mb-6 text-body">When you run <InlineCode>npm install grafex</InlineCode>, a postinstall script downloads the WebKit binary. No action needed.</p>
 
-      <div class="rounded-xl overflow-hidden border mb-4" style="border-color: var(--color-border-default);">
-        <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
-          <span class="text-xs uppercase tracking-wider font-medium" style="color: var(--color-text-muted);">bash</span>
-          <CopyButton text="npm install grafex" client:load />
-        </div>
-        <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
-          <Code code={autoInstallCode} lang="bash" theme={grafexTheme} />
-        </div>
-      </div>
+      <CodeBlock lang="bash" code={autoInstallCode} />
 
-      <p class="text-sm" style="color: var(--color-text-secondary);">The binary is cached — subsequent installs skip the download.</p>
+      <p class="text-sm text-body">The binary is cached — subsequent installs skip the download.</p>
     </section>
 
     <!-- Manual Installation -->
     <section class="mb-12">
-      <h2 class="font-heading font-bold text-2xl mb-4" style="color: var(--color-text-primary);">Manual Installation</h2>
-      <p class="text-base leading-relaxed mb-6" style="color: var(--color-text-secondary);">If the postinstall script fails (corporate proxies, restricted environments), install WebKit manually:</p>
+      <h2 class="font-heading font-bold text-2xl mb-4 text-heading">Manual Installation</h2>
+      <p class="text-base leading-relaxed mb-6 text-body">If the postinstall script fails (corporate proxies, restricted environments), install WebKit manually:</p>
 
       <div class="space-y-4">
-        <div class="rounded-xl overflow-hidden border" style="border-color: var(--color-border-default);">
-          <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
-            <span class="text-xs uppercase tracking-wider font-medium" style="color: var(--color-text-muted);">bash</span>
-            <CopyButton text="npx playwright install webkit" client:load />
-          </div>
-          <div class="px-4 py-3" style="background: var(--color-bg-code);">
-            <code class="font-mono text-sm" style="color: var(--color-accent-lime);">npx playwright install webkit</code>
-          </div>
-        </div>
+        <CodeBlock lang="bash" code="npx playwright install webkit" class="mb-0" />
 
-        <p class="text-sm" style="color: var(--color-text-secondary);">Or install only the browser binary without system dependencies:</p>
+        <p class="text-sm text-body">Or install only the browser binary without system dependencies:</p>
 
-        <div class="rounded-xl overflow-hidden border" style="border-color: var(--color-border-default);">
-          <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
-            <span class="text-xs uppercase tracking-wider font-medium" style="color: var(--color-text-muted);">bash</span>
-            <CopyButton text="npx playwright-core install webkit" client:load />
-          </div>
-          <div class="px-4 py-3" style="background: var(--color-bg-code);">
-            <code class="font-mono text-sm" style="color: var(--color-accent-lime);">npx playwright-core install webkit</code>
-          </div>
-        </div>
+        <CodeBlock lang="bash" code="npx playwright-core install webkit" class="mb-0" />
       </div>
     </section>
 
     <!-- Chromium (Alternative Engine) -->
     <section class="mb-12">
-      <h2 class="font-heading font-bold text-2xl mb-4" style="color: var(--color-text-primary);">Chromium (Alternative Engine)</h2>
-      <p class="text-base leading-relaxed mb-6" style="color: var(--color-text-secondary);">Grafex uses WebKit by default. Chromium is also supported if you hit CSS compatibility issues or need Chromium-specific rendering behavior. It requires a separate install:</p>
+      <h2 class="font-heading font-bold text-2xl mb-4 text-heading">Chromium (Alternative Engine)</h2>
+      <p class="text-base leading-relaxed mb-6 text-body">Grafex uses WebKit by default. Chromium is also supported if you hit CSS compatibility issues or need Chromium-specific rendering behavior. It requires a separate install:</p>
 
-      <div class="rounded-xl overflow-hidden border mb-6" style="border-color: var(--color-border-default);">
-        <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
-          <span class="text-xs uppercase tracking-wider font-medium" style="color: var(--color-text-muted);">bash</span>
-          <CopyButton text="npx playwright install chromium" client:load />
-        </div>
-        <div class="px-4 py-3" style="background: var(--color-bg-code);">
-          <code class="font-mono text-sm" style="color: var(--color-accent-lime);">npx playwright install chromium</code>
-        </div>
-      </div>
+      <CodeBlock lang="bash" code="npx playwright install chromium" class="mb-6" />
 
-      <p class="text-base leading-relaxed mb-4" style="color: var(--color-text-secondary);">Then pass <code class="font-mono text-sm px-1 py-0.5 rounded" style="color: var(--color-primary); background: rgba(244,114,182,0.1);">--browser chromium</code> to the CLI:</p>
+      <p class="text-base leading-relaxed mb-4 text-body">Then pass <InlineCode>--browser chromium</InlineCode> to the CLI:</p>
 
-      <div class="rounded-xl overflow-hidden border mb-6" style="border-color: var(--color-border-default);">
-        <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
-          <span class="text-xs uppercase tracking-wider font-medium" style="color: var(--color-text-muted);">bash</span>
-          <CopyButton text="grafex export -f card.tsx -o card.png --browser chromium" client:load />
-        </div>
-        <div class="px-4 py-3" style="background: var(--color-bg-code);">
-          <code class="font-mono text-sm" style="color: var(--color-accent-lime);">grafex export -f card.tsx -o card.png --browser chromium</code>
-        </div>
-      </div>
+      <CodeBlock lang="bash" code="grafex export -f card.tsx -o card.png --browser chromium" class="mb-6" />
 
-      <p class="text-base leading-relaxed mb-4" style="color: var(--color-text-secondary);">Or set <code class="font-mono text-sm px-1 py-0.5 rounded" style="color: var(--color-primary); background: rgba(244,114,182,0.1);">browser: 'chromium'</code> in the library API:</p>
+      <p class="text-base leading-relaxed mb-4 text-body">Or set <InlineCode>browser: 'chromium'</InlineCode> in the library API:</p>
 
-      <div class="rounded-xl overflow-hidden border mb-6" style="border-color: var(--color-border-default);">
-        <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
-          <span class="text-xs font-mono" style="color: var(--color-text-muted);">node</span>
-          <CopyButton text={`const result = await render('./card.tsx', {\n  browser: 'chromium',\n});`} client:load />
-        </div>
-        <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
-          <Code code={chromiumApiCode} lang="ts" theme={grafexTheme} />
-        </div>
-      </div>
+      <CodeBlock lang="typescript" label="node" code={chromiumApiCode} class="mb-6" />
 
-      <div class="rounded-xl p-4 border-l-4" style="background: rgba(56,189,248,0.08); border-left-color: var(--color-secondary);">
-        <p class="text-sm leading-relaxed" style="color: var(--color-text-primary);">
-          <span class="font-semibold" style="color: var(--color-secondary);">Note: </span>
+      <Callout type="sky" label="Note:">
           WebKit is recommended for most use cases — it is smaller (~2 MB vs ~200 MB for Chromium) and downloaded automatically. Use Chromium only if you need specific rendering behavior that differs between engines.
-        </p>
-      </div>
+      </Callout>
     </section>
 
     <!-- PLAYWRIGHT_BROWSERS_PATH -->
     <section class="mb-12">
-      <h2 class="font-heading font-bold text-2xl mb-4" style="color: var(--color-text-primary);"><code class="font-mono" style="color: var(--color-primary);">PLAYWRIGHT_BROWSERS_PATH</code></h2>
-      <p class="text-base leading-relaxed mb-6" style="color: var(--color-text-secondary);">By default, Playwright stores browser binaries in a shared cache directory under your home folder. Set <code class="font-mono text-sm px-1 py-0.5 rounded" style="color: var(--color-primary); background: rgba(244,114,182,0.1);">PLAYWRIGHT_BROWSERS_PATH</code> to change this location:</p>
+      <h2 class="font-heading font-bold text-2xl mb-4 text-heading"><code class="font-mono">PLAYWRIGHT_BROWSERS_PATH</code></h2>
+      <p class="text-base leading-relaxed mb-6 text-body">By default, Playwright stores browser binaries in a shared cache directory under your home folder. Set <InlineCode>PLAYWRIGHT_BROWSERS_PATH</InlineCode> to change this location:</p>
 
-      <div class="rounded-xl overflow-hidden border mb-4" style="border-color: var(--color-border-default);">
-        <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
-          <span class="text-xs uppercase tracking-wider font-medium" style="color: var(--color-text-muted);">bash</span>
-          <CopyButton text="export PLAYWRIGHT_BROWSERS_PATH=/path/to/browsers\nnpx playwright install webkit\ngrafex export -f card.tsx -o card.png" client:load />
-        </div>
-        <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
-          <Code code={playwrightBrowsersPathCode} lang="bash" theme={grafexTheme} />
-        </div>
-      </div>
+      <CodeBlock lang="bash" code={playwrightBrowsersPathCode} />
 
-      <p class="text-sm" style="color: var(--color-text-secondary);">This is useful in CI environments where the home directory is read-only or ephemeral.</p>
+      <p class="text-sm text-body">This is useful in CI environments where the home directory is read-only or ephemeral.</p>
     </section>
 
     <!-- CI Setup -->
     <section class="mb-12">
-      <h2 class="font-heading font-bold text-2xl mb-4" style="color: var(--color-text-primary);">CI Setup</h2>
-      <p class="text-base leading-relaxed mb-6" style="color: var(--color-text-secondary);">On Linux, WebKit requires system-level dependencies (GTK, GStreamer, etc.). Install them before the browser binary:</p>
+      <h2 class="font-heading font-bold text-2xl mb-4 text-heading">CI Setup</h2>
+      <p class="text-base leading-relaxed mb-6 text-body">On Linux, WebKit requires system-level dependencies (GTK, GStreamer, etc.). Install them before the browser binary:</p>
 
-      <div class="rounded-xl overflow-hidden border mb-6" style="border-color: var(--color-border-default);">
-        <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
-          <span class="text-xs uppercase tracking-wider font-medium" style="color: var(--color-text-muted);">bash</span>
-          <CopyButton text="npx playwright install-deps webkit\nnpx playwright install webkit" client:load />
-        </div>
-        <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
-          <Code code={ciSetupCode} lang="bash" theme={grafexTheme} />
-        </div>
-      </div>
+      <CodeBlock lang="bash" code={ciSetupCode} class="mb-6" />
 
-      <h3 class="font-heading font-semibold text-xl mb-4" style="color: var(--color-text-primary);">GitHub Actions</h3>
+      <h3 class="font-heading font-semibold text-xl mb-4 text-heading">GitHub Actions</h3>
 
-      <div class="rounded-xl overflow-hidden border mb-6" style="border-color: var(--color-border-default);">
-        <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
-          <span class="text-xs font-mono" style="color: var(--color-text-muted);">.github/workflows/images.yml</span>
-          <CopyButton text={`steps:\n  - uses: actions/checkout@v4\n\n  - uses: actions/setup-node@v4\n    with:\n      node-version: 20\n\n  - name: Install dependencies\n    run: npm ci\n\n  - name: Install WebKit system dependencies\n    run: npx playwright install-deps webkit\n\n  - name: Install WebKit\n    run: npx playwright install webkit\n\n  - name: Export image\n    run: npx grafex export -f card.tsx -o card.png`} client:load />
-        </div>
-        <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
-          <Code code={githubActionsCode} lang="yaml" theme={grafexTheme} />
-        </div>
-      </div>
+      <CodeBlock lang="yaml" label=".github/workflows/images.yml" code={githubActionsCode} class="mb-6" />
 
-      <div class="rounded-xl p-4 border-l-4" style="background: rgba(56,189,248,0.08); border-left-color: var(--color-secondary);">
-        <p class="text-sm leading-relaxed" style="color: var(--color-text-primary);">
-          <span class="font-semibold" style="color: var(--color-secondary);">Info: </span>
-          This pattern works in any CI environment that supports Node.js 20+. Adjust the dependency installation step for your platform (e.g., <code class="font-mono">apt-get</code> on Debian, <code class="font-mono">yum</code> on CentOS).
-        </p>
-      </div>
+      <Callout type="sky" label="Info:">
+          This pattern works in any CI environment that supports Node.js 20+. Adjust the dependency installation step for your platform (e.g., <InlineCode>apt-get</InlineCode> on Debian, <InlineCode>yum</InlineCode> on CentOS).
+      </Callout>
     </section>
 
     <!-- Troubleshooting -->
     <section>
-      <h2 class="font-heading font-bold text-2xl mb-6" style="color: var(--color-text-primary);">Troubleshooting</h2>
+      <h2 class="font-heading font-bold text-2xl mb-6 text-heading">Troubleshooting</h2>
 
       <div class="space-y-6">
-        <div class="rounded-xl p-5 border" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
-          <p class="font-semibold mb-2" style="color: var(--color-text-primary);">"Browser not found" error</p>
-          <p class="text-sm mb-3" style="color: var(--color-text-secondary);">WebKit was not downloaded. Run:</p>
-          <div class="rounded-lg px-4 py-2 font-mono text-sm" style="background: var(--color-bg-code); color: var(--color-accent-lime);">
-            npx playwright install webkit
-          </div>
+        <div class="rounded-xl p-5 border bg-surface border-edge">
+          <p class="font-semibold mb-2 text-heading">"Browser not found" error</p>
+          <p class="text-sm mb-3 text-body">WebKit was not downloaded. Run:</p>
+          <CodeBlock lang="bash" code="npx playwright install webkit" showCopy={false} class="mb-0" />
         </div>
 
-        <div class="rounded-xl p-5 border" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
-          <p class="font-semibold mb-2" style="color: var(--color-text-primary);">"Missing system dependencies" error (Linux)</p>
-          <p class="text-sm mb-3" style="color: var(--color-text-secondary);">WebKit needs system libraries that are not installed. Run:</p>
-          <div class="rounded-lg px-4 py-2 font-mono text-sm" style="background: var(--color-bg-code); color: var(--color-accent-lime);">
-            npx playwright install-deps webkit
-          </div>
-          <p class="text-sm mt-3" style="color: var(--color-text-secondary);">Then retry your export.</p>
+        <div class="rounded-xl p-5 border bg-surface border-edge">
+          <p class="font-semibold mb-2 text-heading">"Missing system dependencies" error (Linux)</p>
+          <p class="text-sm mb-3 text-body">WebKit needs system libraries that are not installed. Run:</p>
+          <CodeBlock lang="bash" code="npx playwright install-deps webkit" showCopy={false} class="mb-0" />
+          <p class="text-sm mt-3 text-body">Then retry your export.</p>
         </div>
 
-        <div class="rounded-xl p-5 border" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
-          <p class="font-semibold mb-2" style="color: var(--color-text-primary);">Slow first render</p>
-          <p class="text-sm" style="color: var(--color-text-secondary);">The first render takes longer because Grafex launches a new WebKit instance. Subsequent renders reuse the browser and are significantly faster (5-50ms). If you are rendering multiple images, use the library API to batch them with a single <code class="font-mono">render()</code> loop and one <code class="font-mono">close()</code> at the end.</p>
+        <div class="rounded-xl p-5 border bg-surface border-edge">
+          <p class="font-semibold mb-2 text-heading">Slow first render</p>
+          <p class="text-sm text-body">The first render takes longer because Grafex launches a new WebKit instance. Subsequent renders reuse the browser and are significantly faster (5-50ms). If you are rendering multiple images, use the library API to batch them with a single <InlineCode>render()</InlineCode> loop and one <InlineCode>close()</InlineCode> at the end.</p>
         </div>
 
-        <div class="rounded-xl p-5 border" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
-          <p class="font-semibold mb-2" style="color: var(--color-text-primary);">Disk space concerns</p>
-          <p class="text-sm" style="color: var(--color-text-secondary);">The WebKit binary is approximately 2 MB (compressed). It is cached after the first download. Compare this to Puppeteer's Chromium at 200 MB+.</p>
+        <div class="rounded-xl p-5 border bg-surface border-edge">
+          <p class="font-semibold mb-2 text-heading">Disk space concerns</p>
+          <p class="text-sm text-body">The WebKit binary is approximately 2 MB (compressed). It is cached after the first download. Compare this to Puppeteer's Chromium at 200 MB+.</p>
         </div>
       </div>
     </section>

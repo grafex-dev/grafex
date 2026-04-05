@@ -1,8 +1,8 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
-import CopyButton from '../../components/CopyButton.tsx';
-import { Code } from 'astro:components';
-import { grafexTheme } from '../../shiki-theme';
+import Callout from '../../components/Callout.astro';
+import InlineCode from '../../components/InlineCode.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
 
 const importCode = `import { render, renderAll, close } from 'grafex';`;
 
@@ -105,43 +105,27 @@ const closeCallCode = `await close();`;
   currentPage="/docs/api"
 >
   <article>
-    <h1 class="font-heading font-bold text-4xl mb-2" style="color: var(--color-text-primary);">Library API</h1>
-    <p class="text-lg mb-4" style="color: var(--color-text-secondary);">Use Grafex programmatically in your Node.js applications. Useful for build scripts, CI pipelines, and server-side image generation.</p>
+    <h1 class="font-heading font-bold text-4xl mb-2 text-heading">Library API</h1>
+    <p class="text-lg mb-4 text-body">Use Grafex programmatically in your Node.js applications. Useful for build scripts, CI pipelines, and server-side image generation.</p>
 
-    <div class="rounded-xl overflow-hidden border mb-12" style="border-color: var(--color-border-default);">
-      <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
-        <span class="text-xs uppercase tracking-wider font-medium" style="color: var(--color-text-muted);">TypeScript</span>
-        <CopyButton text="import { render, renderAll, close } from 'grafex';" client:load />
-      </div>
-      <div class="overflow-x-auto [&_pre]:px-4 [&_pre]:py-3 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed">
-        <Code code={importCode} lang="typescript" theme={grafexTheme} />
-      </div>
-    </div>
+    <CodeBlock lang="typescript" code={importCode} class="mb-12" />
 
     <!-- render() -->
     <section class="mb-12">
-      <h2 class="font-heading font-bold text-2xl mb-2" style="color: var(--color-text-primary);"><code class="font-mono" style="color: var(--color-primary);">render(compositionPath, options?)</code></h2>
-      <p class="text-base leading-relaxed mb-6" style="color: var(--color-text-secondary);">Render a composition to an image buffer.</p>
+      <h2 class="font-heading font-bold text-2xl mb-2 text-heading"><code class="font-mono">render(compositionPath, options?)</code></h2>
+      <p class="text-base leading-relaxed mb-6 text-body">Render a composition to an image buffer.</p>
 
-      <div class="rounded-xl overflow-hidden border mb-6" style="border-color: var(--color-border-default);">
-        <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
-          <span class="text-xs uppercase tracking-wider font-medium" style="color: var(--color-text-muted);">TypeScript</span>
-          <CopyButton text={`const result = await render('./card.tsx', {\n  props: { title: 'Hello' },\n  width: 1200,\n  height: 630,\n});`} client:load />
-        </div>
-        <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
-          <Code code={renderCallCode} lang="typescript" theme={grafexTheme} />
-        </div>
-      </div>
+      <CodeBlock lang="typescript" code={renderCallCode} class="mb-6" />
 
-      <h3 class="font-heading font-semibold text-lg mb-4" style="color: var(--color-text-primary);">Parameters</h3>
-      <div class="rounded-xl overflow-hidden border mb-8" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
+      <h3 class="font-heading font-semibold text-lg mb-4 text-heading">Parameters</h3>
+      <div class="rounded-xl overflow-hidden border mb-8 bg-surface border-edge">
         <div class="overflow-x-auto">
           <table class="w-full text-sm">
             <thead>
-              <tr style="background: var(--color-bg-surface-hover); border-bottom: 1px solid var(--color-border-default);">
-                <th class="text-left px-4 py-3 font-semibold" style="color: var(--color-text-primary);">Parameter</th>
-                <th class="text-left px-4 py-3 font-semibold" style="color: var(--color-text-primary);">Type</th>
-                <th class="text-left px-4 py-3 font-semibold" style="color: var(--color-text-primary);">Description</th>
+              <tr class="bg-surface-hover border-b border-edge">
+                <th class="text-left px-4 py-3 font-semibold text-heading">Parameter</th>
+                <th class="text-left px-4 py-3 font-semibold text-heading">Type</th>
+                <th class="text-left px-4 py-3 font-semibold text-heading">Description</th>
               </tr>
             </thead>
             <tbody>
@@ -156,10 +140,10 @@ const closeCallCode = `await close();`;
                 ['options.scale', 'number', 'Device pixel ratio (default: 1)'],
                 ['options.variant', 'string', 'Named variant to render from config.variants'],
               ].map(([param, type, desc]) => (
-                <tr style="border-bottom: 1px solid var(--color-border-default);">
-                  <td class="px-4 py-3"><code class="font-mono text-xs" style="color: var(--color-primary);">{param}</code></td>
-                  <td class="px-4 py-3"><code class="font-mono text-xs" style="color: var(--color-secondary);">{type}</code></td>
-                  <td class="px-4 py-3 text-sm" style="color: var(--color-text-secondary);">{desc}</td>
+                <tr class="border-b border-edge">
+                  <td class="px-4 py-3"><code class="font-mono text-sm text-pink">{param}</code></td>
+                  <td class="px-4 py-3"><code class="font-mono text-sm text-sky">{type}</code></td>
+                  <td class="px-4 py-3 text-sm text-body">{desc}</td>
                 </tr>
               ))}
             </tbody>
@@ -167,96 +151,53 @@ const closeCallCode = `await close();`;
         </div>
       </div>
 
-      <h3 class="font-heading font-semibold text-lg mb-4" style="color: var(--color-text-primary);">Return value</h3>
-      <p class="text-sm mb-4" style="color: var(--color-text-secondary);"><code class="font-mono" style="color: var(--color-primary);">render()</code> returns a <code class="font-mono" style="color: var(--color-secondary);">Promise&lt;RenderResult&gt;</code>:</p>
+      <h3 class="font-heading font-semibold text-lg mb-4 text-heading">Return value</h3>
+      <p class="text-sm mb-4 text-body"><InlineCode>render()</InlineCode> returns a <InlineCode>Promise&lt;RenderResult&gt;</InlineCode>:</p>
 
-      <div class="rounded-xl overflow-hidden border mb-8" style="border-color: var(--color-border-default);">
-        <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
-          <Code code={renderResultTypeCode} lang="typescript" theme={grafexTheme} />
-        </div>
-      </div>
+      <CodeBlock lang="typescript" code={renderResultTypeCode} showCopy={false} class="mb-8" />
 
-      <h3 class="font-heading font-semibold text-lg mb-4" style="color: var(--color-text-primary);">Example — write to file</h3>
-      <div class="rounded-xl overflow-hidden border" style="border-color: var(--color-border-default);">
-        <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
-          <span class="text-xs uppercase tracking-wider font-medium" style="color: var(--color-text-muted);">TypeScript</span>
-          <CopyButton text={`import { render, close } from 'grafex';\nimport { writeFileSync } from 'node:fs';\n\nconst result = await render('./card.tsx', {\n  props: { title: 'Hello World' },\n});\n\nwriteFileSync('card.png', result.buffer);\nawait close();`} client:load />
-        </div>
-        <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
-          <Code code={writeToFileCode} lang="typescript" theme={grafexTheme} />
-        </div>
-      </div>
+      <h3 class="font-heading font-semibold text-lg mb-4 text-heading">Example — write to file</h3>
+      <CodeBlock lang="typescript" code={writeToFileCode} />
     </section>
 
     <!-- renderAll() -->
     <section class="mb-12">
-      <h2 class="font-heading font-bold text-2xl mb-2" style="color: var(--color-text-primary);"><code class="font-mono" style="color: var(--color-primary);">renderAll(compositionPath, options?)</code></h2>
-      <p class="text-base leading-relaxed mb-6" style="color: var(--color-text-secondary);">Render all variants defined in <code class="font-mono text-sm" style="color: var(--color-primary);">config.variants</code>. Returns a <code class="font-mono text-sm" style="color: var(--color-secondary);">Map&lt;string, RenderResult&gt;</code> keyed by variant name. Throws if the composition has no variants defined.</p>
+      <h2 class="font-heading font-bold text-2xl mb-2 text-heading"><code class="font-mono">renderAll(compositionPath, options?)</code></h2>
+      <p class="text-base leading-relaxed mb-6 text-body">Render all variants defined in <InlineCode>config.variants</InlineCode>. Returns a <InlineCode>Map&lt;string, RenderResult&gt;</InlineCode> keyed by variant name. Throws if the composition has no variants defined.</p>
 
-      <div class="rounded-xl overflow-hidden border mb-6" style="border-color: var(--color-border-default);">
-        <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
-          <span class="text-xs uppercase tracking-wider font-medium" style="color: var(--color-text-muted);">TypeScript</span>
-          <CopyButton text={renderAllCallCode} client:load />
-        </div>
-        <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
-          <Code code={renderAllCallCode} lang="typescript" theme={grafexTheme} />
-        </div>
-      </div>
+      <CodeBlock lang="typescript" code={renderAllCallCode} class="mb-6" />
 
-      <p class="text-sm mb-4" style="color: var(--color-text-secondary);">Accepts the same options as <code class="font-mono" style="color: var(--color-primary);">render()</code>, except <code class="font-mono" style="color: var(--color-primary);">variant</code> is ignored — all variants are always rendered.</p>
+      <p class="text-sm mb-4 text-body">Accepts the same options as <InlineCode>render()</InlineCode>, except <InlineCode>variant</InlineCode> is ignored — all variants are always rendered.</p>
     </section>
 
     <!-- close() -->
     <section class="mb-12">
-      <h2 class="font-heading font-bold text-2xl mb-2" style="color: var(--color-text-primary);"><code class="font-mono" style="color: var(--color-primary);">close()</code></h2>
-      <p class="text-base leading-relaxed mb-6" style="color: var(--color-text-secondary);">Shut down the browser process. Call this when you are done rendering to free resources.</p>
+      <h2 class="font-heading font-bold text-2xl mb-2 text-heading"><code class="font-mono">close()</code></h2>
+      <p class="text-base leading-relaxed mb-6 text-body">Shut down the browser process. Call this when you are done rendering to free resources.</p>
 
-      <div class="rounded-xl overflow-hidden border mb-6" style="border-color: var(--color-border-default);">
-        <div class="overflow-x-auto [&_pre]:px-4 [&_pre]:py-3 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed">
-          <Code code={closeCallCode} lang="typescript" theme={grafexTheme} />
-        </div>
-      </div>
+      <CodeBlock lang="typescript" code={closeCallCode} showCopy={false} class="mb-6" />
 
-      <div class="rounded-xl p-4 border-l-4 mb-8" style="background: rgba(251,146,60,0.08); border-left-color: var(--color-accent-amber);">
-        <p class="text-sm leading-relaxed" style="color: var(--color-text-primary);">
-          <span class="font-semibold" style="color: var(--color-accent-amber);">Caution: </span>
-          Always call <code class="font-mono">close()</code> when finished. Leaving the browser process running will leak memory and prevent your Node.js process from exiting cleanly.
-        </p>
-      </div>
+      <Callout type="amber" label="Caution:" class="mb-8">
+          Always call <InlineCode>close()</InlineCode> when finished. Leaving the browser process running will leak memory and prevent your Node.js process from exiting cleanly.
+      </Callout>
 
-      <h3 class="font-heading font-semibold text-lg mb-4" style="color: var(--color-text-primary);">Example — render multiple compositions</h3>
-      <div class="rounded-xl overflow-hidden border" style="border-color: var(--color-border-default);">
-        <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
-          <span class="text-xs uppercase tracking-wider font-medium" style="color: var(--color-text-muted);">TypeScript</span>
-          <CopyButton text={`import { render, close } from 'grafex';\nimport { writeFileSync } from 'node:fs';\n\nconst pages = [\n  { file: 'hero.tsx', out: 'hero.png' },\n  { file: 'card.tsx', out: 'card.png' },\n  { file: 'thumbnail.tsx', out: 'thumbnail.png' },\n];\n\nfor (const page of pages) {\n  const result = await render(page.file);\n  writeFileSync(page.out, result.buffer);\n}\n\nawait close();`} client:load />
-        </div>
-        <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
-          <Code code={renderMultipleCode} lang="typescript" theme={grafexTheme} />
-        </div>
-      </div>
+      <h3 class="font-heading font-semibold text-lg mb-4 text-heading">Example — render multiple compositions</h3>
+      <CodeBlock lang="typescript" code={renderMultipleCode} />
     </section>
 
     <!-- Advanced Exports -->
     <section class="mb-12">
-      <h2 class="font-heading font-bold text-2xl mb-4" style="color: var(--color-text-primary);">Advanced Exports</h2>
-      <p class="text-base leading-relaxed mb-6" style="color: var(--color-text-secondary);">For lower-level control, Grafex exposes additional internals:</p>
+      <h2 class="font-heading font-bold text-2xl mb-4 text-heading">Advanced Exports</h2>
+      <p class="text-base leading-relaxed mb-6 text-body">For lower-level control, Grafex exposes additional internals:</p>
 
-      <div class="rounded-xl overflow-hidden border mb-6" style="border-color: var(--color-border-default);">
-        <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
-          <span class="text-xs uppercase tracking-wider font-medium" style="color: var(--color-text-muted);">TypeScript</span>
-          <CopyButton text="import { h, Fragment, renderToHTML, BrowserManager } from 'grafex';" client:load />
-        </div>
-        <div class="overflow-x-auto [&_pre]:px-4 [&_pre]:py-3 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed">
-          <Code code={advancedImportCode} lang="typescript" theme={grafexTheme} />
-        </div>
-      </div>
+      <CodeBlock lang="typescript" code={advancedImportCode} class="mb-6" />
 
-      <div class="rounded-xl overflow-hidden border" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
+      <div class="rounded-xl overflow-hidden border bg-surface border-edge">
         <table class="w-full text-sm">
           <thead>
-            <tr style="background: var(--color-bg-surface-hover); border-bottom: 1px solid var(--color-border-default);">
-              <th class="text-left px-4 py-3 font-semibold" style="color: var(--color-text-primary);">Export</th>
-              <th class="text-left px-4 py-3 font-semibold" style="color: var(--color-text-primary);">Description</th>
+            <tr class="bg-surface-hover border-b border-edge">
+              <th class="text-left px-4 py-3 font-semibold text-heading">Export</th>
+              <th class="text-left px-4 py-3 font-semibold text-heading">Description</th>
             </tr>
           </thead>
           <tbody>
@@ -266,9 +207,9 @@ const closeCallCode = `await close();`;
               ['renderToHTML', 'Convert a composition to an HTML string without rendering to an image'],
               ['BrowserManager', 'Direct access to the browser lifecycle for custom workflows'],
             ].map(([name, desc]) => (
-              <tr style="border-bottom: 1px solid var(--color-border-default);">
-                <td class="px-4 py-3"><code class="font-mono text-sm" style="color: var(--color-primary);">{name}</code></td>
-                <td class="px-4 py-3 text-sm" style="color: var(--color-text-secondary);">{desc}</td>
+              <tr class="border-b border-edge">
+                <td class="px-4 py-3"><code class="font-mono text-sm text-pink">{name}</code></td>
+                <td class="px-4 py-3 text-sm text-body">{desc}</td>
               </tr>
             ))}
           </tbody>
@@ -278,59 +219,27 @@ const closeCallCode = `await close();`;
 
     <!-- Types -->
     <section>
-      <h2 class="font-heading font-bold text-2xl mb-6" style="color: var(--color-text-primary);">Types</h2>
+      <h2 class="font-heading font-bold text-2xl mb-6 text-heading">Types</h2>
 
       <div class="space-y-6">
         <div>
-          <h3 class="font-heading font-semibold text-lg mb-3" style="color: var(--color-text-primary);">VariantConfig</h3>
-          <div class="rounded-xl overflow-hidden border" style="border-color: var(--color-border-default);">
-            <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
-              <span class="text-xs uppercase tracking-wider font-medium" style="color: var(--color-text-muted);">TypeScript</span>
-              <CopyButton text={variantConfigTypeCode} client:load />
-            </div>
-            <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
-              <Code code={variantConfigTypeCode} lang="typescript" theme={grafexTheme} />
-            </div>
-          </div>
+          <h3 class="font-heading font-semibold text-lg mb-3 text-heading">VariantConfig</h3>
+          <CodeBlock lang="typescript" code={variantConfigTypeCode} />
         </div>
 
         <div>
-          <h3 class="font-heading font-semibold text-lg mb-3" style="color: var(--color-text-primary);">CompositionConfig</h3>
-          <div class="rounded-xl overflow-hidden border" style="border-color: var(--color-border-default);">
-            <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
-              <span class="text-xs uppercase tracking-wider font-medium" style="color: var(--color-text-muted);">TypeScript</span>
-              <CopyButton text={compositionConfigTypeCode} client:load />
-            </div>
-            <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
-              <Code code={compositionConfigTypeCode} lang="typescript" theme={grafexTheme} />
-            </div>
-          </div>
+          <h3 class="font-heading font-semibold text-lg mb-3 text-heading">CompositionConfig</h3>
+          <CodeBlock lang="typescript" code={compositionConfigTypeCode} />
         </div>
 
         <div>
-          <h3 class="font-heading font-semibold text-lg mb-3" style="color: var(--color-text-primary);">RenderResult</h3>
-          <div class="rounded-xl overflow-hidden border" style="border-color: var(--color-border-default);">
-            <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
-              <span class="text-xs uppercase tracking-wider font-medium" style="color: var(--color-text-muted);">TypeScript</span>
-              <CopyButton text={`interface RenderResult {\n  buffer: Buffer;          // Image data\n  width: number;           // Effective render width (after scaling)\n  height: number;          // Effective render height (after scaling)\n  format: 'png' | 'jpeg';  // Output format\n  scale: number;           // Device pixel ratio used\n}`} client:load />
-            </div>
-            <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
-              <Code code={renderResultFullTypeCode} lang="typescript" theme={grafexTheme} />
-            </div>
-          </div>
+          <h3 class="font-heading font-semibold text-lg mb-3 text-heading">RenderResult</h3>
+          <CodeBlock lang="typescript" code={renderResultFullTypeCode} />
         </div>
 
         <div>
-          <h3 class="font-heading font-semibold text-lg mb-3" style="color: var(--color-text-primary);">RenderOptions</h3>
-          <div class="rounded-xl overflow-hidden border" style="border-color: var(--color-border-default);">
-            <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
-              <span class="text-xs uppercase tracking-wider font-medium" style="color: var(--color-text-muted);">TypeScript</span>
-              <CopyButton text={`interface RenderOptions {\n  props?: Record<string, unknown>;    // Props passed to the composition\n  width?: number;                     // Override width in pixels\n  height?: number;                    // Override height in pixels\n  format?: 'png' | 'jpeg';            // Output format (default: 'png')\n  quality?: number;                   // JPEG quality 1-100 (default: 90)\n  browser?: 'webkit' | 'chromium';    // Browser engine (default: 'webkit')\n  scale?: number;                     // Device pixel ratio (default: 1)\n  variant?: string;                   // Named variant to render\n}`} client:load />
-            </div>
-            <div class="overflow-x-auto [&_pre]:p-4 [&_pre]:!bg-[var(--color-bg-code)] [&_pre]:m-0 [&_code]:font-mono [&_code]:text-sm [&_code]:leading-relaxed" style="max-height: 500px; overflow-y: auto;">
-              <Code code={renderOptionsTypeCode} lang="typescript" theme={grafexTheme} />
-            </div>
-          </div>
+          <h3 class="font-heading font-semibold text-lg mb-3 text-heading">RenderOptions</h3>
+          <CodeBlock lang="typescript" code={renderOptionsTypeCode} />
         </div>
       </div>
     </section>
