@@ -2,6 +2,7 @@
 import { createRequire } from 'node:module';
 import { runExport } from './commands/export.js';
 import { runDev } from './commands/dev.js';
+import { runInit } from './commands/init.js';
 
 const require = createRequire(import.meta.url);
 const pkg = require('../package.json') as { version: string };
@@ -10,6 +11,7 @@ const HELP = `
 Usage: grafex <command> [options]
 
 Commands:
+  init      Scaffold the minimal setup to start writing compositions
   export    Render a composition to a PNG file
   dev       Watch a composition and serve a live preview
 
@@ -32,7 +34,14 @@ if (command === '--help' || command === '-h' || !command) {
   process.exit(0);
 }
 
-if (command === 'export') {
+if (command === 'init') {
+  try {
+    runInit(rest);
+  } catch (err: unknown) {
+    process.stderr.write(`Error: ${(err as Error).message}\n`);
+    process.exit(1);
+  }
+} else if (command === 'export') {
   runExport(rest).catch((err: unknown) => {
     process.stderr.write(`Error: ${(err as Error).message}\n`);
     process.exit(1);

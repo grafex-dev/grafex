@@ -207,7 +207,25 @@ export default function OgCard() {
     <section class="mb-12">
       <h2 class="font-heading font-bold text-2xl mb-4" style="color: var(--color-text-primary);">TypeScript Setup</h2>
       <p class="text-base leading-relaxed mb-4" style="color: var(--color-text-secondary);">
-        For full JSX type-checking in your editor, add these compiler options to your <code class="font-mono text-sm px-1.5 py-0.5 rounded" style="color: var(--color-primary); background: rgba(244,114,182,0.1);">tsconfig.json</code>:
+        Run <code class="font-mono text-sm px-1.5 py-0.5 rounded" style="color: var(--color-primary); background: rgba(244,114,182,0.1);">grafex init</code> to generate the correct <code class="font-mono text-sm px-1.5 py-0.5 rounded" style="color: var(--color-primary); background: rgba(244,114,182,0.1);">tsconfig.json</code> automatically:
+      </p>
+
+      <div class="rounded-xl overflow-hidden border mb-6" style="border-color: var(--color-border-default);">
+        <div class="flex items-center justify-between px-4 py-2 border-b" style="background: var(--color-bg-surface); border-color: var(--color-border-default);">
+          <span class="text-xs uppercase tracking-wider font-medium" style="color: var(--color-text-muted);">bash</span>
+          <CopyButton text="npx grafex init" client:load />
+        </div>
+        <div class="px-4 py-3" style="background: var(--color-bg-code);">
+          <code class="font-mono text-sm" style="color: var(--color-accent-lime);">npx grafex init</code>
+        </div>
+      </div>
+
+      <p class="text-base leading-relaxed mb-4" style="color: var(--color-text-secondary);">
+        This creates a <code class="font-mono text-sm px-1.5 py-0.5 rounded" style="color: var(--color-primary); background: rgba(244,114,182,0.1);">tsconfig.json</code> and a starter <code class="font-mono text-sm px-1.5 py-0.5 rounded" style="color: var(--color-primary); background: rgba(244,114,182,0.1);">composition.tsx</code> in your current directory. Existing files are never overwritten.
+      </p>
+
+      <p class="text-base leading-relaxed mb-4" style="color: var(--color-text-secondary);">
+        Or add these compiler options to your <code class="font-mono text-sm px-1.5 py-0.5 rounded" style="color: var(--color-primary); background: rgba(244,114,182,0.1);">tsconfig.json</code> manually:
       </p>
 
       <div class="rounded-xl overflow-hidden border mb-4" style="border-color: var(--color-border-default);">
